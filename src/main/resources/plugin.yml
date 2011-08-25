@@ -1,0 +1,65 @@
+name: Privileges
+main: net.krinsoft.privileges.Privileges
+author: krinsdeath
+version: ${project.version}
+softdepend: [Spout]
+
+commands:
+  privileges:
+    aliases: [perm, permissions, permission, perms, p]
+    description: The commands for manipulating players and settings
+    usage: |
+      /<command> promote - Displays help information about promotion tracks
+      /<command> group - Displays help information about group commands
+      /<command> player - Displays help information about player commands
+      /<command> check [node] - Checks the status of the specified node
+      Example: /<command> check privileges.promote - Displays whether you can use /<command> promote
+      /<command> list (player) [page] - Shows a paged view of all current nodes for the specified player
+      Example: /<command> list - Shows a paged view of your permissions nodes
+      Example: /<command> list Player 3 - Shows page 3 of Player's permissions nodes
+
+permissions:
+  privileges.*:
+    description: Sets all permissions nodes relevant to this plugin
+    default: op
+    children:
+      privileges.promote: true
+      privileges.group.*: true
+      privileges.player.*: true
+      privileges.check: true
+      privileges.list: true
+      privileges.reload: true
+      privileges.build: true
+      privileges.interact: true
+  privileges.group.*:
+    description: Gives all nodes relevant to group-related commands
+    default: false
+    children:
+      privileges.group.inherit: true
+      privileges.group.create: true
+      privileges.group.delete: true
+      privileges.group.addperm: true
+      privileges.group.rmperm: true
+  privileges.player.*:
+    description: Gives all nodes relevant to group-related commands
+    default: false
+    children:
+      privileges.player.addgroup: true
+      privileges.player.rmgroup: true
+      privileges.player.addperm: true
+      privileges.player.rmperm: true
+  privileges.build:
+    description: Allows the user to place and destroy blocks
+    default: true
+  privileges.interact:
+    description: Allows the user to interact with objects
+    default: true
+  privileges.check:
+    description: Allows the user to check their nodes
+    default: false
+  privileges.list:
+    description: Allows the user to view a paged report of all nodes
+    default: false
+  privileges.reload:
+    description: Allows the user to reload the configuration
+    default: false
