@@ -1,7 +1,11 @@
 package net.krinsoft.privileges;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
+import net.krinsoft.privileges.groups.Group;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
@@ -14,6 +18,7 @@ public class PermissionManager {
 
     private Privileges plugin;
     private HashMap<String, String> players = new HashMap<String, String>();
+    private HashMap<String, PermissionAttachment> perms = new HashMap<String, PermissionAttachment>();
 
     public PermissionManager(Privileges plugin) {
         this.plugin = plugin;
@@ -37,20 +42,53 @@ public class PermissionManager {
             plugin.debug("Removing '" + node + "' from '" + player + "'");
             attachment.unsetPermission(node);
         }
-        // iterate through the player's groups
-        for (String group : plugin.getUserNode(player).getStringList("groups", null)) {
+        // iterate through the player's groups, and add them to a list
+        LinkedList<String> list = new LinkedList<String>();
+        for (String top : plugin.getUserNode(player).getStringList("groups", new ArrayList<String>())) {
+            list.add(top);
+            List<String> groups = calculateGroupTree(top);
+            plugin.debug("Group tree: " + groups.toString());
+            plugin.getGroupManager().addPlayer(player, groups);
             // calculate group's permissions
-            calculateGroupPermissions(attachment, player, group);
+            for (String group : groups) {
+                plugin.debug("Calculating nodes: " + group);
+                calculateGroupPermissions(attachment, player, group);
+            }
         }
         // calculate player's permissions
         // overrides group and world permissions
         calculatePlayerPermissions(attachment, player);
         plugin.getServer().getPlayer(player).recalculatePermissions();
+        perms.put(player, attachment);
+        plugin.getGroupManager().addPlayer(player, list);
+    }
+
+    protected List<String> calculateGroupTree(String group) {
+        List<String> groups = new ArrayList<String>();
+        groups.add(0, group);
+        for (String top : plugin.getGroupNode(group).getStringList("inheritance", new ArrayList<String>())) {
+            if (top.equalsIgnoreCase(group)) { continue; }
+            groups.add(0, top);
+            for (String trunk : calculateGroupTree(top)) {
+                if (trunk.equalsIgnoreCase(top)) { continue; }
+                groups.add(0, trunk);
+            }
+        }
+        return groups;
     }
 
     final protected void unregisterPlayer(String player) {
         if (players.containsKey(player)) {
+            PermissionAttachment att = perms.get(player); // stupid, this reference has to exist to unset permissions on reload :|
+            if (att == null) {
+                plugin.debug("'" + player + "' unregistering: Attachment is null");
+            } else {
+                for (String key : att.getPermissions().keySet()) {
+                    att.unsetPermission(key);
+                }
+            }
             players.remove(player);
+            perms.remove(player);
         } else {
             plugin.debug("Unregistering '" + player + "': player isn't registered.");
         }
@@ -76,7 +114,7 @@ public class PermissionManager {
 
     private void calculateGroupPermissions(PermissionAttachment attachment, String player, String group) {
         // iterate through the group's global permissions
-        for (String node : plugin.getGroupNode(group).getStringList("permissions", null)) {
+        for (String node : plugin.getGroupNode(group).getStringList("permissions", new ArrayList<String>())) {
             // attach the node
             attachNode(attachment, node);
         }
@@ -84,58 +122,31 @@ public class PermissionManager {
         // calculate group's world permissions
         // overrides global permissions
         calculateGroupWorldPermissions(attachment, player, group);
-
-        // calculate group inheritance
-        // inherited nodes are ignored if the child has already set them
-        calculateGroupInheritance(attachment, player, group);
     }
 
     private void calculateGroupWorldPermissions(PermissionAttachment attachment, String player, String group) {
         // Iterate through each world
-        for (String node : plugin.getGroupNode(group).getStringList("worlds." + players.get(player), null)) {
+        for (String node : plugin.getGroupNode(group).getStringList("worlds." + players.get(player), new ArrayList<String>())) {
             // iterate through this world's nodes
             attachNode(attachment, node);
         }
     }
 
-    private void calculateGroupInheritance(PermissionAttachment attachment, String player, String group) {
-        // iterate through inherited groups
-        plugin.debug("Calculating inheritance for '" + group + "'");
-        for (String parent : plugin.getGroupNode(group).getStringList("inheritance", null)) {
-            plugin.debug("-- parent -> " + parent);
-            if (parent.equalsIgnoreCase(group)) {
-                plugin.debug("Warning! '" + group + "' is inheriting from itself!");
-                continue;
-            }
-            calculateGroupPermissions(attachment, player, parent);
-        }
-    }
-
     private void calculatePlayerPermissions(PermissionAttachment attachment, String player) {
-        for (String node : plugin.getUserNode(player).getStringList("permissions", null)) {
-            overrideNode(attachment, node);
+        for (String node : plugin.getUserNode(player).getStringList("permissions", new ArrayList<String>())) {
+            attachNode(attachment, node);
         }
     }
 
     private void attachNode(PermissionAttachment attachment, String node) {
-        if (attachment.getPermissible().isPermissionSet(NEGATIVE.matcher(node).replaceAll("$1"))) {
-            plugin.debug("parent attempting to override child: " + node);
-            return;
-        }
+        String debug = NEGATIVE.matcher(node).replaceAll("$1");
         if (node.startsWith("-")) {
             attachment.setPermission(NEGATIVE.matcher(node).replaceAll("$1"), false);
         } else {
             attachment.setPermission(node, true);
         }
-        plugin.debug("Setting " + node);
-    }
-
-    private void overrideNode(PermissionAttachment attachment, String node) {
-        if (node.startsWith("-")) {
-            attachment.setPermission(NEGATIVE.matcher(node).replaceAll("$1"), false);
-        } else {
-            attachment.setPermission(node, true);
-        }
+        debug = (attachment.getPermissible().isPermissionSet(debug) ? "overriding " : "setting ") + debug + " to " + attachment.getPermissible().hasPermission(debug);
+        plugin.debug(debug);
     }
 
 }

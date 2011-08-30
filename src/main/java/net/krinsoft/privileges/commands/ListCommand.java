@@ -22,12 +22,11 @@ public class ListCommand extends PrivilegesCommand {
         super(plugin);
         this.plugin = (Privileges) plugin;
         this.setName("privileges list");
-        this.setCommandUsage("/perm list ([player] [page])");
+        this.setCommandUsage("/privileges list ([player] [page])");
         this.setArgRange(0, 2);
         this.addKey("privileges list");
-        this.addKey("perms list");
-        this.addKey("perm list");
-        this.setPermission("privileges.list", "Allows this user to use '/perm list'", PermissionDefault.OP);
+        this.addKey("priv list");
+        this.setPermission("privileges.list", "Allows this user to use '/perm list'", PermissionDefault.FALSE);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class ListCommand extends PrivilegesCommand {
                 pageNum = 0;
             }
         }
-        List<PermissionAttachmentInfo> attInfo = new ArrayList<PermissionAttachmentInfo>(sender.getEffectivePermissions());
+        List<PermissionAttachmentInfo> attInfo = new ArrayList<PermissionAttachmentInfo>(target.getEffectivePermissions());
         Collections.sort(attInfo, new Comparator<PermissionAttachmentInfo>() {
             public int compare(PermissionAttachmentInfo a, PermissionAttachmentInfo b) {
                 return a.getPermission().compareTo(b.getPermission());
@@ -67,7 +66,7 @@ public class ListCommand extends PrivilegesCommand {
             String node = att.getPermission();
             String msg = "";
             msg = "&B" + node + "&A - &B" + att.getValue() + "&A ";
-            msg = msg + "(" + (att.getAttachment() != null ? "&5set&A" : "&3default&A") + ")";
+            msg = msg + "&A(" + (att.getAttachment() != null ? "set: &6" + att.getAttachment().getPlugin().getDescription().getName() + "&A" : "&3default&A") + ")";
             list.add(msg.replaceAll("(?i)&([0-F])", "\u00A7$1"));
         }
         FancyPage page = new FancyPage(list);

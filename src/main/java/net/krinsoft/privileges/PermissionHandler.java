@@ -8,20 +8,19 @@ import org.bukkit.command.CommandSender;
  *
  * @author krinsdeath
  */
-class PermissionHandler implements PermissionsInterface {
-    private Privileges plugin;
+public class PermissionHandler implements PermissionsInterface {
 
-    public PermissionHandler(Privileges plugin) {
-        this.plugin = plugin;
-    }
+    public PermissionHandler() {}
 
     public boolean hasPermission(CommandSender sender, String node, boolean isOpRequired) {
-        if (!sender.isOp() && isOpRequired) { return false; }
-        if (sender.hasPermission(node)) {
+        boolean hasPermission = sender.hasPermission(node);
+        boolean isPermissionSet = sender.isPermissionSet(node);
+        boolean globalPermission = sender.hasPermission("privileges.*");
+        if (hasPermission) {
             return true;
-        } else if (sender.isPermissionSet(node) && !sender.hasPermission(node)) {
+        } else if (isPermissionSet && !hasPermission) {
             return false;
-        } else if (!sender.isPermissionSet(node) && sender.hasPermission("privileges.*")) {
+        } else if (!isPermissionSet && globalPermission) {
             return true;
         } else {
             return false;
@@ -29,7 +28,6 @@ class PermissionHandler implements PermissionsInterface {
     }
 
     public boolean hasAnyPermission(CommandSender sender, List<String> allPermissionStrings, boolean opRequired) {
-        if (!sender.isOp() && opRequired) { return false; }
         for (String node : allPermissionStrings) {
             if (hasPermission(sender, node, opRequired)) {
                 return true;
@@ -39,7 +37,6 @@ class PermissionHandler implements PermissionsInterface {
     }
 
     public boolean hasAllPermission(CommandSender sender, List<String> allPermissionStrings, boolean opRequired) {
-        if (!sender.isOp() && opRequired) { return false; }
         for (String node : allPermissionStrings) {
             if (!hasPermission(sender, node, opRequired)) {
                 return false;

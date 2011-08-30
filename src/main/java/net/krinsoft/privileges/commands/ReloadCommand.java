@@ -20,9 +20,8 @@ public class ReloadCommand extends PrivilegesCommand {
         this.setCommandUsage("/perm reload");
         this.setArgRange(0, 0);
         this.addKey("privileges reload");
-        this.addKey("permissions reload");
-        this.addKey("perms reload");
-        this.addKey("perm reload");
+        this.addKey("priv reload");
+        this.addKey("pr");
         this.setPermission("privileges.reload", "Allows this user to access '/perm reload'", PermissionDefault.OP);
     }
 

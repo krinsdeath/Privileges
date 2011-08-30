@@ -10,7 +10,7 @@ import net.krinsoft.privileges.Privileges;
 public abstract class PrivilegesCommand extends Command {
 
     protected Privileges plugin;
-
+    
     public PrivilegesCommand(Privileges plugin) {
         super(plugin);
         this.plugin = (Privileges) plugin;
