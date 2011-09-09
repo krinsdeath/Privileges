@@ -1,8 +1,5 @@
 package net.krinsoft.privileges.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author krinsdeath
@@ -11,16 +8,10 @@ public class Group {
 
     private String name;
     private int rank;
-    private List<String> permissions = new ArrayList<String>();
 
-    public Group(String name, int rank, List<String> nodes) {
+    public Group(String name, int rank) {
         this.name = name;
         this.rank = rank;
-        for (String node : nodes) {
-            if (!node.startsWith("-")) {
-                this.permissions.add(node);
-            }
-        }
     }
 
     public int getRank() {
@@ -31,10 +22,6 @@ public class Group {
         return this.name;
     }
 
-    public List<String> getNodes() {
-        return this.permissions;
-    }
-
     @Override
     public String toString() {
         return "Group{name=" + this.name + ",rank=" + this.rank + "}";
@@ -43,7 +30,7 @@ public class Group {
     @Override
     public int hashCode() {
         int hash = 19;
-        hash = hash * 31 + (this.permissions.size() / 19);
+        hash = hash * 31 + (this.name.length() / 19);
         hash = hash * 31 + (this.rank * 19);
         return hash + this.toString().hashCode();
     }

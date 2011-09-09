@@ -26,7 +26,7 @@ public class ListCommand extends PrivilegesCommand {
         this.setArgRange(0, 2);
         this.addKey("privileges list");
         this.addKey("priv list");
-        this.setPermission("privileges.list", "Allows this user to use '/perm list'", PermissionDefault.FALSE);
+        this.setPermission("privileges.list", "Allows this user to use '/priv list'", PermissionDefault.FALSE);
     }
 
     @Override

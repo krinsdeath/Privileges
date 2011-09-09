@@ -1,7 +1,7 @@
 name: Privileges
 main: net.krinsoft.privileges.Privileges
 author: krinsdeath
-version: ${project.version}-b${project.build.number}
+version: ${project.version}-${project.build.number}
 
 commands:
   privileges:
@@ -16,6 +16,7 @@ commands:
       - pg
       - pgc
       - pgr
+      - pgs
       - pgp
       - pgps
       - pgpr

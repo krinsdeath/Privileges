@@ -13,6 +13,7 @@ import net.krinsoft.privileges.commands.GroupRemoveCommand;
 import net.krinsoft.privileges.commands.ListCommand;
 import net.krinsoft.privileges.commands.ReloadCommand;
 import net.krinsoft.privileges.groups.GroupManager;
+import net.krinsoft.privileges.importer.ImportManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event.Priority;
@@ -39,9 +40,13 @@ public class Privileges extends JavaPlugin {
     private Configuration users;
     private Configuration groups;
 
+    // import manager
+    private ImportManager importManager;
+
     @Override
     public void onEnable() {
         registerConfiguration();
+        performImports();
         registerPermissions();
         registerEvents();
         registerCommands();
@@ -80,7 +85,10 @@ public class Privileges extends JavaPlugin {
             groups.setHeader(
                     "# Group ranks determine the order they are promoted in.",
                     "# Lowest rank is 1, highest rank is 2,147,483,647.",
-                    "# Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration");
+                    "# Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration",
+                    "# World nodes override global nodes for that group",
+                    "# Inherited groups are calculated first. Each group in the tree overrides any nodes",
+                    "# from the previous group. In the example config, default -> user (overrides default) -> admin (overrides user)");
             groups.setProperty("groups.default.rank", 1);
             groups.setProperty("groups.default.permissions", Arrays.asList("-privileges.build", "-privileges.interact"));
             groups.setProperty("groups.default.worlds.world", Arrays.asList("-example.basic.node2"));
@@ -96,6 +104,10 @@ public class Privileges extends JavaPlugin {
             config.save();
         }
         debug = config.getBoolean("debug", false);
+    }
+
+    private void performImports() {
+        this.importManager = new ImportManager(this);
     }
 
     private void registerEvents() {
@@ -128,7 +140,7 @@ public class Privileges extends JavaPlugin {
             Configuration c = getUsers();
             String path = "users." + player;
             c.setProperty(path + ".permissions", null);
-            c.setProperty(path + ".groups", Arrays.asList(getConfiguration().getString("default_group", "default")));
+            c.setProperty(path + ".group", getConfiguration().getString("default_group", "default"));
             c.save();
             debug("Empty user node for '" + player + "' created.");
         }
@@ -137,7 +149,7 @@ public class Privileges extends JavaPlugin {
 
     public ConfigurationNode getGroupNode(String group) {
         if (getGroups().getNode("groups." + group) == null) {
-            debug("Empty group node detected.");
+            debug("Empty group node '" + group + "' detected.");
             return null;
         }
         return getGroups().getNode("groups." + group);
@@ -149,6 +161,10 @@ public class Privileges extends JavaPlugin {
 
     public Configuration getGroups() {
         return groups;
+    }
+
+    public void info(Object message) {
+        LOGGER.info(String.valueOf("[" + this + "] " + message));
     }
 
     protected void debug(String message) {

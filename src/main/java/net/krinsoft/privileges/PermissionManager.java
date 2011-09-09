@@ -2,10 +2,8 @@ package net.krinsoft.privileges;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-import net.krinsoft.privileges.groups.Group;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
@@ -43,24 +41,20 @@ public class PermissionManager {
             attachment.unsetPermission(node);
         }
         // iterate through the player's groups, and add them to a list
-        LinkedList<String> list = new LinkedList<String>();
-        for (String top : plugin.getUserNode(player).getStringList("groups", new ArrayList<String>())) {
-            list.add(top);
-            List<String> groups = calculateGroupTree(top);
-            plugin.debug("Group tree: " + groups.toString());
-            plugin.getGroupManager().addPlayer(player, groups);
-            // calculate group's permissions
-            for (String group : groups) {
-                plugin.debug("Calculating nodes: " + group);
-                calculateGroupPermissions(attachment, player, group);
-            }
+        String group = plugin.getUserNode(player).getString("group", plugin.getConfiguration().getString("default_group", null));
+        List<String> groups = calculateGroupTree(group);
+        plugin.debug("Group tree: " + groups.toString());
+        plugin.getGroupManager().addPlayer(player, group);
+        // calculate group's permissions
+        for (String branch : groups) {
+            plugin.debug("Calculating nodes: " + branch);
+            calculateGroupPermissions(attachment, player, branch);
         }
         // calculate player's permissions
         // overrides group and world permissions
         calculatePlayerPermissions(attachment, player);
         plugin.getServer().getPlayer(player).recalculatePermissions();
         perms.put(player, attachment);
-        plugin.getGroupManager().addPlayer(player, list);
     }
 
     protected List<String> calculateGroupTree(String group) {

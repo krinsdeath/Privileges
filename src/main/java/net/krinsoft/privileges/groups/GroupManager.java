@@ -16,26 +16,29 @@ public class GroupManager {
     private Privileges plugin;
     private HashMap<String, Group> groupList = new HashMap<String, Group>();
     private HashMap<String, Integer> ranks = new HashMap<String, Integer>();
-    private HashMap<String, LinkedList<Group>> players = new HashMap<String, LinkedList<Group>>();
+    private HashMap<String, Group> players = new HashMap<String, Group>();
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
     }
 
-    public void addPlayer(String player, List<String> groups) {
-        LinkedList<Group> list = new LinkedList<Group>();
-        for (String name : groups) {
-            list.add(new Group(name, plugin.getGroupNode(name).getInt("rank", 1), plugin.getGroupNode(name).getStringList("permissions", null)));
-            if (groupList.get(name) == null) {
-                groupList.put(name, list.getLast());
-            }
-            if (ranks.get(player) == null || list.getLast().getRank() > ranks.get(player)) {
-                ranks.put(player, list.getLast().getRank());
-            }
+    /**
+     * Adds the specified player to the specified group
+     * @param player The player to change
+     * @param group The group to set
+     */
+    public void addPlayer(String player, String group) {
+        Group g = createGroup(group);
+        if (ranks.get(player) == null || g.getRank() > ranks.get(player)) {
+            ranks.put(player, g.getRank());
         }
-        this.players.put(player, list);
+        players.put(player, g);
     }
 
+    /**
+     * Removes all groups from the specified player.
+     * @param player
+     */
     public void removePlayer(String player) {
         this.players.remove(player);
         this.ranks.remove(player);
@@ -51,32 +54,25 @@ public class GroupManager {
         }
     }
 
-    public boolean addGroup(String player, String group) {
-        if (players.containsKey(player)) {
-            return players.get(player).add(getGroup(group));
-        } else {
-            return false;
-        }
-    }
-
-    public boolean removeGroup(String player, String group) {
-        if (players.containsKey(player)) {
-            return players.get(player).remove(getGroup(group));
-        } else {
-            return false;
-        }
+    public void setGroup(String player, String group) {
+        plugin.getUsers().setProperty("users." + player + ".group", group);
+        plugin.getUsers().save();
+        players.put(player, createGroup(group));
+        ranks.put(player, players.get(player).getRank());
+        plugin.getServer().dispatchCommand(new ConsoleCommandSender(plugin.getServer()), "priv reload");
     }
 
     public Group getGroup(String name) {
-        return groupList.get(name);
+        return createGroup(name);
     }
 
-    public Group createGroup(String group) {
-        if (groupList.containsKey(group)) {
-            return groupList.get(group);
+    protected Group createGroup(String group) {
+        if (groupList.containsKey(group.toLowerCase())) {
+            return groupList.get(group.toLowerCase());
         } else {
-            groupList.put(group, new Group(group, plugin.getGroupNode(group).getInt("rank", 1), plugin.getGroupNode(group).getStringList("permissions", null)));
-            return groupList.get(group);
+            groupList.put(group.toLowerCase(), new Group(group, plugin.getGroupNode(group).getInt("rank", 1)));
+            return groupList.get(group.toLowerCase());
         }
     }
+
 }
