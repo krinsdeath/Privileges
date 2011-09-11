@@ -50,13 +50,13 @@ public class Privileges extends JavaPlugin {
         registerPermissions();
         registerEvents();
         registerCommands();
-        LOGGER.info(this + " is now enabled.");
+        info("Is now enabled.");
     }
 
     @Override
     public void onDisable() {
         this.permissionManager.disable();
-        LOGGER.info(this + " is now disabled.");
+        info("Is now disabled.");
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Privileges extends JavaPlugin {
         this.permissionManager = new PermissionManager(this);
     }
 
-    private void registerConfiguration() {
+    public void registerConfiguration() {
         users = new Configuration(new File(this.getDataFolder(), "users.yml"));
         users.load();
         groups = new Configuration(new File(this.getDataFolder(), "groups.yml"));

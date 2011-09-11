@@ -28,6 +28,7 @@ public class ReloadCommand extends PrivilegesCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         plugin.registerPermissions();
+        plugin.registerConfiguration();
     }
 
 }
