@@ -1,12 +1,10 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
 
 /**
  *
@@ -53,7 +51,7 @@ public class GroupCreateCommand extends PrivilegesCommand {
             }
         }
         // check that the user can create a group of this rank
-        if (rank > plugin.getGroupManager().getHighestRank(sender)) {
+        if (rank > plugin.getGroupManager().getRank(sender)) {
             // sender is trying to be a bad boy!
             sender.sendMessage("That rank is too high for you.");
             return;

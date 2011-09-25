@@ -26,9 +26,12 @@ public class PermissionManager {
     }
 
 
-    final protected void registerPlayer(String player) {
+    final public void registerPlayer(String player) {
         // build attachment
         PermissionAttachment attachment = plugin.getServer().getPlayer(player).addAttachment(plugin);
+        if (perms.containsKey(player)) {
+            attachment = perms.get(player);
+        }
         if (!players.containsKey(player)) {
             players.put(player, plugin.getServer().getPlayer(player).getWorld().getName());
         }
@@ -63,9 +66,23 @@ public class PermissionManager {
         for (String top : plugin.getGroupNode(group).getStringList("inheritance", new ArrayList<String>())) {
             if (top.equalsIgnoreCase(group)) { continue; }
             groups.add(0, top);
-            for (String trunk : calculateGroupTree(top)) {
+            for (String trunk : calculateBackwardsGroupTree(top)) {
                 if (trunk.equalsIgnoreCase(top)) { continue; }
                 groups.add(0, trunk);
+            }
+        }
+        return groups;
+    }
+
+    protected List<String> calculateBackwardsGroupTree(String group) {
+        List<String> groups = new ArrayList<String>();
+        groups.add(0, group);
+        for (String top : plugin.getGroupNode(group).getStringList("inheritance", new ArrayList<String>())) {
+            if (top.equalsIgnoreCase(group)) { continue; }
+            groups.add(top);
+            for (String trunk : calculateGroupTree(top)) {
+                if (trunk.equalsIgnoreCase(top)) { continue; }
+                groups.add(trunk);
             }
         }
         return groups;

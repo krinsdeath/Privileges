@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.events.GroupChangeEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 public class GroupManager {
     private Privileges plugin;
     private HashMap<String, Group> groupList = new HashMap<String, Group>();
-    private HashMap<String, Integer> ranks = new HashMap<String, Integer>();
     private HashMap<String, Group> players = new HashMap<String, Group>();
 
     public GroupManager(Privileges plugin) {
@@ -29,9 +29,6 @@ public class GroupManager {
      */
     public void addPlayer(String player, String group) {
         Group g = createGroup(group);
-        if (ranks.get(player) == null || g.getRank() > ranks.get(player)) {
-            ranks.put(player, g.getRank());
-        }
         players.put(player, g);
     }
 
@@ -41,12 +38,11 @@ public class GroupManager {
      */
     public void removePlayer(String player) {
         this.players.remove(player);
-        this.ranks.remove(player);
     }
 
-    public int getHighestRank(CommandSender sender) {
+    public int getRank(CommandSender sender) {
         if (sender instanceof Player) {
-            return ranks.get(((Player) sender).getName());
+            return players.get(((Player)sender).getName()).getRank();
         } else if (sender instanceof ConsoleCommandSender) {
             return Integer.MAX_VALUE;
         } else {
@@ -54,22 +50,64 @@ public class GroupManager {
         }
     }
 
+    /**
+     * Set a player's group to the specified group by name
+     * @param player The player whose group we're changing
+     * @param group The name of the group (case-insensitive) to switch to
+     */
     public void setGroup(String player, String group) {
+        // make sure the group is valid
+        if (getGroup(group) == null) { return; }
+
+        // update the player's group in the configuration
         plugin.getUsers().setProperty("users." + player + ".group", group);
         plugin.getUsers().save();
-        players.put(player, createGroup(group));
-        ranks.put(player, players.get(player).getRank());
-        plugin.getServer().dispatchCommand(new ConsoleCommandSender(plugin.getServer()), "priv reload");
+
+        // update the player's values
+        players.put(player, getGroup(group));
+
+        // reload the permissions
+        plugin.getPermissionManager().registerPlayer(player);
+
+        // throw a group change event to let other plugins know of the change
+        plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(getGroup(group), plugin.getServer().getPlayer(player)));
     }
 
-    public Group getGroup(String name) {
-        return createGroup(name);
+    /**
+     * Gets the specified group by name (case-insensitive)
+     * @param group The group's name.
+     * @return the group instance, or null
+     * @see getGroup(Player)
+     */
+    public Group getGroup(String group) {
+        try {
+            createGroup(group).getName();
+        } catch (NullPointerException e) {
+            return null;
+        }
+        return groupList.get(group.toLowerCase());
+    }
+
+    /**
+     * Gets the specified player's group
+     * @param player
+     * @return the group associated with this player
+     */
+    public Group getGroup(Player player) {
+        try {
+            return players.get(player.getName());
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     protected Group createGroup(String group) {
         if (groupList.containsKey(group.toLowerCase())) {
             return groupList.get(group.toLowerCase());
         } else {
+            if (plugin.getGroupNode(group) == null) {
+                return null;
+            }
             groupList.put(group.toLowerCase(), new Group(group, plugin.getGroupNode(group).getInt("rank", 1)));
             return groupList.get(group.toLowerCase());
         }

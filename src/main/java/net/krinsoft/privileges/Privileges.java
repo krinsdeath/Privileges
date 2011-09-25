@@ -10,6 +10,7 @@ import net.krinsoft.privileges.commands.CheckCommand;
 import net.krinsoft.privileges.commands.GroupCommand;
 import net.krinsoft.privileges.commands.GroupCreateCommand;
 import net.krinsoft.privileges.commands.GroupRemoveCommand;
+import net.krinsoft.privileges.commands.GroupSetCommand;
 import net.krinsoft.privileges.commands.ListCommand;
 import net.krinsoft.privileges.commands.ReloadCommand;
 import net.krinsoft.privileges.groups.GroupManager;
@@ -155,6 +156,7 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new GroupCommand(this));
         commandHandler.registerCommand(new GroupCreateCommand(this));
         commandHandler.registerCommand(new GroupRemoveCommand(this));
+        commandHandler.registerCommand(new GroupSetCommand(this));
     }
 
     public ConfigurationNode getUserNode(String player) {
