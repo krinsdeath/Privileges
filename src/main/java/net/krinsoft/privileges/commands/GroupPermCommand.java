@@ -1,22 +1,21 @@
 package net.krinsoft.privileges.commands;
 
 import java.util.List;
+import net.krinsoft.privileges.PermissionManager;
 import net.krinsoft.privileges.Privileges;
-import net.krinsoft.privileges.groups.GroupManager;
 import org.bukkit.command.CommandSender;
 
 /**
  *
  * @author krinsdeath
  */
-public abstract class GroupCommand extends PrivilegesCommand {
+public abstract class GroupPermCommand extends GroupCommand {
 
-    protected GroupManager groupManager;
+    protected PermissionManager permManager;
 
-    public GroupCommand(Privileges plugin) {
+    public GroupPermCommand(Privileges plugin) {
         super(plugin);
-        this.plugin = (Privileges) plugin;
-        this.groupManager = plugin.getGroupManager();
+        permManager = plugin.getPermissionManager();
     }
 
     @Override

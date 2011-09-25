@@ -7,15 +7,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import net.krinsoft.privileges.commands.CheckCommand;
+import net.krinsoft.privileges.commands.DebugCommand;
 import net.krinsoft.privileges.commands.GroupCommand;
 import net.krinsoft.privileges.commands.GroupCreateCommand;
+import net.krinsoft.privileges.commands.GroupPermRemoveCommand;
+import net.krinsoft.privileges.commands.GroupPermSetCommand;
 import net.krinsoft.privileges.commands.GroupRemoveCommand;
 import net.krinsoft.privileges.commands.GroupSetCommand;
 import net.krinsoft.privileges.commands.ListCommand;
 import net.krinsoft.privileges.commands.ReloadCommand;
+import net.krinsoft.privileges.commands.UserPermRemoveCommand;
+import net.krinsoft.privileges.commands.UserPermSetCommand;
 import net.krinsoft.privileges.commands.VersionCommand;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event.Priority;
@@ -153,12 +159,16 @@ public class Privileges extends JavaPlugin {
         commandHandler = new CommandHandler(this, permissionHandler);
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
+        commandHandler.registerCommand(new DebugCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new CheckCommand(this));
-        commandHandler.registerCommand(new GroupCommand(this));
         commandHandler.registerCommand(new GroupCreateCommand(this));
         commandHandler.registerCommand(new GroupRemoveCommand(this));
         commandHandler.registerCommand(new GroupSetCommand(this));
+        commandHandler.registerCommand(new GroupPermSetCommand(this));
+        commandHandler.registerCommand(new GroupPermRemoveCommand(this));
+        commandHandler.registerCommand(new UserPermSetCommand(this));
+        commandHandler.registerCommand(new UserPermRemoveCommand(this));
     }
 
     public ConfigurationNode getUserNode(String player) {
@@ -193,11 +203,22 @@ public class Privileges extends JavaPlugin {
         LOGGER.info(String.valueOf("[" + this + "] " + message));
     }
 
-    protected void debug(String message) {
+    public void debug(String message) {
         if (debug) {
             message = "[" + this + "] [Debug] " + message;
             LOGGER.info(message);
         }
+    }
+
+    public void toggleDebug(String flip) {
+        if (flip.equals("--flip")) {
+            debug = !debug;
+        } else {
+            debug = Boolean.valueOf(flip);
+        }
+        getConfiguration().setProperty("debug", debug);
+        getConfiguration().save();
+        info("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
     }
 
     public PermissionHandler getPermissionHandler() {

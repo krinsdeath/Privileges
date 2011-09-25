@@ -21,6 +21,10 @@ public class PermissionManager {
 
     public PermissionManager(Privileges plugin) {
         this.plugin = plugin;
+        reload();
+    }
+
+    final public void reload() {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             registerPlayer(p.getName());
         }

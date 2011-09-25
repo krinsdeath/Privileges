@@ -13,13 +13,22 @@ commands:
       - pr
       # /priv check
       - pc
+      # /priv debug
+      - pd
       # /priv group*
       - pg
       - pgc
       - pgr
       - pgs
+      # /priv group perm*
       - pgp
       - pgps
       - pgpr
+      # /priv user*
+      - pu
+      # /priv user perm*
+      - pup
+      - pups
+      - pupr
     description: The commands for manipulating players and settings
-    usage: |
+    usage: /<command>

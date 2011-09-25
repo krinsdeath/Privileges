@@ -29,6 +29,7 @@ public class ReloadCommand extends PrivilegesCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         plugin.registerConfiguration();
         plugin.registerPermissions();
+        sender.sendMessage("Privileges has been reloaded.");
     }
 
 }
