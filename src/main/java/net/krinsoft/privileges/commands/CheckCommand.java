@@ -18,6 +18,8 @@ public class CheckCommand extends PrivilegesCommand {
         this.plugin = (Privileges) plugin;
         this.setName("privileges check");
         this.setCommandUsage("/privileges check [player] [node]");
+        this.addCommandExample("/priv check Player privileges.build -- Checks Player's 'privileges.build' node");
+        this.addCommandExample("/priv check privileges.reload -- Checks your own 'privileges.reload' node");
         this.setArgRange(1, 2);
         this.addKey("privileges check");
         this.addKey("priv check");

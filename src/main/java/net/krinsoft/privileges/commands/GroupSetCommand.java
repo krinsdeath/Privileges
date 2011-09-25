@@ -10,7 +10,7 @@ import org.bukkit.permissions.PermissionDefault;
  *
  * @author krinsdeath
  */
-public class GroupSetCommand extends PrivilegesCommand {
+public class GroupSetCommand extends GroupCommand {
 
     public GroupSetCommand(Privileges plugin) {
         super(plugin);
@@ -28,11 +28,11 @@ public class GroupSetCommand extends PrivilegesCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         CommandSender target = plugin.getServer().getPlayer(args.get(0));
         if (target == null) { return; }
-        int tRank = plugin.getGroupManager().getRank(target);
-        int sRank = plugin.getGroupManager().getRank(sender);
+        int tRank = groupManager.getRank(target);
+        int sRank = groupManager.getRank(sender);
         int gRank = 0;
         try {
-            gRank = plugin.getGroupManager().getGroup(args.get(1)).getRank();
+            gRank = groupManager.getGroup(args.get(1)).getRank();
         } catch (NullPointerException e) {
             sender.sendMessage("That group does not exist.");
             return;
@@ -45,7 +45,7 @@ public class GroupSetCommand extends PrivilegesCommand {
             sender.sendMessage("That group's rank is too high for you to set.");
             return;
         }
-        plugin.getGroupManager().setGroup(((Player) target).getName(), args.get(1));
+        groupManager.setGroup(((Player) target).getName(), args.get(1));
     }
 
 }

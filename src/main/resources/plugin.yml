@@ -2,6 +2,7 @@ name: Privileges
 main: net.krinsoft.privileges.Privileges
 author: krinsdeath
 version: ${project.version}-${project.build.number}
+load: startup
 
 commands:
   privileges:

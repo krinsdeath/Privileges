@@ -15,11 +15,17 @@ import org.bukkit.entity.Player;
  */
 public class GroupManager {
     private Privileges plugin;
+    private String DEFAULT;
     private HashMap<String, Group> groupList = new HashMap<String, Group>();
     private HashMap<String, Group> players = new HashMap<String, Group>();
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
+        this.DEFAULT = plugin.getConfiguration().getString("default_group", "default");
+    }
+
+    public Group getDefaultGroup() {
+        return getGroup(this.DEFAULT);
     }
 
     /**
@@ -40,6 +46,11 @@ public class GroupManager {
         this.players.remove(player);
     }
 
+    /**
+     * Gets the specified sender's rank
+     * @param sender The sender (player or console) to get
+     * @return the sender's group rank, 2^32-1 for console, or 0 for unknown
+     */
     public int getRank(CommandSender sender) {
         if (sender instanceof Player) {
             return players.get(((Player)sender).getName()).getRank();
@@ -86,6 +97,10 @@ public class GroupManager {
             return null;
         }
         return groupList.get(group.toLowerCase());
+    }
+
+    public Group removeGroup(String group) {
+        return groupList.remove(group.toLowerCase());
     }
 
     /**

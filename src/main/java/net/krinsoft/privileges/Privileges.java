@@ -13,6 +13,7 @@ import net.krinsoft.privileges.commands.GroupRemoveCommand;
 import net.krinsoft.privileges.commands.GroupSetCommand;
 import net.krinsoft.privileges.commands.ListCommand;
 import net.krinsoft.privileges.commands.ReloadCommand;
+import net.krinsoft.privileges.commands.VersionCommand;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
 import org.bukkit.command.Command;
@@ -151,6 +152,7 @@ public class Privileges extends JavaPlugin {
         permissionHandler = new PermissionHandler();
         commandHandler = new CommandHandler(this, permissionHandler);
         commandHandler.registerCommand(new ReloadCommand(this));
+        commandHandler.registerCommand(new VersionCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new CheckCommand(this));
         commandHandler.registerCommand(new GroupCommand(this));

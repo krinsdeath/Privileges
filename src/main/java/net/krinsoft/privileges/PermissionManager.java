@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
@@ -146,6 +147,17 @@ public class PermissionManager {
     private void calculatePlayerPermissions(PermissionAttachment attachment, String player) {
         for (String node : plugin.getUserNode(player).getStringList("permissions", new ArrayList<String>())) {
             attachNode(attachment, node);
+        }
+        if (plugin.getUserNode(player).getKeys("worlds") == null) {
+            for (World w : plugin.getServer().getWorlds()) {
+                plugin.getUsers().setProperty("users." + player + ".worlds." + w.getName(), null);
+            }
+            plugin.getUsers().save();
+        }
+        for (String world : plugin.getUserNode(player).getKeys("worlds")) {
+            for (String node : plugin.getUserNode(player).getStringList("worlds." + world, new ArrayList<String>())) {
+                attachNode(attachment, node);
+            }
         }
     }
 

@@ -10,7 +10,7 @@ import org.bukkit.util.config.Configuration;
  *
  * @author krinsdeath
  */
-public class GroupCreateCommand extends PrivilegesCommand {
+public class GroupCreateCommand extends GroupCommand {
 
     public GroupCreateCommand(Privileges plugin) {
         super(plugin);
@@ -51,7 +51,7 @@ public class GroupCreateCommand extends PrivilegesCommand {
             }
         }
         // check that the user can create a group of this rank
-        if (rank > plugin.getGroupManager().getRank(sender)) {
+        if (rank >= groupManager.getRank(sender)) {
             // sender is trying to be a bad boy!
             sender.sendMessage("That rank is too high for you.");
             return;
