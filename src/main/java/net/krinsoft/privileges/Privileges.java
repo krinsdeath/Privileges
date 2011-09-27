@@ -39,6 +39,7 @@ public class Privileges extends JavaPlugin {
 
     private final static Logger LOGGER = Logger.getLogger("Privileges");
     private boolean debug = false;
+    public static Privileges instance;
 
     // managers and handlers
     private PermissionManager permissionManager;
@@ -54,6 +55,7 @@ public class Privileges extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         if (!validateCommandHandler()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -189,6 +191,15 @@ public class Privileges extends JavaPlugin {
             return null;
         }
         return getGroups().getNode("groups." + group);
+    }
+
+    public void buildGroup(String group) {
+        if (getGroups().getNode("groups." + group) == null) {
+            getGroups().setProperty("groups." + group + ".permissions", null);
+            getGroups().setProperty("groups." + group + ".worlds", null);
+            getGroups().setProperty("groups." + group + ".inheritance", null);
+            getGroups().save();
+        }
     }
 
     public Configuration getUsers() {

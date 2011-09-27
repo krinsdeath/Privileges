@@ -1,8 +1,6 @@
 package net.krinsoft.privileges.groups;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.events.GroupChangeEvent;
 import org.bukkit.command.CommandSender;
@@ -100,6 +98,15 @@ public class GroupManager {
     }
 
     public Group removeGroup(String group) {
+        Group g = getGroup(group);
+        if (g == null) { return null; }
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (players.get(player.getName()).equals(g)) {
+                players.put(player.getName(), getDefaultGroup());
+                plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(getDefaultGroup(), player));
+            }
+        }
+        plugin.getPermissionManager().reload();
         return groupList.remove(group.toLowerCase());
     }
 
