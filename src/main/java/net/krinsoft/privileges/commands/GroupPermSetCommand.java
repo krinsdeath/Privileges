@@ -75,7 +75,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
             plugin.getGroupNode(group.getName()).setProperty("worlds." + world, nodes);
         }
         plugin.getGroups().save();
-        sender.sendMessage("Node '" + ChatColor.GREEN + node + ChatColor.WHITE + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
+        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
         permManager.reload();
     }
 

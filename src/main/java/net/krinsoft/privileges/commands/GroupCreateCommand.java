@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.config.Configuration;
@@ -62,6 +63,7 @@ public class GroupCreateCommand extends GroupCommand {
         groups.setProperty("groups." + args.get(0) + ".worlds", null);
         groups.setProperty("groups." + args.get(0) + ".inheritance", null);
         groups.save();
+        sender.sendMessage("The group " + colorize(ChatColor.GREEN, args.get(0)) + " has been created.");
     }
 
 }

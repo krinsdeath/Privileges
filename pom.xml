@@ -11,6 +11,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.number>b20</project.build.number>
     </properties>
+    <repositories>
+        <!-- Multiverse Repository -->
+        <repository>
+            <id>OnARandomBox</id>
+            <url>http://repo.onarandombox.com/artifactory/repo</url>
+        </repository>
+        <!-- End Multiverse -->
+    </repositories>
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <plugins>

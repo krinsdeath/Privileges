@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -46,6 +47,7 @@ public class GroupSetCommand extends GroupCommand {
             return;
         }
         groupManager.setGroup(((Player) target).getName(), args.get(1));
+        sender.sendMessage(colorize(ChatColor.GREEN, ((Player)target).getName()) + "'s group has been set to " + colorize(ChatColor.GREEN, args.get(1)));
     }
 
 }

@@ -21,5 +21,4 @@ public abstract class GroupCommand extends PrivilegesCommand {
 
     @Override
     public abstract void runCommand(CommandSender sender, List<String> args);
-
 }

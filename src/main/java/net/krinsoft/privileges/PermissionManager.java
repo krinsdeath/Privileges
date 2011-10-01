@@ -65,7 +65,7 @@ public class PermissionManager {
         perms.put(player, attachment);
     }
 
-    protected List<String> calculateGroupTree(String group) {
+    public List<String> calculateGroupTree(String group) {
         List<String> groups = new ArrayList<String>();
         groups.add(0, group);
         for (String top : plugin.getGroupNode(group).getStringList("inheritance", new ArrayList<String>())) {

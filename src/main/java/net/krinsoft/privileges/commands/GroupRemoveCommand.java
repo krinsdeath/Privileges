@@ -3,6 +3,7 @@ package net.krinsoft.privileges.commands;
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -59,6 +60,7 @@ public class GroupRemoveCommand extends GroupCommand {
         }
         plugin.getGroups().removeProperty("groups." + group.getName());
         plugin.getGroups().save();
+        sender.sendMessage("The group " + colorize(ChatColor.GREEN, group.getName()) + " has been removed.");
         groupManager.removeGroup(group.getName());
     }
 
