@@ -47,7 +47,8 @@ public class GroupSetCommand extends GroupCommand {
             return;
         }
         groupManager.setGroup(((Player) target).getName(), args.get(1));
-        sender.sendMessage(colorize(ChatColor.GREEN, ((Player)target).getName()) + "'s group has been set to " + colorize(ChatColor.GREEN, args.get(1)));
+        sender.sendMessage(colorize(ChatColor.GREEN, target.getName()) + "'s group has been set to " + colorize(ChatColor.GREEN, args.get(1)));
+        plugin.log(sender.getName() + " set " + target.getName() + "'s group to '" + args.get(1) + "'");
     }
 
 }

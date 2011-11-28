@@ -22,6 +22,7 @@ public class Group {
         this.rank = rank;
         List<String> tree = Privileges.instance.getPermissionManager().calculateGroupTree(this.name);
         for (String branch : tree) {
+            if (branch.equalsIgnoreCase(this.name)) { continue; }
             for (String node : Privileges.instance.getGroupManager().getGroup(branch).getGlobals()) {
                 if (node.startsWith("-")) {
                     globals.remove(node.substring(1));

@@ -214,6 +214,11 @@ public class Privileges extends JavaPlugin {
         LOGGER.info(String.valueOf("[" + this + "] " + message));
     }
 
+    public void log(String message) {
+        message = "[" + this + "] " + message;
+        LOGGER.info(message);
+    }
+
     public void debug(String message) {
         if (debug) {
             message = "[" + this + "] [Debug] " + message;
