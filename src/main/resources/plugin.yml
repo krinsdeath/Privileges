@@ -1,7 +1,7 @@
 name: Privileges
 main: net.krinsoft.privileges.Privileges
 author: krinsdeath
-version: ${project.version}-${project.build.number}
+version: maven-version-number
 load: startup
 
 commands:
