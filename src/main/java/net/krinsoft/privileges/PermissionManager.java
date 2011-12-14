@@ -68,7 +68,7 @@ public class PermissionManager {
     public List<String> calculateGroupTree(String group) {
         List<String> groups = new ArrayList<String>();
         groups.add(0, group);
-        for (String top : plugin.getGroupNode(group).getStringList("inheritance", new ArrayList<String>())) {
+        for (String top : plugin.getGroupNode(group).getStringList("inheritance")) {
             if (top.equalsIgnoreCase(group)) { continue; }
             groups.add(0, top);
             for (String trunk : calculateBackwardsGroupTree(top)) {
@@ -82,7 +82,7 @@ public class PermissionManager {
     protected List<String> calculateBackwardsGroupTree(String group) {
         List<String> groups = new ArrayList<String>();
         groups.add(0, group);
-        for (String top : plugin.getGroupNode(group).getStringList("inheritance", new ArrayList<String>())) {
+        for (String top : plugin.getGroupNode(group).getStringList("inheritance")) {
             if (top.equalsIgnoreCase(group)) { continue; }
             groups.add(top);
             for (String trunk : calculateGroupTree(top)) {
@@ -130,7 +130,7 @@ public class PermissionManager {
 
     private void calculateGroupPermissions(PermissionAttachment attachment, String player, String group) {
         // iterate through the group's global permissions
-        for (String node : plugin.getGroupNode(group).getStringList("permissions", new ArrayList<String>())) {
+        for (String node : plugin.getGroupNode(group).getStringList("permissions")) {
             // attach the node
             attachNode(attachment, node);
         }
@@ -142,24 +142,24 @@ public class PermissionManager {
 
     private void calculateGroupWorldPermissions(PermissionAttachment attachment, String player, String group) {
         // Iterate through each world
-        for (String node : plugin.getGroupNode(group).getStringList("worlds." + players.get(player), new ArrayList<String>())) {
+        for (String node : plugin.getGroupNode(group).getStringList("worlds." + players.get(player))) {
             // iterate through this world's nodes
             attachNode(attachment, node);
         }
     }
 
     private void calculatePlayerPermissions(PermissionAttachment attachment, String player) {
-        for (String node : plugin.getUserNode(player).getStringList("permissions", new ArrayList<String>())) {
+        for (String node : plugin.getUserNode(player).getStringList("permissions")) {
             attachNode(attachment, node);
         }
-        if (plugin.getUserNode(player).getKeys("worlds") == null) {
+        if (plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false) == null) {
             for (World w : plugin.getServer().getWorlds()) {
-                plugin.getUsers().setProperty("users." + player + ".worlds." + w.getName(), null);
+                plugin.getUsers().set("users." + player + ".worlds." + w.getName(), null);
             }
-            plugin.getUsers().save();
+            plugin.saveUsers();
         }
-        for (String world : plugin.getUserNode(player).getKeys("worlds")) {
-            for (String node : plugin.getUserNode(player).getStringList("worlds." + world, new ArrayList<String>())) {
+        for (String world : plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false)) {
+            for (String node : plugin.getUserNode(player).getStringList("worlds." + world)) {
                 attachNode(attachment, node);
             }
         }

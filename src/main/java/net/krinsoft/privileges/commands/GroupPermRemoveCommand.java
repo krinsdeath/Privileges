@@ -57,17 +57,17 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
         }
         List<String> nodes = new ArrayList<String>();
         if (world == null) {
-            nodes = plugin.getGroupNode(group.getName()).getStringList("permissions", null);
+            nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");
             nodes.remove(node);
             nodes.remove("-" + node);
-            plugin.getGroupNode(group.getName()).setProperty("permissions", nodes);
+            plugin.getGroupNode(group.getName()).set("permissions", nodes);
         } else {
-            nodes = plugin.getGroupNode(group.getName()).getStringList("worlds." + world, null);
+            nodes = plugin.getGroupNode(group.getName()).getStringList("worlds." + world);
             nodes.remove(node);
             nodes.remove("-" + node);
-            plugin.getGroupNode(group.getName()).setProperty("worlds." + world, nodes);
+            plugin.getGroupNode(group.getName()).set("worlds." + world, nodes);
         }
-        plugin.getGroups().save();
+        plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from the group " + group.getName());
         permManager.reload();
     }

@@ -2,34 +2,24 @@ package net.krinsoft.privileges;
 
 import com.pneumaticraft.commandhandler.CommandHandler;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import net.krinsoft.privileges.commands.CheckCommand;
-import net.krinsoft.privileges.commands.DebugCommand;
-import net.krinsoft.privileges.commands.GroupCommand;
-import net.krinsoft.privileges.commands.GroupCreateCommand;
-import net.krinsoft.privileges.commands.GroupPermRemoveCommand;
-import net.krinsoft.privileges.commands.GroupPermSetCommand;
-import net.krinsoft.privileges.commands.GroupRemoveCommand;
-import net.krinsoft.privileges.commands.GroupSetCommand;
-import net.krinsoft.privileges.commands.ListCommand;
-import net.krinsoft.privileges.commands.ReloadCommand;
-import net.krinsoft.privileges.commands.UserPermRemoveCommand;
-import net.krinsoft.privileges.commands.UserPermSetCommand;
-import net.krinsoft.privileges.commands.VersionCommand;
+import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
 
 /**
  *
@@ -47,8 +37,8 @@ public class Privileges extends JavaPlugin {
     private double chVersion = 1;
     private CommandHandler commandHandler;
     private PermissionHandler permissionHandler;
-    private Configuration users;
-    private Configuration groups;
+    private FileConfiguration users;
+    private FileConfiguration groups;
 
     // import manager
     private ImportManager importManager;
@@ -106,34 +96,34 @@ public class Privileges extends JavaPlugin {
     }
 
     public void registerConfiguration() {
-        users = new Configuration(new File(this.getDataFolder(), "users.yml"));
-        users.load();
-        groups = new Configuration(new File(this.getDataFolder(), "groups.yml"));
-        groups.load();
-        Configuration config = getConfiguration();
-        if (config.getProperty("default_group") == null) {
-            config.setProperty("default_group", "default");
-            config.setProperty("debug", false);
-            groups.setHeader(
-                    "# Group ranks determine the order they are promoted in.",
-                    "# Lowest rank is 1, highest rank is 2,147,483,647.",
-                    "# Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration",
-                    "# World nodes override global nodes for that group",
-                    "# Inherited groups are calculated first. Each group in the tree overrides any nodes",
+        users = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "users.yml"));
+        users.setDefaults(YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "users.yml")));
+        groups = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "groups.yml"));
+        groups.setDefaults(YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "groups.yml")));
+        FileConfiguration config = getConfig();
+        if (config.get("default_group") == null) {
+            config.set("default_group", "default");
+            config.set("debug", false);
+            groups.options().header(
+                    "# Group ranks determine the order they are promoted in.\n" +
+                    "# Lowest rank is 1, highest rank is 2,147,483,647.\n" +
+                    "# Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration\n" +
+                    "# World nodes override global nodes for that group\n" +
+                    "# Inherited groups are calculated first. Each group in the tree overrides any nodes\n" +
                     "# from the previous group. In the example config, default -> user (overrides default) -> admin (overrides user)");
-            groups.setProperty("groups.default.rank", 1);
-            groups.setProperty("groups.default.permissions", Arrays.asList("-privileges.build", "-privileges.interact"));
-            groups.setProperty("groups.default.worlds.world", Arrays.asList("-example.basic.node2"));
-            groups.setProperty("groups.default.worlds.world_nether", Arrays.asList("-example.basic.node1"));
-            groups.setProperty("groups.default.inheritance", new ArrayList<String>());
-            groups.setProperty("groups.user.rank", 2);
-            groups.setProperty("groups.user.permissions", Arrays.asList("privileges.build", "privileges.check"));
-            groups.setProperty("groups.user.inheritance", Arrays.asList("default"));
-            groups.setProperty("groups.admin.rank", 3);
-            groups.setProperty("groups.admin.permissions", Arrays.asList("privileges.promote"));
-            groups.setProperty("groups.admin.inheritance", Arrays.asList("user"));
-            groups.save();
-            config.save();
+            groups.set("groups.default.rank", 1);
+            groups.set("groups.default.permissions", Arrays.asList("-privileges.build", "-privileges.interact"));
+            groups.set("groups.default.worlds.world", Arrays.asList("-example.basic.node2"));
+            groups.set("groups.default.worlds.world_nether", Arrays.asList("-example.basic.node1"));
+            groups.set("groups.default.inheritance", new ArrayList<String>());
+            groups.set("groups.user.rank", 2);
+            groups.set("groups.user.permissions", Arrays.asList("privileges.build", "privileges.check"));
+            groups.set("groups.user.inheritance", Arrays.asList("default"));
+            groups.set("groups.admin.rank", 3);
+            groups.set("groups.admin.permissions", Arrays.asList("privileges.promote"));
+            groups.set("groups.admin.inheritance", Arrays.asList("user"));
+            saveGroups();
+            saveConfig();
         }
         debug = config.getBoolean("debug", false);
     }
@@ -167,47 +157,64 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new GroupCreateCommand(this));
         commandHandler.registerCommand(new GroupRemoveCommand(this));
         commandHandler.registerCommand(new GroupSetCommand(this));
+        commandHandler.registerCommand(new GroupShowCommand(this));
         commandHandler.registerCommand(new GroupPermSetCommand(this));
         commandHandler.registerCommand(new GroupPermRemoveCommand(this));
         commandHandler.registerCommand(new UserPermSetCommand(this));
         commandHandler.registerCommand(new UserPermRemoveCommand(this));
     }
 
-    public ConfigurationNode getUserNode(String player) {
-        if (getUsers().getNode("users." + player) == null) {
-            Configuration c = getUsers();
+    public ConfigurationSection getUserNode(String player) {
+        if (getUsers().getConfigurationSection("users." + player) == null) {
+            FileConfiguration c = getUsers();
             String path = "users." + player;
-            c.setProperty(path + ".permissions", null);
-            c.setProperty(path + ".group", getConfiguration().getString("default_group", "default"));
-            c.save();
+            c.set(path + ".permissions", null);
+            c.set(path + ".group", getConfiguration().getString("default_group", "default"));
+            saveUsers();
             debug("Empty user node for '" + player + "' created.");
         }
-        return getUsers().getNode("users." + player);
+        return getUsers().getConfigurationSection("users." + player);
     }
 
-    public ConfigurationNode getGroupNode(String group) {
-        if (getGroups().getNode("groups." + group) == null) {
+    public ConfigurationSection getGroupNode(String group) {
+        if (getGroups().getConfigurationSection("groups." + group) == null) {
             debug("Empty group node '" + group + "' detected.");
             return null;
         }
-        return getGroups().getNode("groups." + group);
+        return getGroups().getConfigurationSection("groups." + group);
     }
 
     public void buildGroup(String group) {
-        if (getGroups().getNode("groups." + group) == null) {
-            getGroups().setProperty("groups." + group + ".permissions", null);
-            getGroups().setProperty("groups." + group + ".worlds", null);
-            getGroups().setProperty("groups." + group + ".inheritance", null);
-            getGroups().save();
+        if (getGroups().getConfigurationSection("groups." + group) == null) {
+            getGroups().set("groups." + group + ".permissions", null);
+            getGroups().set("groups." + group + ".worlds", null);
+            getGroups().set("groups." + group + ".inheritance", null);
+            saveGroups();
         }
     }
 
-    public Configuration getUsers() {
+    public FileConfiguration getUsers() {
         return users;
     }
 
-    public Configuration getGroups() {
+    public void saveUsers() {
+        try {
+            users.save(new File(this.getDataFolder(), "users.yml"));
+        } catch (IOException ex) {
+            debug(ex.getLocalizedMessage());
+        }
+    }
+
+    public FileConfiguration getGroups() {
         return groups;
+    }
+
+    public void saveGroups() {
+        try {
+            groups.save(new File(this.getDataFolder(), "groups.yml"));
+        } catch (IOException ex) {
+            debug(ex.getLocalizedMessage());
+        }
     }
 
     public void info(Object message) {
@@ -232,8 +239,8 @@ public class Privileges extends JavaPlugin {
         } else {
             debug = Boolean.valueOf(flip);
         }
-        getConfiguration().setProperty("debug", debug);
-        getConfiguration().save();
+        getConfig().set("debug", debug);
+        saveConfig();
         info("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
     }
 

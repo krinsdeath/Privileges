@@ -62,19 +62,19 @@ public class GroupPermSetCommand extends GroupPermCommand {
             }
         }
         if (world == null) {
-            List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("permissions", null);
+            List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");
             nodes.remove(node);
             nodes.remove("-" + node);
             nodes.add((val ? "" : "-") + node);
-            plugin.getGroupNode(group.getName()).setProperty("permissions", nodes);
+            plugin.getGroupNode(group.getName()).set("permissions", nodes);
         } else {
-            List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("worlds." + world, null);
+            List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("worlds." + world);
             nodes.remove(node);
             nodes.remove("-" + node);
             nodes.add((val ? "" : "-") + node);
-            plugin.getGroupNode(group.getName()).setProperty("worlds." + world, nodes);
+            plugin.getGroupNode(group.getName()).set("worlds." + world, nodes);
         }
-        plugin.getGroups().save();
+        plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
         permManager.reload();
     }

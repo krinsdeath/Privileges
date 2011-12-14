@@ -6,6 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
@@ -34,8 +37,8 @@ public class ImportManager {
                 long time = System.currentTimeMillis();
                 // create the group if it doesn't exist
                 plugin.buildGroup(group);
-                plugin.getGroupNode(group).setProperty("rank", plugin.getGroupNode(group).getInt("rank", 0));
-                List<String> globals = plugin.getGroups().getNode("groups." + group).getStringList("permissions", null);
+                plugin.getGroupNode(group).set("rank", plugin.getGroupNode(group).getInt("rank", 0));
+                List<String> globals = plugin.getGroupNode(group).getStringList("permissions");
                 String permKey = group + ".permissions";
                 // iterate through global 'permissions'
                 for (Map.Entry<String, Object> globalNode : groups.getNode(permKey).getAll().entrySet()) {
@@ -47,12 +50,12 @@ public class ImportManager {
                         }
                     }
                 }
-                plugin.getGroupNode(group).setProperty("permissions", globals);
+                plugin.getGroupNode(group).set("permissions", globals);
                 // iterate through worlds
                 if (groups.getKeys(group + ".worlds") != null) {
                     for (String world : groups.getKeys(group + ".worlds")) {
                         String worldKey = group + ".worlds." + world;
-                        List<String> worldNodes = plugin.getGroupNode(group).getStringList("worlds." + world, null);
+                        List<String> worldNodes = plugin.getGroupNode(group).getStringList("worlds." + world);
                         // iterate through world keys for individual nodes
                         if (groups.getKeys(worldKey) != null) {
                             for (Map.Entry<String, Object> worldNode : groups.getNode(worldKey).getAll().entrySet()) {
@@ -65,11 +68,11 @@ public class ImportManager {
                                 }
                             }
                         }
-                        plugin.getGroupNode(group).setProperty("worlds." + world, worldNodes);
+                        plugin.getGroupNode(group).set("worlds." + world, worldNodes);
                     }
                 }
                 plugin.info("Imported " + group + " in " + (System.currentTimeMillis() - time) + "ms");
-                plugin.getGroups().save();
+                plugin.saveGroups();
             }
             file.getParentFile().renameTo(new File("plugins/PermissionsBukkit_DEPRECATED"));
             plugin.info("PermissionsBukkit import finished in " + (System.currentTimeMillis() - imp) + "ms");
@@ -86,17 +89,16 @@ public class ImportManager {
             plugin.info("Beginning Permissions 3 configuration import...");
             File gGroups = new File("plugins/Permissions/globalGroups.yml");
             if (gGroups.exists()) {
-                Configuration conf = new Configuration(gGroups);
-                conf.load();
-                if (conf.getKeys("groups") != null) {
-                    for (String group : conf.getKeys("groups")) {
+                FileConfiguration conf = YamlConfiguration.loadConfiguration(gGroups);
+                if (conf.getKeys(false) != null) {
+                    for (String group : conf.getKeys(false)) {
                         plugin.buildGroup(group);
-                        ConfigurationNode NODE = conf.getNode("groups." + group);
-                        List<String> globals = plugin.getGroupNode(group).getStringList("permissions", null);
-                        List<String> nodes = NODE.getStringList("permissions", null);
+                        ConfigurationSection NODE = conf.getConfigurationSection("groups." + group);
+                        List<String> globals = plugin.getGroupNode(group).getStringList("permissions");
+                        List<String> nodes = NODE.getStringList("permissions");
                         if (NODE.getBoolean("default", false)) {
                             plugin.info("Setting default group to '" + group + "'");
-                            plugin.getConfiguration().setProperty("default_group", group);
+                            plugin.getConfig().set("default_group", group);
                         }
                         for (String node : nodes) {
                             globals.remove(node);
@@ -112,15 +114,15 @@ public class ImportManager {
                             globals.remove("-privileges.build");
                             globals.add("-privileges.build");
                         }
-                        List<String> parents = plugin.getGroupNode(group).getStringList("inheritance", null);
-                        List<String> inherits = NODE.getStringList("inheritance", null);
+                        List<String> parents = plugin.getGroupNode(group).getStringList("inheritance");
+                        List<String> inherits = NODE.getStringList("inheritance");
                         for (String parent : inherits) {
                             parents.remove(parent);
                             parents.add(parent);
                         }
-                        plugin.getGroupNode(group).setProperty("permissions", globals);
-                        plugin.getGroupNode(group).setProperty("inheritance", parents);
-                        plugin.getGroupNode(group).setProperty("rank", NODE.getInt("info.rank", 0));
+                        plugin.getGroupNode(group).set("permissions", globals);
+                        plugin.getGroupNode(group).set("inheritance", parents);
+                        plugin.getGroupNode(group).set("rank", NODE.getInt("info.rank", 0));
                     }
                 }
             }
@@ -128,19 +130,18 @@ public class ImportManager {
                 if (folder.isDirectory()) {
                     File gConfig = new File("plugins/Permissions/" + folder.getName() + "/groups.yml");
                     if (gConfig.exists()) {
-                        Configuration conf = new Configuration(gConfig);
-                        conf.load();
-                        ConfigurationNode groups = conf.getNode("groups");
+                        FileConfiguration conf = YamlConfiguration.loadConfiguration(gConfig);
+                        ConfigurationSection groups = conf.getConfigurationSection("groups");
                         if (groups == null) { continue; }
-                        for (String group : groups.getKeys()) {
+                        for (String group : groups.getKeys(false)) {
                             long groupTIME = System.currentTimeMillis();
                             // create the group if it doesn't exist, and get the nodes for this world
                             plugin.buildGroup(group);
-                            List<String> worldNodes = plugin.getGroupNode(group).getStringList("worlds." + folder.getName(), null);
+                            List<String> worldNodes = plugin.getGroupNode(group).getStringList("worlds." + folder.getName());
                             // get the node for this group from the permissions 3 config
-                            ConfigurationNode NODE = groups.getNode(group);
+                            ConfigurationSection NODE = groups.getConfigurationSection(group);
                             // get the list of permissions
-                            List<String> nodes = NODE.getStringList("permissions", null);
+                            List<String> nodes = NODE.getStringList("permissions");
                             for (String node : nodes) {
                                 worldNodes.remove(node);
                                 worldNodes.remove("-" + node);
@@ -156,15 +157,15 @@ public class ImportManager {
                                 worldNodes.add("-privileges.build");
                             }
                             // get parent groups for this group
-                            List<String> parents = plugin.getGroupNode(group).getStringList("inheritance", null);
-                            List<String> inherits = NODE.getStringList("inheritance", null);
+                            List<String> parents = plugin.getGroupNode(group).getStringList("inheritance");
+                            List<String> inherits = NODE.getStringList("inheritance");
                             for (String parent : inherits) {
                                 parents.remove(parent);
                                 parents.add(parent);
                             }
-                            plugin.getGroupNode(group).setProperty("rank", NODE.getInt("info.rank", 0));
-                            plugin.getGroupNode(group).setProperty("worlds." + folder.getName(), worldNodes);
-                            plugin.getGroupNode(group).setProperty("inheritance", parents);
+                            plugin.getGroupNode(group).set("rank", NODE.getInt("info.rank", 0));
+                            plugin.getGroupNode(group).set("worlds." + folder.getName(), worldNodes);
+                            plugin.getGroupNode(group).set("inheritance", parents);
                             plugin.info("Imported '" + group + "' from Permissions 3 in " + (System.currentTimeMillis() - groupTIME) + "ms");
                         }
                     }
@@ -174,8 +175,8 @@ public class ImportManager {
             plugin.info("Permissions 3 import finished in " + (System.currentTimeMillis() - imp) + "ms");
             plugin.info("Permissions 3 can now be deleted.");
             plugin.info("Please check plugin/Privileges/groups.yml. Some groups may have unset 'rank' keys.");
-            plugin.getGroups().save();
-            plugin.getConfiguration().save();
+            plugin.saveGroups();
+            plugin.saveConfig();
         }
     }
 

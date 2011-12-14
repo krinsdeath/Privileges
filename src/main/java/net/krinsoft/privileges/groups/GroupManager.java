@@ -69,8 +69,8 @@ public class GroupManager {
         if (getGroup(group) == null) { return; }
 
         // update the player's group in the configuration
-        plugin.getUsers().setProperty("users." + player + ".group", group);
-        plugin.getUsers().save();
+        plugin.getUsers().set("users." + player + ".group", group);
+        plugin.saveUsers();
 
         // update the player's values
         players.put(player, getGroup(group));

@@ -44,23 +44,24 @@ public class GroupRemoveCommand extends GroupCommand {
             return;
         }
         if (args.size() == 2 && args.get(1).equalsIgnoreCase("--safe")) {
-            for (String user : plugin.getUsers().getKeys("users")) {
+            for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
                 if (plugin.getUserNode(user).getString("group").equals(group.getName())) {
-                    plugin.getUsers().setProperty("users." + user + ".group", groupManager.getDefaultGroup().getName());
+                    plugin.getUsers().set("users." + user + ".group", groupManager.getDefaultGroup().getName());
                 }
             }
-            plugin.getUsers().save();
-            for (String g : plugin.getGroups().getKeys("groups")) {
-                List<String> inherits = plugin.getGroupNode(g).getStringList("inheritance", null);
+            plugin.saveUsers();
+            for (String g : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
+                List<String> inherits = plugin.getGroupNode(g).getStringList("inheritance");
                 if (inherits.contains(group.getName())) {
                     inherits.remove(group.getName());
-                    plugin.getGroupNode(g).setProperty("inheritance", inherits);
+                    plugin.getGroupNode(g).set("inheritance", inherits);
                 }
             }
         }
-        plugin.getGroups().removeProperty("groups." + group.getName());
-        plugin.getGroups().save();
+        plugin.getGroups().set("groups." + group.getName(), null);
+        plugin.saveGroups();
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, group.getName()) + " has been removed.");
+        plugin.getPermissionManager().reload();
         groupManager.removeGroup(group.getName());
     }
 
