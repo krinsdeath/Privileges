@@ -22,7 +22,7 @@
     <!-- Jenkins manager -->
     <ciManagement>
         <system>jenkins</system>
-        <url>http://pneumaticsystem.com:25579</url>
+        <url>http://ci.onarandombox.com</url>
     </ciManagement>
     <!-- End Jenkins -->
     <scm>
