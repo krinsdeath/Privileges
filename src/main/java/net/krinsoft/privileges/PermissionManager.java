@@ -49,7 +49,7 @@ public class PermissionManager {
             attachment.unsetPermission(node);
         }
         // iterate through the player's groups, and add them to a list
-        String group = plugin.getUserNode(player).getString("group", plugin.getConfiguration().getString("default_group", null));
+        String group = plugin.getUserNode(player).getString("group", plugin.getConfig().getString("default_group", null));
         List<String> groups = calculateGroupTree(group);
         plugin.debug("Group tree: " + groups.toString());
         plugin.getGroupManager().addPlayer(player, group);
@@ -68,7 +68,9 @@ public class PermissionManager {
     public List<String> calculateGroupTree(String group) {
         List<String> groups = new ArrayList<String>();
         groups.add(0, group);
-        for (String top : plugin.getGroupNode(group).getStringList("inheritance")) {
+        List<String> parents = plugin.getGroupNode(group).getStringList("inheritance");
+        if (parents == null) { return groups; }
+        for (String top : parents) {
             if (top.equalsIgnoreCase(group)) { continue; }
             groups.add(0, top);
             for (String trunk : calculateBackwardsGroupTree(top)) {
@@ -82,7 +84,9 @@ public class PermissionManager {
     protected List<String> calculateBackwardsGroupTree(String group) {
         List<String> groups = new ArrayList<String>();
         groups.add(0, group);
-        for (String top : plugin.getGroupNode(group).getStringList("inheritance")) {
+        List<String> parents = plugin.getGroupNode(group).getStringList("inheritance");
+        if (parents == null) { return groups; }
+        for (String top : parents) {
             if (top.equalsIgnoreCase(group)) { continue; }
             groups.add(top);
             for (String trunk : calculateGroupTree(top)) {
@@ -130,11 +134,15 @@ public class PermissionManager {
 
     private void calculateGroupPermissions(PermissionAttachment attachment, String player, String group) {
         // iterate through the group's global permissions
-        for (String node : plugin.getGroupNode(group).getStringList("permissions")) {
-            // attach the node
-            attachNode(attachment, node);
+        try {
+            for (String node : plugin.getGroupNode(group).getStringList("permissions")) {
+                // attach the node
+                attachNode(attachment, node);
+            }
+        } catch (NullPointerException e) {
+            plugin.debug("Encountered null path at '" + group + ".permissions' in groups.yml");
+            plugin.debug("Bug Bukkit about pull request #455");
         }
-
         // calculate group's world permissions
         // overrides global permissions
         calculateGroupWorldPermissions(attachment, player, group);
@@ -142,15 +150,26 @@ public class PermissionManager {
 
     private void calculateGroupWorldPermissions(PermissionAttachment attachment, String player, String group) {
         // Iterate through each world
-        for (String node : plugin.getGroupNode(group).getStringList("worlds." + players.get(player))) {
-            // iterate through this world's nodes
-            attachNode(attachment, node);
+        String world = players.get(player);
+        try {
+            for (String node : plugin.getGroupNode(group).getStringList("worlds." + world)) {
+                // iterate through this world's nodes
+                attachNode(attachment, node);
+            }
+        } catch (NullPointerException e) {
+            plugin.debug("Encountered null path at '" + group + ".worlds." + world + "' in groups.yml");
+            plugin.debug("Bug Bukkit about pull request #455");
         }
     }
 
     private void calculatePlayerPermissions(PermissionAttachment attachment, String player) {
-        for (String node : plugin.getUserNode(player).getStringList("permissions")) {
-            attachNode(attachment, node);
+        try {
+            for (String node : plugin.getUserNode(player).getStringList("permissions")) {
+                attachNode(attachment, node);
+            }
+        } catch (NullPointerException e) {
+            plugin.debug("Encountered null path at '" + player + ".permissions' in users.yml");
+            plugin.debug("Bug Bukkit about pull request #455");
         }
         if (plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false) == null) {
             for (World w : plugin.getServer().getWorlds()) {
@@ -159,8 +178,13 @@ public class PermissionManager {
             plugin.saveUsers();
         }
         for (String world : plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false)) {
-            for (String node : plugin.getUserNode(player).getStringList("worlds." + world)) {
-                attachNode(attachment, node);
+            try {
+                for (String node : plugin.getUserNode(player).getStringList("worlds." + world)) {
+                    attachNode(attachment, node);
+                }
+            } catch (NullPointerException e) {
+                plugin.debug("Encountered null path at '" + player + ".worlds." + world + "' in users.yml");
+                plugin.debug("Bug Bukkit about pull request #455");
             }
         }
     }
