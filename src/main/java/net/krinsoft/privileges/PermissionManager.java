@@ -171,11 +171,15 @@ public class PermissionManager {
             plugin.debug("Encountered null path at '" + player + ".permissions' in users.yml");
             plugin.debug("Bug Bukkit about pull request #455");
         }
-        if (plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false) == null) {
-            for (World w : plugin.getServer().getWorlds()) {
-                plugin.getUsers().set("users." + player + ".worlds." + w.getName(), null);
+        try {
+            if (plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false) == null) {
+                for (World w : plugin.getServer().getWorlds()) {
+                    plugin.getUsers().set("users." + player + ".worlds." + w.getName(), new ArrayList<String>(0));
+                }
+                plugin.saveUsers();
             }
-            plugin.saveUsers();
+        } catch (NullPointerException e) {
+            plugin.debug("Encounter null path at '" + player + ".worlds' in users.yml");
         }
         for (String world : plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false)) {
             try {

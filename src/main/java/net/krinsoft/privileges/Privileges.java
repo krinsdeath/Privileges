@@ -11,6 +11,7 @@ import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -169,7 +170,10 @@ public class Privileges extends JavaPlugin {
             FileConfiguration c = getUsers();
             String path = "users." + player;
             c.set(path + ".permissions", null);
-            c.set(path + ".group", getConfiguration().getString("default_group", "default"));
+            c.set(path + ".group", getConfig().getString("default_group", "default"));
+            for (World w : getServer().getWorlds()) {
+                c.set(path + ".worlds." + w.getName(), null);
+            }
             saveUsers();
             debug("Empty user node for '" + player + "' created.");
         }
