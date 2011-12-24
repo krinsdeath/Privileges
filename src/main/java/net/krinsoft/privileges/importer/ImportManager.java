@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.importer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -30,42 +31,35 @@ public class ImportManager {
         if (file.exists()) {
             long imp = System.currentTimeMillis();
             plugin.info("Beginning PermissionsBukkit configuration import...");
-            Configuration config = new Configuration(file);
-            config.load();
-            ConfigurationNode groups = config.getNode("groups");
-            for (String group : groups.getKeys()) {
+            FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+            ConfigurationSection groups = config.getConfigurationSection("groups");
+            for (String group : groups.getKeys(false)) {
                 long time = System.currentTimeMillis();
                 // create the group if it doesn't exist
                 plugin.buildGroup(group);
                 plugin.getGroupNode(group).set("rank", plugin.getGroupNode(group).getInt("rank", 0));
                 List<String> globals = plugin.getGroupNode(group).getStringList("permissions");
                 String permKey = group + ".permissions";
+                System.out.println(permKey);
                 // iterate through global 'permissions'
-                for (Map.Entry<String, Object> globalNode : groups.getNode(permKey).getAll().entrySet()) {
-                    if (!globals.contains(globalNode.getKey()) && !globals.contains("-" + globalNode.getKey())) {
-                        if ((Boolean) globalNode.getValue()) {
-                            globals.add(globalNode.getKey());
-                        } else if (!(Boolean) globalNode.getValue()) {
-                            globals.add("-" + globalNode.getKey());
-                        }
+                for (Map.Entry<String, Object> key : groups.getConfigurationSection(permKey).getValues(true).entrySet()) {
+                    if (key.getValue() instanceof Boolean) {
+                        globals.add(((Boolean) key.getValue() ? key.getKey() : "-" + key.getKey()));
+                        plugin.debug(key.getKey() + ": " + key.getValue());
                     }
                 }
                 plugin.getGroupNode(group).set("permissions", globals);
                 // iterate through worlds
-                if (groups.getKeys(group + ".worlds") != null) {
-                    for (String world : groups.getKeys(group + ".worlds")) {
+                if (groups.getConfigurationSection(group + ".worlds") != null) {
+                    for (String world : groups.getConfigurationSection(group + ".worlds").getKeys(false)) {
                         String worldKey = group + ".worlds." + world;
                         List<String> worldNodes = plugin.getGroupNode(group).getStringList("worlds." + world);
+                        if (worldNodes == null) { worldNodes = new ArrayList<String>(); }
                         // iterate through world keys for individual nodes
-                        if (groups.getKeys(worldKey) != null) {
-                            for (Map.Entry<String, Object> worldNode : groups.getNode(worldKey).getAll().entrySet()) {
-                                if (!worldNodes.contains(worldNode.getKey()) && !worldNodes.contains("-" + worldNode.getKey())) {
-                                    if ((Boolean)worldNode.getValue()) {
-                                        worldNodes.add(worldNode.getKey());
-                                    } else if (!(Boolean)worldNode.getValue()) {
-                                        worldNodes.add("-" + worldNode.getKey());
-                                    }
-                                }
+                        for (Map.Entry<String, Object> key : groups.getConfigurationSection(worldKey).getValues(true).entrySet()) {
+                            if (key.getValue() instanceof Boolean) {
+                                worldNodes.add(((Boolean) key.getValue() ? key.getKey() : "-" + key.getKey()));
+                                plugin.debug(key.getKey() + ": " + key.getValue());
                             }
                         }
                         plugin.getGroupNode(group).set("worlds." + world, worldNodes);
