@@ -15,7 +15,7 @@
         <!-- Multiverse Repository -->
         <repository>
             <id>OnARandomBox</id>
-            <url>http://repo.onarandombox.com/artifactory/repo</url>
+            <url>http://repo.onarandombox.com/content/groups/public/</url>
         </repository>
         <!-- End Multiverse -->
     </repositories>

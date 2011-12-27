@@ -118,7 +118,7 @@ public class Privileges extends JavaPlugin {
             groups.set("groups.default.worlds.world_nether", Arrays.asList("-example.basic.node1"));
             groups.set("groups.default.inheritance", new ArrayList<String>());
             groups.set("groups.user.rank", 2);
-            groups.set("groups.user.permissions", Arrays.asList("privileges.build", "privileges.check"));
+            groups.set("groups.user.permissions", Arrays.asList("privileges.build", "privileges.interact", "privileges.check"));
             groups.set("groups.user.inheritance", Arrays.asList("default"));
             groups.set("groups.admin.rank", 3);
             groups.set("groups.admin.permissions", Arrays.asList("privileges.promote"));
