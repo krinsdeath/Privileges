@@ -1,11 +1,14 @@
 package net.krinsoft.privileges.groups;
 
 import java.util.HashMap;
+import java.util.List;
+
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.events.GroupChangeEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 /**
  *
@@ -19,7 +22,7 @@ public class GroupManager {
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
-        this.DEFAULT = plugin.getConfiguration().getString("default_group", "default");
+        this.DEFAULT = plugin.getConfig().getString("default_group", "default");
     }
 
     public Group getDefaultGroup() {
@@ -39,6 +42,7 @@ public class GroupManager {
     /**
      * Removes all groups from the specified player.
      * @param player
+     * The player whose groups we're removing
      */
     public void removePlayer(String player) {
         this.players.remove(player);
@@ -51,7 +55,7 @@ public class GroupManager {
      */
     public int getRank(CommandSender sender) {
         if (sender instanceof Player) {
-            return players.get(((Player)sender).getName()).getRank();
+            return players.get(sender.getName()).getRank();
         } else if (sender instanceof ConsoleCommandSender) {
             return Integer.MAX_VALUE;
         } else {
@@ -86,7 +90,7 @@ public class GroupManager {
      * Gets the specified group by name (case-insensitive)
      * @param group The group's name.
      * @return the group instance, or null
-     * @see getGroup(Player)
+     * @see #getGroup(org.bukkit.entity.Player)
      */
     public Group getGroup(String group) {
         try {
@@ -113,6 +117,7 @@ public class GroupManager {
     /**
      * Gets the specified player's group
      * @param player
+     * The player whose group we're fetching
      * @return the group associated with this player
      */
     public Group getGroup(Player player) {
@@ -130,7 +135,11 @@ public class GroupManager {
             if (plugin.getGroupNode(group) == null) {
                 return null;
             }
-            groupList.put(group.toLowerCase(), new Group(group, plugin.getGroupNode(group).getInt("rank", 1)));
+            List<String> tree = plugin.getPermissionManager().calculateGroupTree(group);
+            groupList.put(group.toLowerCase(), new RankedGroup(group, plugin.getGroupNode(group).getInt("rank", 1), tree));
+            Permission perm = new Permission("group." + group);
+            perm.setDescription("A permission node that relates directly to the group: " + group);
+            plugin.getServer().getPluginManager().addPermission(perm);
             return groupList.get(group.toLowerCase());
         }
     }

@@ -173,6 +173,4 @@ public class ImportManager {
             plugin.saveConfig();
         }
     }
-
-
 }

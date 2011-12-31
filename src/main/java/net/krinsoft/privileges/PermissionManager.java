@@ -181,15 +181,20 @@ public class PermissionManager {
         } catch (NullPointerException e) {
             plugin.debug("Encounter null path at '" + player + ".worlds' in users.yml");
         }
-        for (String world : plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false)) {
-            try {
-                for (String node : plugin.getUserNode(player).getStringList("worlds." + world)) {
-                    attachNode(attachment, node);
+        try {
+            for (String world : plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false)) {
+                try {
+                    for (String node : plugin.getUserNode(player).getStringList("worlds." + world)) {
+                        attachNode(attachment, node);
+                    }
+                } catch (NullPointerException e) {
+                    plugin.debug("Encountered null path at '" + player + ".worlds." + world + "' in users.yml");
+                    plugin.debug("Bug Bukkit about pull request #455");
                 }
-            } catch (NullPointerException e) {
-                plugin.debug("Encountered null path at '" + player + ".worlds." + world + "' in users.yml");
-                plugin.debug("Bug Bukkit about pull request #455");
             }
+        } catch (NullPointerException e) {
+            plugin.debug("Encounter null path at '" + player + ".worlds' in users.yml");
+            plugin.debug("Bug Bukkit about pull request #455");
         }
     }
 
