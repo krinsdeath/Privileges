@@ -40,6 +40,7 @@ public class GroupManager {
     }
 
     /**
+     *
      * Removes all groups from the specified player.
      * @param player
      * The player whose groups we're removing
@@ -139,7 +140,9 @@ public class GroupManager {
             groupList.put(group.toLowerCase(), new RankedGroup(group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
             perm.setDescription("A permission node that relates directly to the group: " + group);
-            plugin.getServer().getPluginManager().addPermission(perm);
+            if (plugin.getServer().getPluginManager().getPermission("group." + group) == null) {
+                plugin.getServer().getPluginManager().addPermission(perm);
+            }
             return groupList.get(group.toLowerCase());
         }
     }

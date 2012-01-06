@@ -30,18 +30,10 @@ public class RankedGroup implements Group {
         return tree;
     }
 
-    /**
-     * Gets the rank of this group.
-     * @return the group's rank
-     */
     public int getRank() {
         return this.rank;
     }
 
-    /**
-     * Gets the actual given name of this group
-     * @return the group's name
-     */
     public String getName() {
         return this.name;
     }
