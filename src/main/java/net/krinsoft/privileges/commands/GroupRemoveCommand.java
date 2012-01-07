@@ -39,7 +39,7 @@ public class GroupRemoveCommand extends GroupCommand {
             sender.sendMessage("No such group exists.");
             return;
         }
-        if (group.getRank() >= groupManager.getRank(sender)) {
+        if (group.getRank() >= groupManager.getRank(sender) && !sender.hasPermission("privileges.self.edit")) {
             sender.sendMessage("Your rank is too low to do that.");
             return;
         }

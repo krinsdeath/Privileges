@@ -46,7 +46,7 @@ public class GroupSetCommand extends GroupCommand {
             sender.sendMessage("That group's rank is too high for you to set.");
             return;
         }
-        groupManager.setGroup(((Player) target).getName(), args.get(1));
+        groupManager.setGroup(target.getName(), args.get(1));
         sender.sendMessage(colorize(ChatColor.GREEN, target.getName()) + "'s group has been set to " + colorize(ChatColor.GREEN, args.get(1)));
         plugin.log(sender.getName() + " set " + target.getName() + "'s group to '" + args.get(1) + "'");
     }

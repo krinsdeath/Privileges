@@ -36,7 +36,7 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
             sender.sendMessage("That group does not exist.");
             return;
         }
-        if (group.getRank() >= groupManager.getRank(sender)) {
+        if (group.getRank() >= groupManager.getRank(sender) && !sender.hasPermission("privileges.self.edit")) {
             sender.sendMessage("That group's rank is too high.");
             return;
         }

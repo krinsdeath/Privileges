@@ -32,3 +32,11 @@ commands:
       - pupr
     description: The commands for manipulating players and settings
     usage: /<command>
+
+permissions:
+  privileges.build:
+    description: Determines whether or not a player can build.
+    default: true
+  privileges.interact:
+    description: Determines whether or not a player can interact with the game objects.
+    default: true
