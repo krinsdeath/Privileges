@@ -1,6 +1,7 @@
 package net.krinsoft.privileges;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -50,7 +51,7 @@ public class PermissionManager {
         }
         // iterate through the player's groups, and add them to a list
         String group = plugin.getUserNode(player).getString("group", plugin.getConfig().getString("default_group", null));
-        List<String> groups = calculateGroupTree(group);
+        List<String> groups = calculateGroupTree(group, "");
         plugin.debug("Group tree: " + groups.toString());
         plugin.getGroupManager().addPlayer(player, group);
         // calculate group's permissions
@@ -65,36 +66,42 @@ public class PermissionManager {
         perms.put(player, attachment);
     }
 
-    public List<String> calculateGroupTree(String group) {
-        List<String> groups = new ArrayList<String>();
-        groups.add(0, group);
-        List<String> parents = plugin.getGroupNode(group).getStringList("inheritance");
-        if (parents == null) { return groups; }
-        for (String top : parents) {
+    public List<String> calculateGroupTree(String group, String next) {
+        System.out.println(next + "> " + group);
+        List<String> tree = new ArrayList<String>();
+        tree.add(0, group);
+        List<String> inheritance;
+        try {
+            inheritance = plugin.getGroupNode(group).getStringList("inheritance");
+        } catch (NullPointerException e) {
+            return tree;
+        }
+        for (String top : inheritance) {
             if (top.equalsIgnoreCase(group)) { continue; }
-            groups.add(0, top);
-            for (String trunk : calculateBackwardsGroupTree(top)) {
-                if (trunk.equalsIgnoreCase(top)) { continue; }
-                groups.add(0, trunk);
+            for (String trunk : calculateBackwardTree(top, next + "-")) {
+                tree.add(0, trunk);
             }
         }
-        return groups;
+        return tree;
     }
-
-    protected List<String> calculateBackwardsGroupTree(String group) {
-        List<String> groups = new ArrayList<String>();
-        groups.add(0, group);
-        List<String> parents = plugin.getGroupNode(group).getStringList("inheritance");
-        if (parents == null) { return groups; }
-        for (String top : parents) {
+    
+    private List<String> calculateBackwardTree(String group, String next) {
+        System.out.println(next + "> " + group);
+        List<String> tree = new ArrayList<String>();
+        tree.add(group);
+        List<String> inheritance;
+        try {
+            inheritance = plugin.getGroupNode(group).getStringList("inheritance");
+        } catch (NullPointerException e) {
+            return tree;
+        }
+        for (String top : inheritance) {
             if (top.equalsIgnoreCase(group)) { continue; }
-            groups.add(top);
-            for (String trunk : calculateGroupTree(top)) {
-                if (trunk.equalsIgnoreCase(top)) { continue; }
-                groups.add(trunk);
+            for (String trunk : calculateBackwardTree(top, next + "-")) {
+                tree.add(trunk);
             }
         }
-        return groups;
+        return tree;
     }
 
     final protected void unregisterPlayer(String player) {

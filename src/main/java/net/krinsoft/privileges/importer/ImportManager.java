@@ -39,6 +39,7 @@ public class ImportManager {
                 plugin.buildGroup(group);
                 plugin.getGroupNode(group).set("rank", plugin.getGroupNode(group).getInt("rank", 0));
                 List<String> globals = plugin.getGroupNode(group).getStringList("permissions");
+                if (globals == null) { globals = new ArrayList<String>(); }
                 String permKey = group + ".permissions";
                 System.out.println(permKey);
                 // iterate through global 'permissions'

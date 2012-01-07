@@ -1,5 +1,6 @@
 package net.krinsoft.privileges.groups;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -136,7 +137,7 @@ public class GroupManager {
             if (plugin.getGroupNode(group) == null) {
                 return null;
             }
-            List<String> tree = plugin.getPermissionManager().calculateGroupTree(group);
+            List<String> tree = plugin.getPermissionManager().calculateGroupTree(group, "");
             groupList.put(group.toLowerCase(), new RankedGroup(group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
             perm.setDescription("A permission node that relates directly to the group: " + group);
