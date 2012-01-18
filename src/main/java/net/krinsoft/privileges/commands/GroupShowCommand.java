@@ -3,6 +3,7 @@ package net.krinsoft.privileges.commands;
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -41,7 +42,7 @@ public class GroupShowCommand extends GroupCommand {
             group = groupManager.getGroup(plugin.getServer().getPlayer(args.get(0)));
             target = plugin.getServer().getPlayer(args.get(0)).getName() + "'s";
         }
-        sender.sendMessage(target + " group is: " + group.getName());
+        sender.sendMessage(ChatColor.GREEN + target + ChatColor.WHITE + "'s group is: " + group.getName());
     }
 
 }

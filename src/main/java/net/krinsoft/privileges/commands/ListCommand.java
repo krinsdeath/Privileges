@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import net.krinsoft.privileges.FancyPage;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class ListCommand extends PrivilegesCommand {
                 pageNum = 0;
                 if (plugin.getServer().getPlayer(args.get(0)) != null) {
                     target = plugin.getServer().getPlayer(args.get(0));
-                    name = ((Player)target).getName();
+                    name = target.getName();
                 }
             }
         } else if (args.size() == 2) {
@@ -50,7 +51,7 @@ public class ListCommand extends PrivilegesCommand {
                 pageNum = Integer.parseInt(args.get(1));
                 if (plugin.getServer().getPlayer(args.get(0)) != null) {
                     target = plugin.getServer().getPlayer(args.get(0));
-                    name = ((Player)target).getName();
+                    name = target.getName();
                 }
             } catch (NumberFormatException e) {
                 pageNum = 0;
@@ -64,22 +65,22 @@ public class ListCommand extends PrivilegesCommand {
         }); // thanks SpaceManiac!
         for (PermissionAttachmentInfo att : attInfo) {
             String node = att.getPermission();
-            String msg = "";
+            String msg;
             msg = "&B" + node + "&A - &B" + att.getValue() + "&A ";
             msg = msg + "&A(" + (att.getAttachment() != null ? "set: &6" + att.getAttachment().getPlugin().getDescription().getName() + "&A" : "&3default&A") + ")";
-            list.add(msg.replaceAll("(?i)&([0-F])", "\u00A7$1"));
+            list.add(msg.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
         }
         FancyPage page = new FancyPage(list);
-        String header = "";
+        String header;
         if (sender instanceof ConsoleCommandSender) {
-            header = "\u00A7A=== \u00A7BPermissions list for  " + name + " \u00A7A===";
-            sender.sendMessage(header);
+            header = "&A=== &FPermissions list for  " + name + " &A===";
+            sender.sendMessage(header.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
             for (String line : list) {
                 sender.sendMessage(line);
             }
         } else {
-            header = "\u00A7A=== \u00A7BPage " + pageNum + "\u00A7A/\u00A7B" + page.getPages() + " \u00A7A===";
-            sender.sendMessage(header);
+            header = "&A=== &FPage " + pageNum + "/" + page.getPages() + " &A===";
+            sender.sendMessage(header.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
             for (String line : page.getPage(pageNum)) {
                 sender.sendMessage(line);
             }

@@ -1,5 +1,7 @@
 package net.krinsoft.privileges.groups;
 
+import net.krinsoft.privileges.Privileges;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  * @author krinsdeath
  */
 public class RankedGroup implements Group {
+    protected static Privileges plugin;
 
     // the name of this group
     private String name;
@@ -44,6 +47,20 @@ public class RankedGroup implements Group {
 
     public boolean isMemberOf(Group group) {
         return (this.tree.contains(group.getName()));
+    }
+    
+    public boolean has(String node) {
+        return has(node, "permissions");
+    }
+    
+    public boolean has(String node, String world) {
+        List<String> nodes;
+        if (world.equals("permissions")) {
+            nodes = plugin.calculateNodeList(name, null);
+        } else {
+            nodes = plugin.calculateNodeList(name, world);
+        }
+        return nodes.contains(node);
     }
 
 }

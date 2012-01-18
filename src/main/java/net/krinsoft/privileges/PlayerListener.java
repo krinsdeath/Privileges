@@ -1,11 +1,8 @@
 package net.krinsoft.privileges;
 
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
+import org.bukkit.event.player.*;
 
 /**
  *
@@ -36,22 +33,16 @@ class PlayerListener extends org.bukkit.event.player.PlayerListener {
     }
 
     @Override
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.isCancelled()) { return; }
-        plugin.getPermissionManager().updatePlayerWorld(event.getPlayer().getName(), event.getTo().getWorld().getName());
-    }
-
-    @Override
-    public void onPlayerPortal(PlayerPortalEvent event) {
-        if (event.isCancelled()) { return; }
-        plugin.getPermissionManager().updatePlayerWorld(event.getPlayer().getName(), event.getTo().getWorld().getName());
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        plugin.getPermissionManager().updatePlayerWorld(event.getPlayer().getName(), event.getPlayer().getWorld().getName());
     }
 
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.isCancelled()) { return; }
-        if (!event.getPlayer().hasPermission("privileges.interact")) {
-            event.getPlayer().sendMessage("You do not have permission to do that!");
+        Block b = event.getClickedBlock();
+        if (!event.getPlayer().hasPermission("privileges.interact") || (b != null && !event.getPlayer().hasPermission("privileges.interact." + b.getTypeId()))) {
+            event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that!");
             event.setCancelled(true);
         }
     }

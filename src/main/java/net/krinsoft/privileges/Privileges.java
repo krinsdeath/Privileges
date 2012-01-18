@@ -3,9 +3,7 @@ package net.krinsoft.privileges;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
@@ -19,6 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,14 +34,9 @@ public class Privileges extends JavaPlugin {
     // managers and handlers
     private PermissionManager permissionManager;
     private GroupManager groupManager;
-    private double chVersion = 1;
     private CommandHandler commandHandler;
-    private PermissionHandler permissionHandler;
     private FileConfiguration users;
     private FileConfiguration groups;
-
-    // import manager
-    private ImportManager importManager;
 
     @Override
     public void onEnable() {
@@ -56,6 +50,11 @@ public class Privileges extends JavaPlugin {
         registerPermissions();
         registerEvents();
         registerCommands();
+        try {
+            getServer().getPluginManager().getPermission("privileges.*").setDefault(PermissionDefault.OP);
+        } catch (NullPointerException e) {
+            debug("Error setting default permission for 'privileges.*'");
+        }
         info("Is now enabled.");
     }
 
@@ -74,6 +73,7 @@ public class Privileges extends JavaPlugin {
     }
 
     private boolean validateCommandHandler() {
+        double chVersion = 1;
         try {
             commandHandler = new CommandHandler(this, null);
             if (this.commandHandler.getVersion() >= chVersion) {
@@ -84,10 +84,10 @@ public class Privileges extends JavaPlugin {
                 return false;
             }
         } catch (Throwable t) {
+            LOGGER.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+            LOGGER.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+            return false;
         }
-        LOGGER.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
-        LOGGER.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
-        return false;
     }
     
     public void registerPermissions() {
@@ -97,40 +97,32 @@ public class Privileges extends JavaPlugin {
     }
 
     public void registerConfiguration() {
-        users = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "users.yml"));
-        users.setDefaults(YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "users.yml")));
-        groups = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "groups.yml"));
-        groups.setDefaults(YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "groups.yml")));
-        FileConfiguration config = getConfig();
-        if (config.get("default_group") == null) {
-            config.set("default_group", "default");
-            config.set("debug", false);
-            groups.options().header(
-                    "# Group ranks determine the order they are promoted in.\n" +
-                    "# Lowest rank is 1, highest rank is 2,147,483,647.\n" +
-                    "# Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration\n" +
-                    "# World nodes override global nodes for that group\n" +
-                    "# Inherited groups are calculated first. Each group in the tree overrides any nodes\n" +
-                    "# from the previous group. In the example config, default -> user (overrides default) -> admin (overrides user)");
-            groups.set("groups.default.rank", 1);
-            groups.set("groups.default.permissions", Arrays.asList("-privileges.build", "-privileges.interact"));
-            groups.set("groups.default.worlds.world", Arrays.asList("-example.basic.node2"));
-            groups.set("groups.default.worlds.world_nether", Arrays.asList("-example.basic.node1"));
-            groups.set("groups.default.inheritance", new ArrayList<String>());
-            groups.set("groups.user.rank", 2);
-            groups.set("groups.user.permissions", Arrays.asList("privileges.build", "privileges.interact", "privileges.check"));
-            groups.set("groups.user.inheritance", Arrays.asList("default"));
-            groups.set("groups.admin.rank", 3);
-            groups.set("groups.admin.permissions", Arrays.asList("privileges.promote"));
-            groups.set("groups.admin.inheritance", Arrays.asList("user"));
-            saveGroups();
+        getUsers().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/users.yml")));
+        getUsers().options().copyDefaults(true);
+        saveUsers();
+        
+        getGroups().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/groups.yml")));
+        getGroups().options().copyDefaults(true);
+        groups.options().header(
+                "Group ranks determine the order they are promoted in.\n" +
+                        "Lowest rank is 1, highest rank is 2,147,483,647.\n" +
+                        "Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration\n" +
+                        "World nodes override global nodes for that group\n" +
+                        "Inherited groups are calculated first. Each group in the tree overrides any nodes\n" +
+                        "from the previous group.");
+        saveGroups();
+
+        getConfig();
+        if (getConfig().get("default_group") == null) {
+            getConfig().set("default_group", "default");
+            getConfig().set("debug", false);
             saveConfig();
         }
-        debug = config.getBoolean("debug", false);
+        debug = getConfig().getBoolean("debug", false);
     }
 
     private void performImports() {
-        this.importManager = new ImportManager(this);
+        new ImportManager(this);
     }
 
     private void registerEvents() {
@@ -140,21 +132,22 @@ public class Privileges extends JavaPlugin {
         manager.registerEvent(Type.PLAYER_JOIN, pListener, Priority.Lowest, this);
         manager.registerEvent(Type.PLAYER_QUIT, pListener, Priority.Monitor, this);
         manager.registerEvent(Type.PLAYER_KICK, pListener, Priority.Monitor, this);
-        manager.registerEvent(Type.PLAYER_TELEPORT, pListener, Priority.Monitor, this);
-        manager.registerEvent(Type.PLAYER_PORTAL, pListener, Priority.Monitor, this);
+        manager.registerEvent(Type.PLAYER_CHANGED_WORLD, pListener, Priority.Monitor, this);
         manager.registerEvent(Type.PLAYER_INTERACT, pListener, Priority.Lowest, this);
         manager.registerEvent(Type.BLOCK_PLACE, bListener, Priority.Lowest, this);
         manager.registerEvent(Type.BLOCK_BREAK, bListener, Priority.Lowest, this);
     }
 
     private void registerCommands() {
-        permissionHandler = new PermissionHandler();
+        PermissionHandler permissionHandler = new PermissionHandler();
         commandHandler = new CommandHandler(this, permissionHandler);
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new CheckCommand(this));
+        commandHandler.registerCommand(new HelpCommand(this));
+        commandHandler.registerCommand(new PromoteCommand(this));
         commandHandler.registerCommand(new GroupCreateCommand(this));
         commandHandler.registerCommand(new GroupRemoveCommand(this));
         commandHandler.registerCommand(new GroupSetCommand(this));
@@ -198,6 +191,9 @@ public class Privileges extends JavaPlugin {
     }
 
     public FileConfiguration getUsers() {
+        if (users == null) {
+            users = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "users.yml"));
+        }
         return users;
     }
 
@@ -210,6 +206,9 @@ public class Privileges extends JavaPlugin {
     }
 
     public FileConfiguration getGroups() {
+        if (groups == null) {
+            groups = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "groups.yml"));
+        }
         return groups;
     }
 
@@ -248,15 +247,42 @@ public class Privileges extends JavaPlugin {
         info("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
     }
 
-    public PermissionHandler getPermissionHandler() {
-        return this.permissionHandler;
-    }
-
     public PermissionManager getPermissionManager() {
         return this.permissionManager;
     }
 
     public GroupManager getGroupManager() {
         return this.groupManager;
+    }
+
+    /**
+     * Warning! This method is probably inefficient!
+     * Fetches a list of permissions nodes contained in groups.yml for the specified group
+     * @param group The group whose nodes we're checking.
+     * @param world The world (or null) to check nodes on
+     * @return A list of the nodes available for the specified group (optional: on the given world)
+     */
+    public List<String> calculateNodeList(String group, String world) {
+        List<String> tree = permissionManager.calculateGroupTree(group, "-");
+        Set<String> nodes = new HashSet<String>();
+        for (String g : tree) {
+            Set<String> nodeList = new HashSet<String>(getGroupNode(g).getStringList("permissions"));
+            for (String node : nodeList) {
+                if (node.startsWith("-")) {
+                    nodes.remove(node.substring(1));
+                }
+                nodes.add(node);
+            }
+            if (world != null) {
+                nodeList = new HashSet<String>(getGroupNode(g).getStringList("worlds." + world));
+                for (String node : nodeList) {
+                    if (node.startsWith("-") && nodes.contains(node.substring(1))) {
+                        nodes.remove(node.substring(1));
+                    }
+                    nodes.add(node);
+                }
+            }
+        }
+        return new ArrayList<String>(nodes);
     }
 }

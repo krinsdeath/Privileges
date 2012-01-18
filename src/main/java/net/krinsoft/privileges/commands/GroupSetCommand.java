@@ -48,6 +48,7 @@ public class GroupSetCommand extends GroupCommand {
         }
         groupManager.setGroup(target.getName(), args.get(1));
         sender.sendMessage(colorize(ChatColor.GREEN, target.getName()) + "'s group has been set to " + colorize(ChatColor.GREEN, args.get(1)));
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
         plugin.log(sender.getName() + " set " + target.getName() + "'s group to '" + args.get(1) + "'");
     }
 

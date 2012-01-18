@@ -20,7 +20,6 @@ public class DebugCommand extends PrivilegesCommand {
         this.setArgRange(0, 1);
         this.addKey("privileges debug");
         this.addKey("priv debug");
-        this.addKey("pd");
         this.setPermission("privileges.debug", "Allows this user to toggle debug mode.", PermissionDefault.OP);
     }
 

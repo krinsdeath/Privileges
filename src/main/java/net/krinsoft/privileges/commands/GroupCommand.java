@@ -15,7 +15,6 @@ public abstract class GroupCommand extends PrivilegesCommand {
 
     public GroupCommand(Privileges plugin) {
         super(plugin);
-        this.plugin = (Privileges) plugin;
         this.groupManager = plugin.getGroupManager();
     }
 

@@ -19,7 +19,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         this.setCommandUsage("/privileges group perm set [group] [world:]node [val]");
         this.addCommandExample("/pgps user privileges.version true -- sets 'privileges.version' to true for the group 'user'");
         this.addCommandExample("/pgps user world:example.node false -- sets 'example.node' to false for 'user' on the world 'world'");
-        this.setArgRange(3, 3);
+        this.setArgRange(2, 3);
         this.addKey("privileges group perm set");
         this.addKey("priv group perm set");
         this.addKey("pg perm set");
@@ -33,7 +33,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         Group group = groupManager.getGroup(args.get(0));
         String world = null;
         String node = args.get(1);
-        boolean val;
+        boolean val = true;
         try {
             val = Boolean.parseBoolean(args.get(2));
         } catch (NumberFormatException e) {
@@ -76,7 +76,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         }
         plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
-        permManager.reload();
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
     }
 
 }

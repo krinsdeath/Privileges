@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -24,7 +25,7 @@ public class VersionCommand extends PrivilegesCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        sender.sendMessage("Privileges version: " + plugin.getDescription().getVersion());
+        sender.sendMessage("Privileges version: " + ChatColor.GREEN + plugin.getDescription().getVersion());
     }
 
 }

@@ -1,0 +1,34 @@
+groups:
+  default:
+    permissions:
+    - group.default
+    - privileges.check
+    worlds:
+      world: []
+      world_nether:
+      - -privileges.build
+      world_the_end: []
+    inheritance: []
+  user:
+    permissions:
+    - group.user
+    - privileges.dump
+    worlds:
+      world: []
+      world_nether:
+      - privileges.build
+    inheritance:
+    - default
+  admin:
+    permissions:
+    - group.admin
+    - privileges.promote
+    inheritance:
+    - user
+  owner:
+    permissions:
+    - group.owner
+    - privileges.self.edit
+    - privileges.*
+    inheritance:
+    - admin

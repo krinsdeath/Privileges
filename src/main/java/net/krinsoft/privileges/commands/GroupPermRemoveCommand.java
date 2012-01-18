@@ -69,7 +69,7 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
         }
         plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from the group " + group.getName());
-        permManager.reload();
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
     }
 
 }

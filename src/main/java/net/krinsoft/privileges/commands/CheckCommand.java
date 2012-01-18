@@ -2,9 +2,11 @@ package net.krinsoft.privileges.commands;
 
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 /**
@@ -15,7 +17,6 @@ public class CheckCommand extends PrivilegesCommand {
 
     public CheckCommand(Privileges plugin) {
         super(plugin);
-        this.plugin = (Privileges) plugin;
         this.setName("privileges check");
         this.setCommandUsage("/privileges check [player] [node]");
         this.addCommandExample("/priv check Player privileges.build -- Checks Player's 'privileges.build' node");
@@ -43,10 +44,12 @@ public class CheckCommand extends PrivilegesCommand {
         } else {
             node = args.get(0);
         }
+        Permission perm = plugin.getServer().getPluginManager().getPermission(node);
         String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : ((Player) target).getName() + "&A's");
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
         msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
-        sender.sendMessage(msg.replaceAll("(?i)&([0-F])", "\u00A7$1"));
+        sender.sendMessage(msg.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
+        sender.sendMessage("Description: " + perm.getDescription());
     }
 
 }

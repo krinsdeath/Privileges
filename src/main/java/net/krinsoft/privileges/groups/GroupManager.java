@@ -1,11 +1,10 @@
 package net.krinsoft.privileges.groups;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.events.GroupChangeEvent;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -18,18 +17,55 @@ import org.bukkit.permissions.Permission;
 public class GroupManager {
     private Privileges plugin;
     private String DEFAULT;
-    private HashMap<String, Group> groupList = new HashMap<String, Group>();
-    private HashMap<String, Group> players = new HashMap<String, Group>();
+    private Map<String, Group> groupList = new HashMap<String, Group>();
+    private Map<String, Group> players = new HashMap<String, Group>();
+    private Map<Integer, String> promotion = new TreeMap<Integer, String>();
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
+        RankedGroup.plugin = plugin;
         this.DEFAULT = plugin.getConfig().getString("default_group", "default");
+        for (String group : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
+            Group g = getGroup(group);
+            if (g == null) { continue; }
+            if (promotion.get(g.getRank()) != null) {
+                plugin.debug("Duplicate rank found! " + group + "->" + promotion.get(g.getRank()));
+            }
+            promotion.put(g.getRank(), g.getName());
+        }
     }
 
     public Group getDefaultGroup() {
         return getGroup(this.DEFAULT);
     }
 
+    /**
+     * Promotes the specified player to the next higher ranked group
+     * @param sender The CommandSender issuing the promotion
+     * @param player The player to promote
+     * @return The new rank of the player after promotion
+     */
+    public int promote(CommandSender sender, Player player) {
+        int send = getRank(sender);
+        int rank = getRank(player);
+        boolean next = false;
+        if (rank >= send) {
+            sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
+            return -1;
+        }
+        for (Integer i : promotion.keySet()) {
+            if (next) { rank = i; break; }
+            if (i == rank) { next = true; }
+        }
+        if (rank < send) {
+            setGroup(player.getName(), promotion.get(rank));
+            return getRank(player);
+        } else {
+            sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
+            return -1;
+        }
+    }
+    
     /**
      * Adds the specified player to the specified group
      * @param player The player to change
@@ -96,6 +132,7 @@ public class GroupManager {
      */
     public Group getGroup(String group) {
         try {
+            plugin.debug("-> trying Group.getName() for '" + group + "'");
             createGroup(group).getName();
         } catch (NullPointerException e) {
             return null;
@@ -118,8 +155,7 @@ public class GroupManager {
 
     /**
      * Gets the specified player's group
-     * @param player
-     * The player whose group we're fetching
+     * @param player The player whose group we're fetching
      * @return the group associated with this player
      */
     public Group getGroup(Player player) {
@@ -141,7 +177,7 @@ public class GroupManager {
             groupList.put(group.toLowerCase(), new RankedGroup(group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
             perm.setDescription("A permission node that relates directly to the group: " + group);
-            if (plugin.getServer().getPluginManager().getPermission("group." + group) == null) {
+            if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
                 plugin.getServer().getPluginManager().addPermission(perm);
             }
             return groupList.get(group.toLowerCase());

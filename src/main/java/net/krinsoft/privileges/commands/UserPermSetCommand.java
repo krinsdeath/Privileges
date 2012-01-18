@@ -67,7 +67,7 @@ public class UserPermSetCommand extends UserPermCommand {
         }
         plugin.saveUsers();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + user + (world == null ? "" : " on " + ChatColor.GREEN + world));
-        permManager.reload();
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
     }
 
 }

@@ -1,13 +1,15 @@
 package net.krinsoft.privileges;
 
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachment;
 
 /**
  *
@@ -22,6 +24,13 @@ public class PermissionManager {
 
     public PermissionManager(Privileges plugin) {
         this.plugin = plugin;
+        for (Material m : Material.values()) {
+            Permission p = new Permission("privileges.interact." + m.getId());
+            p.setDescription("Interaction rights for the material/block: " + m.name());
+            if (plugin.getServer().getPluginManager().getPermission(p.getName()) == null) {
+                plugin.getServer().getPluginManager().addPermission(p);
+            }
+        }
         reload();
     }
 
@@ -67,7 +76,7 @@ public class PermissionManager {
     }
 
     public List<String> calculateGroupTree(String group, String next) {
-        System.out.println(next + "> " + group);
+        plugin.debug(next + "> " + group);
         List<String> tree = new ArrayList<String>();
         tree.add(0, group);
         List<String> inheritance;
@@ -86,7 +95,7 @@ public class PermissionManager {
     }
     
     private List<String> calculateBackwardTree(String group, String next) {
-        System.out.println(next + "> " + group);
+        plugin.debug(next + "> " + group);
         List<String> tree = new ArrayList<String>();
         tree.add(group);
         List<String> inheritance;

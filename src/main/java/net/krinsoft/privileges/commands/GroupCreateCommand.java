@@ -17,7 +17,6 @@ public class GroupCreateCommand extends GroupCommand {
 
     public GroupCreateCommand(Privileges plugin) {
         super(plugin);
-        this.plugin = (Privileges) plugin;
         this.setName("privileges group create");
         this.setCommandUsage("/privileges group create [name] [rank]");
         this.addCommandExample("/pgc ? -- show command help");

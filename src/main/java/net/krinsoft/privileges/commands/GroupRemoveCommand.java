@@ -61,7 +61,7 @@ public class GroupRemoveCommand extends GroupCommand {
         plugin.getGroups().set("groups." + group.getName(), null);
         plugin.saveGroups();
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, group.getName()) + " has been removed.");
-        plugin.getPermissionManager().reload();
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
         groupManager.removeGroup(group.getName());
     }
 

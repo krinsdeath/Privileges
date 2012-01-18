@@ -7,19 +7,13 @@ load: startup
 commands:
   privileges:
     aliases:
-      # /priv *
       - priv
-      # /priv reload
-      - pr
       # /priv check
       - pc
-      # /priv debug
-      - pd
       # /priv group*
       - pg
       - pgc
       - pgr
-      - pgs
       # /priv group perm*
       - pgp
       - pgps
@@ -30,8 +24,44 @@ commands:
       - pup
       - pups
       - pupr
-    description: The commands for manipulating players and settings
-    usage: /<command>
+    description: The commands for manipulating player permissions
+    usage: /<command> [section] [options]...
+  promote:
+    description: Promotes the specified player to the next higher rank
+    permission: privileges.promote
+    usage: /<command> [player]
+  pgs:
+    description: Sets the specified player's group
+    permission: privileges.group.set
+    usage: /<command> [player] [group]
+  pgr:
+    description: Removes the specified group
+    permission: privileges.group.remove
+    usage: /<command> [group] --safe
+  pgc:
+    description: Creates the specified group with the given rank
+    permission: privileges.group.create
+    usage: /<command> [group] [rank]
+  pgps:
+    description: Sets the specified permission for the given group
+    permission: privileges.group.perm.set
+    usage: /<command> [group] [node] [true|false]
+  pgpr:
+    description: Removes the specified permission from the given group
+    permission: privileges.group.perm.remove
+    usage: /<command> [group] [node]
+  pupr:
+    description: Removes the specified permission from the given user
+    permission: privileges.user.perm.remove
+    usage: /<command> [player] [node]
+  pups:
+    description: Sets the specified permission for the given user
+    permission: privileges.user.perm.set
+    usage: /<command> [player] [node] [true|false]
+  help:
+    description: Displays help for available commands
+    permission: privileges.help
+    usage: /<command> [page]
 
 permissions:
   privileges.build:
@@ -40,3 +70,6 @@ permissions:
   privileges.interact:
     description: Determines whether or not a player can interact with the game objects.
     default: true
+  privileges.self.edit:
+    description: Allows any user with this node to edit any permission they want, regardless of rank.
+    default: false
