@@ -68,19 +68,19 @@ public class ListCommand extends PrivilegesCommand {
             String msg;
             msg = "&B" + node + "&A - &B" + att.getValue() + "&A ";
             msg = msg + "&A(" + (att.getAttachment() != null ? "set: &6" + att.getAttachment().getPlugin().getDescription().getName() + "&A" : "&3default&A") + ")";
-            list.add(msg.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
+            list.add(msg.replaceAll("&([0-9A-F])", "\u00A7$1"));
         }
         FancyPage page = new FancyPage(list);
         String header;
         if (sender instanceof ConsoleCommandSender) {
-            header = "&A=== &FPermissions list for  " + name + " &A===";
-            sender.sendMessage(header.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
+            header = ChatColor.GREEN + "=== " + ChatColor.WHITE + "Permissions list for " + ChatColor.AQUA + name + ChatColor.GREEN + " ===";
+            sender.sendMessage(header.replaceAll("&([0-9A-F])", "\u00A7$1"));
             for (String line : list) {
-                sender.sendMessage(line);
+                sender.sendMessage(ChatColor.stripColor(line));
             }
         } else {
-            header = "&A=== &FPage " + pageNum + "/" + page.getPages() + " &A===";
-            sender.sendMessage(header.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
+            header = ChatColor.GREEN + "=== " + ChatColor.WHITE + " [Page " + pageNum + "/" + page.getPages() + "] " + ChatColor.GREEN + "===";
+            sender.sendMessage(header.replaceAll("&([0-9A-F])", "\u00A7$1"));
             for (String line : page.getPage(pageNum)) {
                 sender.sendMessage(line);
             }

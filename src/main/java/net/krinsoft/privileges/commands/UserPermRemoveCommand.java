@@ -50,7 +50,7 @@ public class UserPermRemoveCommand extends UserPermCommand {
                 return;
             }
         }
-        List<String> nodes = new ArrayList<String>();
+        List<String> nodes;
         if (world == null) {
             nodes = plugin.getUserNode(user).getStringList("permissions");
             nodes.remove(node);

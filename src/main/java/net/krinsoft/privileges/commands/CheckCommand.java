@@ -31,7 +31,7 @@ public class CheckCommand extends PrivilegesCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         CommandSender target = sender;
-        String node = "";
+        String node;
         if (args.size() == 2) {
             if (plugin.getServer().getPlayer(args.get(0)) != null) {
                 target = plugin.getServer().getPlayer(args.get(0));
@@ -48,7 +48,12 @@ public class CheckCommand extends PrivilegesCommand {
         String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : ((Player) target).getName() + "&A's");
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
         msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
-        sender.sendMessage(msg.replaceAll("&([0-9A-F])", String.valueOf(ChatColor.getByChar("$1"))));
+        msg = msg.replaceAll("&([0-9A-F])", "\u00A7$1");
+        if (sender instanceof ConsoleCommandSender) {
+            sender.sendMessage(ChatColor.stripColor(msg));
+        } else {
+            sender.sendMessage(msg);
+        }
         sender.sendMessage("Description: " + perm.getDescription());
     }
 
