@@ -34,8 +34,8 @@ public class FancyMessage implements Message {
     public List<String> getLines() {
         if (page > 0) { page--; }
         List<String> messages = new ArrayList<String>();
-        if (page*5 > lines.size()) { page = 0; }
-        for (int i = (page * 5); i < (page*5)+5; i++) {
+        if (page*7 > lines.size()) { page = 0; }
+        for (int i = (page * 7); i < (page*7)+7; i++) {
             try {
                 if (i >= lines.size()) {
                     break;
@@ -52,10 +52,10 @@ public class FancyMessage implements Message {
     public String getHeader() {
         int page = this.page;
         if (page == 0) { page++; }
-        int pages = lines.size() / 5 + 1;
+        int pages = lines.size() / 7 + 1;
         if (page > pages) {
             page = 1;
         }
-        return ChatColor.GREEN + "=== " + ChatColor.WHITE + name + " [Page " + (page) + "/" + pages + ChatColor.GREEN + "] ===";
+        return ChatColor.GREEN + "=== " + ChatColor.WHITE + name + " [Page " + (page) + "/" + pages + "]" + ChatColor.GREEN + " ===";
     }
 }

@@ -157,7 +157,6 @@ public class PermissionManager {
             }
         } catch (NullPointerException e) {
             plugin.debug("Encountered null path at '" + group + ".permissions' in groups.yml");
-            plugin.debug("Bug Bukkit about pull request #455");
         }
         // calculate group's world permissions
         // overrides global permissions
@@ -174,7 +173,6 @@ public class PermissionManager {
             }
         } catch (NullPointerException e) {
             plugin.debug("Encountered null path at '" + group + ".worlds." + world + "' in groups.yml");
-            plugin.debug("Bug Bukkit about pull request #455");
         }
     }
 
@@ -185,7 +183,6 @@ public class PermissionManager {
             }
         } catch (NullPointerException e) {
             plugin.debug("Encountered null path at '" + player + ".permissions' in users.yml");
-            plugin.debug("Bug Bukkit about pull request #455");
         }
         try {
             if (plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false) == null) {
@@ -195,7 +192,7 @@ public class PermissionManager {
                 plugin.saveUsers();
             }
         } catch (NullPointerException e) {
-            plugin.debug("Encounter null path at '" + player + ".worlds' in users.yml");
+            plugin.debug("Encountered null path at '" + player + ".worlds' in users.yml");
         }
         try {
             for (String world : plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false)) {
@@ -205,12 +202,10 @@ public class PermissionManager {
                     }
                 } catch (NullPointerException e) {
                     plugin.debug("Encountered null path at '" + player + ".worlds." + world + "' in users.yml");
-                    plugin.debug("Bug Bukkit about pull request #455");
                 }
             }
         } catch (NullPointerException e) {
             plugin.debug("Encounter null path at '" + player + ".worlds' in users.yml");
-            plugin.debug("Bug Bukkit about pull request #455");
         }
     }
 
