@@ -96,6 +96,14 @@ public class Privileges extends JavaPlugin {
         this.permissionManager = new PermissionManager(this);
     }
 
+    public void registerConfiguration(boolean val) {
+        if (val) {
+            users = null;
+            groups = null;
+            registerConfiguration();
+        }
+    }
+    
     public void registerConfiguration() {
         getUsers().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/users.yml")));
         getUsers().options().copyDefaults(true);

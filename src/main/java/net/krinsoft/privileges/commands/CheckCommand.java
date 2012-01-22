@@ -45,6 +45,10 @@ public class CheckCommand extends PrivilegesCommand {
             node = args.get(0);
         }
         Permission perm = plugin.getServer().getPluginManager().getPermission(node);
+        if (perm == null) {
+            sender.sendMessage(ChatColor.RED + "That node doesn't exist.");
+            return;
+        }
         String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : ((Player) target).getName() + "&A's");
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
         msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
@@ -54,7 +58,8 @@ public class CheckCommand extends PrivilegesCommand {
         } else {
             sender.sendMessage(msg);
         }
-        sender.sendMessage("Description: " + perm.getDescription());
+        String desc = (perm.getDescription() != null ? perm.getDescription() : perm.getName());
+        sender.sendMessage("Description: " + desc);
     }
 
 }

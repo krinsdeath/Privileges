@@ -1,11 +1,11 @@
 package net.krinsoft.privileges.commands;
 
 import com.pneumaticraft.commandhandler.Command;
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 /**
  *
