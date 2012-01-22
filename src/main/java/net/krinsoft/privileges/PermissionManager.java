@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,13 +25,21 @@ public class PermissionManager {
 
     public PermissionManager(Privileges plugin) {
         this.plugin = plugin;
+        Permission perm = new Permission("privileges.interact.*");
+        perm.setDefault(PermissionDefault.TRUE);
+        if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
+            plugin.getServer().getPluginManager().addPermission(perm);
+        }
         for (Material m : Material.values()) {
             Permission p = new Permission("privileges.interact." + m.getId());
+            p.setDefault(PermissionDefault.TRUE);
             p.setDescription("Interaction rights for the material/block: " + m.name());
             if (plugin.getServer().getPluginManager().getPermission(p.getName()) == null) {
+                perm.getChildren().put(p.getName(), true);
                 plugin.getServer().getPluginManager().addPermission(p);
             }
         }
+        perm.recalculatePermissibles();
         reload();
     }
 
