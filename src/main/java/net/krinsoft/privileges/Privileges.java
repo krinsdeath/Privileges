@@ -106,11 +106,15 @@ public class Privileges extends JavaPlugin {
     
     public void registerConfiguration() {
         getUsers().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/users.yml")));
-        getUsers().options().copyDefaults(true);
+        if (!new File(getDataFolder(), "users.yml").exists()) {
+            getUsers().options().copyDefaults(true);
+        }
         saveUsers();
         
         getGroups().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/groups.yml")));
-        getGroups().options().copyDefaults(true);
+        if (!new File(getDataFolder(), "groups.yml").exists()) {
+            getGroups().options().copyDefaults(true);
+        }
         groups.options().header(
                 "Group ranks determine the order they are promoted in.\n" +
                         "Lowest rank is 1, highest rank is 2,147,483,647.\n" +
