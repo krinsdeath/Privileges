@@ -1,5 +1,6 @@
 groups:
   default:
+    rank: 1
     permissions:
     - group.default
     - privileges.check
@@ -10,6 +11,7 @@ groups:
       world_the_end: []
     inheritance: []
   user:
+    rank: 2
     permissions:
     - group.user
     - privileges.dump
@@ -20,12 +22,14 @@ groups:
     inheritance:
     - default
   admin:
+    rank: 3
     permissions:
     - group.admin
     - privileges.promote
     inheritance:
     - user
   owner:
+    rank: 4
     permissions:
     - group.owner
     - privileges.self.edit
