@@ -40,10 +40,9 @@ public class PermissionManager {
             }
         }
         perm.recalculatePermissibles();
-        reload();
     }
 
-    final public void reload() {
+    public void reload() {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             registerPlayer(p.getName());
         }
@@ -63,10 +62,8 @@ public class PermissionManager {
             plugin.debug("Attachment cannot be null.");
             return;
         }
-        for (String node : attachment.getPermissions().keySet()) {
-            plugin.debug("Removing '" + node + "' from '" + player + "'");
-            attachment.unsetPermission(node);
-        }
+        // clear the attachment
+        attachment.getPermissions().clear();
         // iterate through the player's groups, and add them to a list
         String group = plugin.getUserNode(player).getString("group", plugin.getConfig().getString("default_group", null));
         List<String> groups = calculateGroupTree(group, "");

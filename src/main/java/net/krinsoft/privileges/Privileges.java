@@ -56,6 +56,8 @@ public class Privileges extends JavaPlugin {
             debug("Error setting default permission for 'privileges.*'");
         }
         info("Is now enabled.");
+        // since 1.1-R2, this line is required to pick up the proper default attachments
+        //permissionManager.reload();
     }
 
     @Override
@@ -91,9 +93,10 @@ public class Privileges extends JavaPlugin {
     }
     
     public void registerPermissions() {
-        this.groupManager = new GroupManager(this);
         if (this.permissionManager != null) { this.permissionManager.disable(); }
         this.permissionManager = new PermissionManager(this);
+        this.groupManager = new GroupManager(this);
+        this.permissionManager.reload();
     }
 
     public void registerConfiguration(boolean val) {

@@ -135,6 +135,7 @@ public class GroupManager {
             plugin.debug("-> trying Group.getName() for '" + group + "'");
             createGroup(group).getName();
         } catch (NullPointerException e) {
+            plugin.debug("Group.getName() for '" + group + "' was null.");
             return null;
         }
         return groupList.get(group.toLowerCase());
@@ -171,6 +172,7 @@ public class GroupManager {
             return groupList.get(group.toLowerCase());
         } else {
             if (plugin.getGroupNode(group) == null) {
+                plugin.debug("Group node for '" + group + "' was null.");
                 return null;
             }
             List<String> tree = plugin.getPermissionManager().calculateGroupTree(group, "");
