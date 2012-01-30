@@ -50,6 +50,10 @@ commands:
     description: Removes the specified permission from the given group
     permission: privileges.group.perm.remove
     usage: /<command> [group] [node]
+  pui:
+    description: Shows miscellaneous info about the given user
+    permission: privileges.user.info
+    usage: /<command> [player]
   pupr:
     description: Removes the specified permission from the given user
     permission: privileges.user.perm.remove
