@@ -2,13 +2,17 @@ package net.krinsoft.privileges;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
 /**
  *
  * @author krinsdeath
  */
-class PlayerListener extends org.bukkit.event.player.PlayerListener {
+@SuppressWarnings("unused")
+class PlayerListener implements Listener {
 
     private Privileges plugin;
 
@@ -16,29 +20,23 @@ class PlayerListener extends org.bukkit.event.player.PlayerListener {
         this.plugin = plugin;
     }
 
-    @Override
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void playerJoin(PlayerJoinEvent event) {
         plugin.getPermissionManager().registerPlayer(event.getPlayer().getName());
     }
 
-    @Override
-    public void onPlayerKick(PlayerKickEvent event) {
-        if (event.isCancelled()) { return; }
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void playerQuit(PlayerQuitEvent event) {
         plugin.getPermissionManager().unregisterPlayer(event.getPlayer().getName());
     }
 
-    @Override
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        plugin.getPermissionManager().unregisterPlayer(event.getPlayer().getName());
-    }
-
-    @Override
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void playerChangedWorld(PlayerChangedWorldEvent event) {
         plugin.getPermissionManager().updatePlayerWorld(event.getPlayer().getName(), event.getPlayer().getWorld().getName());
     }
 
-    @Override
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void playerInteract(PlayerInteractEvent event) {
         if (event.isCancelled()) { return; }
         Block b = event.getClickedBlock();
         if (!event.getPlayer().hasPermission("privileges.interact") || (b != null && !event.getPlayer().hasPermission("privileges.interact." + b.getTypeId()))) {

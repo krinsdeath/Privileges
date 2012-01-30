@@ -14,7 +14,7 @@ public class VersionCommand extends PrivilegesCommand {
 
     public VersionCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges Version");
+        this.setName("Privileges: Version");
         this.setCommandUsage("/priv version");
         this.setArgRange(0, 0);
         this.addKey("privileges version");
@@ -26,6 +26,7 @@ public class VersionCommand extends PrivilegesCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         sender.sendMessage("Privileges version: " + ChatColor.GREEN + plugin.getDescription().getVersion());
+        sender.sendMessage("By: " + ChatColor.GREEN + "krinsdeath");
     }
 
 }

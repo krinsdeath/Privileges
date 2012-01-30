@@ -1,17 +1,17 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import net.krinsoft.privileges.FancyPage;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -21,8 +21,7 @@ public class ListCommand extends PrivilegesCommand {
 
     public ListCommand(Privileges plugin) {
         super(plugin);
-        this.plugin = (Privileges) plugin;
-        this.setName("privileges list");
+        this.setName("Privileges: List");
         this.setCommandUsage("/privileges list ([player] [page])");
         this.setArgRange(0, 2);
         this.addKey("privileges list");

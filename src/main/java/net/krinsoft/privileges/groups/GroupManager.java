@@ -14,6 +14,7 @@ import org.bukkit.permissions.Permission;
  *
  * @author krinsdeath
  */
+@SuppressWarnings("unused")
 public class GroupManager {
     private Privileges plugin;
     private String DEFAULT;

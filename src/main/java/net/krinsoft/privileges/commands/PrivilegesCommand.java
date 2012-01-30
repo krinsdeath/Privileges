@@ -17,7 +17,7 @@ public abstract class PrivilegesCommand extends Command {
     
     public PrivilegesCommand(Privileges plugin) {
         super(plugin);
-        this.plugin = (Privileges) plugin;
+        this.plugin = plugin;
     }
 
     @Override

@@ -1,10 +1,6 @@
 package net.krinsoft.privileges;
 
 import com.pneumaticraft.commandhandler.CommandHandler;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
 import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
@@ -15,11 +11,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  *
@@ -144,13 +143,8 @@ public class Privileges extends JavaPlugin {
         PluginManager manager = this.getServer().getPluginManager();
         PlayerListener pListener = new PlayerListener(this);
         BlockListener bListener = new BlockListener(this);
-        manager.registerEvent(Type.PLAYER_JOIN, pListener, Priority.Lowest, this);
-        manager.registerEvent(Type.PLAYER_QUIT, pListener, Priority.Monitor, this);
-        manager.registerEvent(Type.PLAYER_KICK, pListener, Priority.Monitor, this);
-        manager.registerEvent(Type.PLAYER_CHANGED_WORLD, pListener, Priority.Monitor, this);
-        manager.registerEvent(Type.PLAYER_INTERACT, pListener, Priority.Lowest, this);
-        manager.registerEvent(Type.BLOCK_PLACE, bListener, Priority.Lowest, this);
-        manager.registerEvent(Type.BLOCK_BREAK, bListener, Priority.Lowest, this);
+        manager.registerEvents(pListener, this);
+        manager.registerEvents(bListener, this);
     }
 
     private void registerCommands() {

@@ -15,7 +15,7 @@ public class PromoteCommand extends GroupCommand {
     
     public PromoteCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges Promote");
+        this.setName("Privileges: Promote");
         this.setCommandUsage("/promote [user]");
         this.setArgRange(1, 1);
         this.addKey("privileges promote");

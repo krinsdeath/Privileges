@@ -5,6 +5,7 @@ import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
 /**
@@ -15,7 +16,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
 
     public GroupPermSetCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges Group Perm Set");
+        this.setName("Privileges: Group Perm Set");
         this.setCommandUsage("/privileges group perm set [group] [world:]node [val]");
         this.addCommandExample("/pgps user privileges.version true -- sets 'privileges.version' to true for the group 'user'");
         this.addCommandExample("/pgps user world:example.node false -- sets 'example.node' to false for 'user' on the world 'world'");
@@ -33,7 +34,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         Group group = groupManager.getGroup(args.get(0));
         String world = null;
         String node = args.get(1);
-        boolean val = true;
+        boolean val;
         try {
             val = Boolean.parseBoolean(args.get(2));
         } catch (NumberFormatException e) {
@@ -60,6 +61,10 @@ public class GroupPermSetCommand extends GroupPermCommand {
                 sender.sendMessage("Invalid node string.");
                 return;
             }
+        }
+        if (node.equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
+            sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
+            return;
         }
         if (world == null) {
             List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");

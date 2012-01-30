@@ -1,13 +1,13 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -17,7 +17,7 @@ public class CheckCommand extends PrivilegesCommand {
 
     public CheckCommand(Privileges plugin) {
         super(plugin);
-        this.setName("privileges check");
+        this.setName("Privileges: Check");
         this.setCommandUsage("/privileges check [player] [node]");
         this.addCommandExample("/priv check Player privileges.build -- Checks Player's 'privileges.build' node");
         this.addCommandExample("/priv check privileges.reload -- Checks your own 'privileges.reload' node");
@@ -49,7 +49,7 @@ public class CheckCommand extends PrivilegesCommand {
             sender.sendMessage(ChatColor.RED + "That node doesn't exist.");
             return;
         }
-        String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : ((Player) target).getName() + "&A's");
+        String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : target.getName() + "&A's");
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
         msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
         msg = msg.replaceAll("&([0-9A-F])", "\u00A7$1");

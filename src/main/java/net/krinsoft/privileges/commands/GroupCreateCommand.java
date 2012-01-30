@@ -1,13 +1,12 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.util.config.Configuration;
+
+import java.util.List;
 
 /**
  *
@@ -17,7 +16,7 @@ public class GroupCreateCommand extends GroupCommand {
 
     public GroupCreateCommand(Privileges plugin) {
         super(plugin);
-        this.setName("privileges group create");
+        this.setName("Privileges: Group Create");
         this.setCommandUsage("/privileges group create [name] [rank]");
         this.addCommandExample("/pgc ? -- show command help");
         this.addCommandExample("/pgc admin 10 -- creates the 'admin' group at rank 10");
@@ -37,7 +36,7 @@ public class GroupCreateCommand extends GroupCommand {
             sender.sendMessage("Groups can have any name you want EXCEPT ones that already exist.");
             return;
         }
-        int rank = 0;
+        int rank;
         try {
             rank = Integer.parseInt(args.get(1));
         } catch (NumberFormatException e) {

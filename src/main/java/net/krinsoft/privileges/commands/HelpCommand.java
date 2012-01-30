@@ -5,7 +5,6 @@ import net.krinsoft.privileges.util.FancyMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -22,7 +21,7 @@ public class HelpCommand extends PrivilegesCommand {
     
     public HelpCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges Help");
+        this.setName("Privileges: Help");
         this.setCommandUsage("/help [page]");
         this.setArgRange(0, 1);
         this.addKey("privileges help");

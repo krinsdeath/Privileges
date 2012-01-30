@@ -14,7 +14,7 @@ public class ReloadCommand extends PrivilegesCommand {
 
     public ReloadCommand(Privileges plugin) {
         super(plugin);
-        this.setName("privileges reload");
+        this.setName("Privileges: Reload");
         this.setCommandUsage("/priv reload");
         this.setArgRange(0, 0);
         this.addKey("privileges reload");

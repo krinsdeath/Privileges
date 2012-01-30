@@ -1,11 +1,12 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -15,7 +16,7 @@ public class UserPermSetCommand extends UserPermCommand {
 
     public UserPermSetCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges User Perm Set");
+        this.setName("Privileges: User Perm Set");
         this.setCommandUsage("/privileges user perm set [user] [world:]node [val]");
         this.addCommandExample("/priv user perm set Player example.node true");
         this.addCommandExample("/pups Player world:example.node false");
@@ -50,6 +51,10 @@ public class UserPermSetCommand extends UserPermCommand {
                 sender.sendMessage("Invalid node string.");
                 return;
             }
+        }
+        if (node.equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
+            sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
+            return;
         }
         List<String> nodes;
         if (world == null) {

@@ -8,6 +8,7 @@ import java.util.List;
  *
  * @author krinsdeath
  */
+@SuppressWarnings("unused")
 public class FancyPage {
     
     private List<String> contents = new ArrayList<String>();

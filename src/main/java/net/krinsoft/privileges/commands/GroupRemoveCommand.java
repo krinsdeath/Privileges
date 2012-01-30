@@ -15,7 +15,7 @@ public class GroupRemoveCommand extends GroupCommand {
 
     public GroupRemoveCommand(Privileges plugin) {
         super(plugin);
-        this.setName("privileges group remove");
+        this.setName("Privileges: Group Remove");
         this.setCommandUsage("/privileges group remove [group] [--safe]");
         this.addCommandExample("/pgr ? -- show command help");
         this.addCommandExample("/pgr user --safe -- removes the 'user' group and deletes all inheritance references, and sets all users with this group to the default group");

@@ -13,7 +13,7 @@ public class DebugCommand extends PrivilegesCommand {
 
     public DebugCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges Debug");
+        this.setName("Privileges: Debug");
         this.setCommandUsage("/privileges debug [val]");
         this.addCommandExample("/priv debug -- flip the current debug setting");
         this.addCommandExample("/priv debug true -- turn debug mode on");

@@ -16,7 +16,7 @@ public class GroupShowCommand extends GroupCommand {
 
     public GroupShowCommand(Privileges plugin) {
         super(plugin);
-        this.setName("privileges group show");
+        this.setName("Privileges: Group Show");
         this.setCommandUsage("/privileges group show [target]");
         this.addCommandExample("/priv group show Player -- Show you Player's group");
         this.addCommandExample("/pg show -- Print out your own group.");
@@ -29,8 +29,8 @@ public class GroupShowCommand extends GroupCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        Group group = null;
-        String target = null;
+        Group group;
+        String target;
         if (args.isEmpty() && !(sender instanceof Player)) {
             sender.sendMessage("You must supply a target as the console.");
             return;

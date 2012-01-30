@@ -1,11 +1,11 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -15,7 +15,7 @@ public class GroupSetCommand extends GroupCommand {
 
     public GroupSetCommand(Privileges plugin) {
         super(plugin);
-        this.setName("privileges group set");
+        this.setName("Privileges: Group Set");
         this.setCommandUsage("/privileges group set [player] [group]");
         this.setArgRange(2, 2);
         this.addKey("privileges group set");
@@ -31,7 +31,7 @@ public class GroupSetCommand extends GroupCommand {
         if (target == null) { return; }
         int tRank = groupManager.getRank(target);
         int sRank = groupManager.getRank(sender);
-        int gRank = 0;
+        int gRank;
         try {
             gRank = groupManager.getGroup(args.get(1)).getRank();
         } catch (NullPointerException e) {

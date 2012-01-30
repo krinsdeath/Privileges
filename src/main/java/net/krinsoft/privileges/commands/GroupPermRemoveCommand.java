@@ -1,12 +1,12 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -16,7 +16,7 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
 
     public GroupPermRemoveCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges Group Perm Remove");
+        this.setName("Privileges: Group Perm Remove");
         this.setCommandUsage("/privileges group perm remove [group] [world:]node");
         this.addCommandExample("/priv group perm remove user privileges.build");
         this.addCommandExample("/pgpr user world_nether:privileges.interact");
@@ -55,7 +55,7 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
                 return;
             }
         }
-        List<String> nodes = new ArrayList<String>();
+        List<String> nodes;
         if (world == null) {
             nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");
             nodes.remove(node);

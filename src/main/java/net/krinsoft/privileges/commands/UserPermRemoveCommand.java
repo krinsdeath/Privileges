@@ -1,11 +1,11 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -15,7 +15,7 @@ public class UserPermRemoveCommand extends UserPermCommand {
 
     public UserPermRemoveCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges User Perm Remove");
+        this.setName("Privileges: User Perm Remove");
         this.setCommandUsage("/privileges user perm remove [user] [world:]node");
         this.addCommandExample("/priv user perm remove Player example.node");
         this.addCommandExample("/pups Player world:example.node");

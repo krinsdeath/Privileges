@@ -1,17 +1,14 @@
 package net.krinsoft.privileges.importer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -69,7 +66,8 @@ public class ImportManager {
                 plugin.info("Imported " + group + " in " + (System.currentTimeMillis() - time) + "ms");
                 plugin.saveGroups();
             }
-            file.getParentFile().renameTo(new File("plugins/PermissionsBukkit_DEPRECATED"));
+            file.getParentFile().renameTo(new File("plugins/PermissionsBukkit_OLD"));
+            //new File("plugins/PermissionsBukkit.jar").renameTo(new File("plugins/PermissionsBukkit.jar.old"));
             plugin.info("PermissionsBukkit import finished in " + (System.currentTimeMillis() - imp) + "ms");
             plugin.info("You can now delete PermissionsBukkit.");
             plugin.info("Please view plugins/Privileges/groups.yml, and edit the ranks of the imported groups.");
