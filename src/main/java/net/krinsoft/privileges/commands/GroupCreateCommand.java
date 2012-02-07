@@ -33,7 +33,7 @@ public class GroupCreateCommand extends GroupCommand {
         ConfigurationSection groups = plugin.getGroups().getConfigurationSection("groups");
         if (groups.getKeys(false).contains(args.get(0))) {
             // already have a group called that!
-            sender.sendMessage("Groups can have any name you want EXCEPT ones that already exist.");
+            sender.sendMessage(ChatColor.RED + "Groups can have any name you want EXCEPT ones that already exist.");
             return;
         }
         int rank;
@@ -41,19 +41,16 @@ public class GroupCreateCommand extends GroupCommand {
             rank = Integer.parseInt(args.get(1));
         } catch (NumberFormatException e) {
             // sender provided an invalid argument
-            sender.sendMessage("Numbers are fun.");
+            sender.sendMessage(ChatColor.RED + "You must specify a rank for the new group.");
             return;
         }
-        for (String key : groups.getKeys(false)) {
-            if (groups.getInt("groups." + key + ".rank", 0) == rank) {
-                // duplicate rank found
-                sender.sendMessage("A group with that rank already exists.");
-                return;
-            }
+        // make sure the rank is not already taken
+        if (!groupManager.isRankTaken(rank)) {
+            sender.sendMessage(ChatColor.RED + "A group with that rank already exists.");
+            return;
         }
         // check that the user can create a group of this rank
-        if (rank >= groupManager.getRank(sender)) {
-            // sender is trying to be a bad boy!
+        if (!groupManager.checkRank(sender, rank)) {
             sender.sendMessage("That rank is too high for you.");
             return;
         }
@@ -63,7 +60,9 @@ public class GroupCreateCommand extends GroupCommand {
         groups.set("groups." + args.get(0) + ".worlds", null);
         groups.set("groups." + args.get(0) + ".inheritance", null);
         plugin.saveGroups();
+        plugin.getGroupManager().getGroup(args.get(0));
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, args.get(0)) + " has been created.");
+        plugin.log(sender.getName() + " created the group '" + args.get(0) + "'");
     }
 
 }

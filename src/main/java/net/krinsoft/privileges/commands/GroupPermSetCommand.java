@@ -32,36 +32,28 @@ public class GroupPermSetCommand extends GroupPermCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         Group group = groupManager.getGroup(args.get(0));
-        String world = null;
-        String node = args.get(1);
+        if (group == null) {
+            sender.sendMessage(ChatColor.RED + "That group does not exist.");
+            return;
+        }
         boolean val;
         try {
             val = Boolean.parseBoolean(args.get(2));
-        } catch (NumberFormatException e) {
-            sender.sendMessage("Value must be a boolean, true or false.");
+        } catch (Exception e) {
+            sender.sendMessage(ChatColor.RED + "Value must be a boolean, true or false.");
             return;
         }
-        if (group == null) {
-            sender.sendMessage("That group does not exist.");
+        if (!groupManager.checkRank(sender, group.getRank())) {
+            sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
             return;
         }
-        if (group.getRank() >= groupManager.getRank(sender) && !sender.hasPermission("privileges.self.edit")) {
-            sender.sendMessage("That group's rank is too high.");
+        String[] param = validateParam(args.get(1));
+        if (param == null) {
+            sender.sendMessage(ChatColor.RED + "Invalid node string.");
             return;
         }
-        if (args.get(1).contains(":")) {
-            try {
-                world = args.get(1).split(":")[0];
-                node = args.get(1).split(":")[1];
-                if (plugin.getServer().getWorld(world) == null) {
-                    sender.sendMessage("Unknown world.");
-                    return;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                sender.sendMessage("Invalid node string.");
-                return;
-            }
-        }
+        String world = param[0];
+        String node = param[1];
         if (node.equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
@@ -82,6 +74,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+        plugin.log(sender.getName() + " set " + node + " to " + val + " for '" + group.getName() + "'");
     }
 
 }

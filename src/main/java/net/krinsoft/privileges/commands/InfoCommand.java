@@ -13,17 +13,18 @@ import java.util.List;
 /**
  * @author krinsdeath
  */
-public class UserInfoCommand extends PrivilegesCommand {
+public class InfoCommand extends PrivilegesCommand {
 
-    public UserInfoCommand(Privileges plugin) {
+    public InfoCommand(Privileges plugin) {
         super(plugin);
-        setName("Privileges: User Info");
-        setCommandUsage("/priv user info [PLAYER]");
+        setName("Privileges: Info");
+        setCommandUsage("/priv info [PLAYER]");
         setArgRange(0, 1);
-        addKey("priv user info");
-        addKey("pu info");
-        addKey("pui");
-        setPermission("privileges.user.info", "Allows the user to check information about themselves or others.", PermissionDefault.OP);
+        addKey("privileges info");
+        addKey("priv info");
+        addKey("pinfo");
+        addKey("pi");
+        setPermission("privileges.info", "Allows the user to check information about themselves or others.", PermissionDefault.OP);
     }
 
     @Override
@@ -44,6 +45,10 @@ public class UserInfoCommand extends PrivilegesCommand {
                 sender.sendMessage(ChatColor.RED + "Target must exist from Console.");
                 return;
             }
+        }
+        if (target.equals(sender) && !sender.hasPermission("privileges.info.other")) {
+            sender.sendMessage(ChatColor.RED + "You cannot view other peoples' information.");
+            return;
         }
         lines.add("=== User Info: " + ChatColor.BLUE + target.getName() + ChatColor.WHITE + " ===");
         lines.add("Is " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + " an op? " + ChatColor.GREEN + (target.isOp() ? "Yes." : "No."));

@@ -33,28 +33,21 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         Group group = groupManager.getGroup(args.get(0));
         if (group == null) {
-            sender.sendMessage("That group does not exist.");
+            sender.sendMessage(ChatColor.RED + "That group does not exist.");
             return;
         }
-        if (group.getRank() >= groupManager.getRank(sender) && !sender.hasPermission("privileges.self.edit")) {
-            sender.sendMessage("That group's rank is too high.");
+        if (!groupManager.checkRank(sender, group.getRank())) {
+            sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
             return;
         }
-        String node = args.get(1);
-        String world = null;
-        if (node.contains(":")) {
-            try {
-                world = node.split(":")[0];
-                node = node.split(":")[1];
-                if (plugin.getServer().getWorld(world) == null) {
-                    sender.sendMessage("Unknown world.");
-                    return;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                sender.sendMessage("Invalid node string.");
-                return;
-            }
+        String[] param = validateParam(args.get(1));
+        if (param == null) {
+            sender.sendMessage(ChatColor.RED + "Invalid node string.");
+            return;
         }
+        String world = param[0];
+        String node = param[1];
+        if (node.startsWith("-")) { node = node.substring(1); }
         List<String> nodes;
         if (world == null) {
             nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");
@@ -70,6 +63,7 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
         plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from the group " + group.getName());
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+        plugin.log(sender.getName() + " removed the node '" + node + "' from the group '" + group.getName() + "'");
     }
 
 }

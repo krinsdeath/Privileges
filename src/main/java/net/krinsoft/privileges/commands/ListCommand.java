@@ -21,12 +21,13 @@ public class ListCommand extends PrivilegesCommand {
 
     public ListCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: List");
-        this.setCommandUsage("/privileges list ([player] [page])");
-        this.setArgRange(0, 2);
-        this.addKey("privileges list");
-        this.addKey("priv list");
-        this.setPermission("privileges.list", "Allows this user to use '/priv list'", PermissionDefault.FALSE);
+        setName("Privileges: List");
+        setCommandUsage("/privileges list ([player] [page])");
+        setArgRange(0, 2);
+        addKey("privileges list");
+        addKey("priv list");
+        addKey("plist");
+        setPermission("privileges.list", "Lists the specified user's permissions nodes.", PermissionDefault.TRUE);
     }
 
     @Override
@@ -55,6 +56,10 @@ public class ListCommand extends PrivilegesCommand {
             } catch (NumberFormatException e) {
                 pageNum = 0;
             }
+        }
+        if (!target.equals(sender) && !sender.hasPermission("privileges.list.other")) {
+            sender.sendMessage(ChatColor.RED + "You do not have permission to view other peoples' nodes.");
+            return;
         }
         List<PermissionAttachmentInfo> attInfo = new ArrayList<PermissionAttachmentInfo>(target.getEffectivePermissions());
         Collections.sort(attInfo, new Comparator<PermissionAttachmentInfo>() {

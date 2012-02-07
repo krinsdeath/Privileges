@@ -25,21 +25,6 @@ public class PermissionManager {
 
     public PermissionManager(Privileges plugin) {
         this.plugin = plugin;
-        Permission perm = new Permission("privileges.interact.*");
-        perm.setDefault(PermissionDefault.TRUE);
-        if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
-            plugin.getServer().getPluginManager().addPermission(perm);
-        }
-        for (Material m : Material.values()) {
-            Permission p = new Permission("privileges.interact." + m.getId());
-            p.setDefault(PermissionDefault.TRUE);
-            p.setDescription("Interaction rights for the material/block: " + m.name());
-            if (plugin.getServer().getPluginManager().getPermission(p.getName()) == null) {
-                perm.getChildren().put(p.getName(), true);
-                plugin.getServer().getPluginManager().addPermission(p);
-            }
-        }
-        perm.recalculatePermissibles();
     }
 
     public void reload() {
@@ -63,7 +48,9 @@ public class PermissionManager {
             return;
         }
         // clear the attachment
-        attachment.getPermissions().clear();
+        for (String node : attachment.getPermissions().keySet()) {
+            attachment.unsetPermission(node);
+        }
         // iterate through the player's groups, and add them to a list
         String group = plugin.getUserNode(player).getString("group", plugin.getConfig().getString("default_group", null));
         List<String> groups = calculateGroupTree(group, "");
@@ -119,7 +106,7 @@ public class PermissionManager {
         return tree;
     }
 
-    final protected void unregisterPlayer(String player) {
+    public void unregisterPlayer(String player) {
         if (players.containsKey(player)) {
             PermissionAttachment att = perms.get(player); // stupid, this reference has to exist to unset permissions on reload :|
             if (att == null) {
@@ -136,13 +123,13 @@ public class PermissionManager {
         }
     }
 
-    final protected void disable() {
+    public void disable() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             unregisterPlayer(player.getName());
         }
     }
 
-    protected void updatePlayerWorld(String player, String world) {
+    public void updatePlayerWorld(String player, String world) {
         if (players.containsKey(player)) {
             String w = players.get(player);
             if (!world.equals(w)) {
@@ -216,13 +203,18 @@ public class PermissionManager {
     }
 
     private void attachNode(PermissionAttachment attachment, String node) {
-        String debug = NEGATIVE.matcher(node).replaceAll("$1");
+        boolean val;
+        String debug;
         if (node.startsWith("-")) {
-            attachment.setPermission(NEGATIVE.matcher(node).replaceAll("$1"), false);
+            val = false;
+            debug = node.substring(1);
+            attachment.setPermission(debug, false);
         } else {
+            val = true;
+            debug = node;
             attachment.setPermission(node, true);
         }
-        debug = (attachment.getPermissible().isPermissionSet(debug) ? "overriding " : "setting ") + debug + " to " + attachment.getPermissible().hasPermission(debug);
+        debug = "setting " + debug + " to " + val;
         plugin.debug(debug);
     }
 

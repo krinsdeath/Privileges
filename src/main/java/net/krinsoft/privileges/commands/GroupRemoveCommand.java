@@ -31,7 +31,7 @@ public class GroupRemoveCommand extends GroupCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         if (groupManager.getDefaultGroup().equals(groupManager.getGroup(args.get(0)))) {
-            sender.sendMessage("You can't delete the default group.");
+            sender.sendMessage(ChatColor.RED + "You can't delete the default group.");
             return;
         }
         Group group = groupManager.getGroup(args.get(0));
@@ -39,30 +39,27 @@ public class GroupRemoveCommand extends GroupCommand {
             sender.sendMessage("No such group exists.");
             return;
         }
-        if (group.getRank() >= groupManager.getRank(sender) && !sender.hasPermission("privileges.self.edit")) {
-            sender.sendMessage("Your rank is too low to do that.");
+        if (!groupManager.checkRank(sender, group.getRank())) {
+            sender.sendMessage(ChatColor.RED + "That rank is too high for you.");
             return;
         }
-        if (args.size() == 2 && args.get(1).equalsIgnoreCase("--safe")) {
-            for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
-                if (plugin.getUserNode(user).getString("group").equals(group.getName())) {
-                    plugin.getUsers().set("users." + user + ".group", groupManager.getDefaultGroup().getName());
-                }
+        for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
+            if (plugin.getUserNode(user).getString("group").equals(group.getName())) {
+                plugin.getUserNode(user).set("group", groupManager.getDefaultGroup().getName());
             }
-            plugin.saveUsers();
-            for (String g : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
-                List<String> inherits = plugin.getGroupNode(g).getStringList("inheritance");
-                if (inherits.contains(group.getName())) {
-                    inherits.remove(group.getName());
-                    plugin.getGroupNode(g).set("inheritance", inherits);
-                }
+        }
+        plugin.saveUsers();
+        for (String g : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
+            List<String> inherit = plugin.getGroupNode(g).getStringList("inheritance");
+            if (inherit.contains(group.getName())) {
+                inherit.remove(group.getName());
+                plugin.getGroupNode(g).set("inheritance", inherit);
             }
         }
         plugin.getGroups().set("groups." + group.getName(), null);
         plugin.saveGroups();
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, group.getName()) + " has been removed.");
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
-        groupManager.removeGroup(group.getName());
     }
 
 }

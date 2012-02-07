@@ -3,33 +3,32 @@ groups:
     rank: 1
     permissions:
     - group.default
-    - privileges.check
+    - privileges.restricted
     worlds:
-      world: []
-      world_nether:
-      - -privileges.build
-      world_the_end: []
     inheritance: []
   user:
     rank: 2
     permissions:
     - group.user
-    - privileges.dump
-    worlds:
-      world: []
-      world_nether:
-      - privileges.build
+    - privileges.users
     inheritance:
     - default
-  admin:
+  mod:
     rank: 3
     permissions:
-    - group.admin
-    - privileges.promote
+    - group.mod
+    - privileges.mods
     inheritance:
     - user
-  owner:
+  admin:
     rank: 4
+    permissions:
+    - group.admin
+    - privileges.admins
+    inheritance:
+    - mod
+  owner:
+    rank: 100
     permissions:
     - group.owner
     - privileges.self.edit

@@ -10,17 +10,19 @@ import java.util.List;
  *
  * @author krinsdeath
  */
+@SuppressWarnings("unused")
 public class RankedGroup implements Group {
-    protected static Privileges plugin;
-
     // the name of this group
     private String name;
     // this group's rank
     private int rank;
     // this group's inheritance tree, as strings
     private List<String> tree;
+    
+    private Privileges plugin;
 
-    public RankedGroup(String name, int rank, List<String> tree) {
+    public RankedGroup(Privileges plugin, String name, int rank, List<String> tree) {
+        this.plugin = plugin;
         this.name = name;
         this.rank = rank;
         this.tree = tree;
@@ -61,6 +63,26 @@ public class RankedGroup implements Group {
             nodes = plugin.calculateNodeList(name, world);
         }
         return nodes.contains(node);
+    }
+    
+    @Override
+    public String toString() {
+        return "RankedGroup{name=" + this.name + "}@" + this.tree.toString().hashCode();
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7 * 19 + this.toString().hashCode();
+        hash = hash * 19 + this.tree.size();
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) { return true; }
+        if (this.getClass() != that.getClass()) { return false; }
+        RankedGroup group = (RankedGroup) that;
+        return this.toString().equals(group.toString());
     }
 
 }

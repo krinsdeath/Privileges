@@ -10,26 +10,33 @@ commands:
       - priv
       # /priv check
       - pc
+      # /priv list
+      - plist
       # /priv group*
       - pg
-      - pgc
-      - pgr
-      # /priv group perm*
       - pgp
-      - pgps
-      - pgpr
       # /priv user*
       - pu
-      # /priv user perm*
       - pup
-      - pups
-      - pupr
     description: The commands for manipulating player permissions
     usage: /<command> [section] [options]...
+  plist:
+    description: Lists all nodes for the specified user.
+    permission: privileges.list
+    usage: /<command> [player] [page]
+  pinfo:
+    aliases: [pi]
+    description: Shows miscellaneous info about the given user
+    permission: privileges.info
+    usage: /<command> [player]
   promote:
     description: Promotes the specified player to the next higher rank
     permission: privileges.promote
     usage: /<command> [player]
+  pgl:
+    description: Lists all available groups.
+    permission: privileges.group.list
+    usage: /<command>
   pgs:
     description: Sets the specified player's group
     permission: privileges.group.set
@@ -50,10 +57,6 @@ commands:
     description: Removes the specified permission from the given group
     permission: privileges.group.perm.remove
     usage: /<command> [group] [node]
-  pui:
-    description: Shows miscellaneous info about the given user
-    permission: privileges.user.info
-    usage: /<command> [player]
   pupr:
     description: Removes the specified permission from the given user
     permission: privileges.user.perm.remove
@@ -63,17 +66,49 @@ commands:
     permission: privileges.user.perm.set
     usage: /<command> [player] [node] [true|false]
   help:
+    aliases: [h]
     description: Displays help for available commands
     permission: privileges.help
     usage: /<command> [page]
-
 permissions:
   privileges.build:
     description: Determines whether or not a player can build.
-    default: true
   privileges.interact:
     description: Determines whether or not a player can interact with the game objects.
-    default: true
+  privileges.list.other:
+    description: Allows viewing other peoples permissions node lists.
+  privileges.check.other:
+    description: Allows checking whether a node is set on another user.
   privileges.self.edit:
     description: Allows any user with this node to edit any permission they want, regardless of rank.
     default: false
+  privileges.restricted:
+    description: A set of nodes that restrict a user from interacting and building
+    children:
+      privileges.build: false
+      privileges.interact: false
+  privileges.users:
+    description: A set of nodes for the typical user
+    children:
+      privileges.build: true
+      privileges.check: true
+      privileges.help: true
+      privileges.info: true
+      privileges.interact: true
+      privileges.list: true
+      privileges.version: true
+  privileges.mods:
+    description: A set of nodes useful for a typical moderator
+    children:
+      privileges.check.other: true
+      privileges.debug: true
+      privileges.group.list: true
+      privileges.info.other: true
+      privileges.list.other: true
+      privileges.promote: true
+      privileges.reload: true
+  privileges.admins:
+    description: Sets all user and group permission editing nodes.
+    children:
+      privileges.group.*: true
+      privileges.user.*: true

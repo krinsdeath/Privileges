@@ -1,5 +1,6 @@
-package net.krinsoft.privileges;
+package net.krinsoft.privileges.listeners;
 
+import net.krinsoft.privileges.Privileges;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,7 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
  * @author krinsdeath
  */
 @SuppressWarnings("unused")
-class BlockListener implements Listener {
+public class BlockListener implements Listener {
     private Privileges plugin;
 
     public BlockListener(Privileges plugin) {

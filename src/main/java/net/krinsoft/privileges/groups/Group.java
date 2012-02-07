@@ -6,6 +6,7 @@ import java.util.List;
  *
  * @author krinsdeath 
  */
+@SuppressWarnings("unused")
 public interface Group {
 
     // Returns a list containing all groups in this group's inheritance tree

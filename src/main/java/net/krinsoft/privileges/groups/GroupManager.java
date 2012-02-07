@@ -3,7 +3,6 @@ package net.krinsoft.privileges.groups;
 import java.util.*;
 
 import net.krinsoft.privileges.Privileges;
-import net.krinsoft.privileges.events.GroupChangeEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -14,7 +13,6 @@ import org.bukkit.permissions.Permission;
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class GroupManager {
     private Privileges plugin;
     private String DEFAULT;
@@ -24,11 +22,13 @@ public class GroupManager {
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
-        RankedGroup.plugin = plugin;
         this.DEFAULT = plugin.getConfig().getString("default_group", "default");
         for (String group : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
             Group g = getGroup(group);
-            if (g == null) { continue; }
+            if (g == null) {
+                plugin.getGroups().set("groups." + group, null);
+                continue;
+            }
             if (promotion.get(g.getRank()) != null) {
                 plugin.debug("Duplicate rank found! " + group + "->" + promotion.get(g.getRank()));
             }
@@ -40,6 +40,18 @@ public class GroupManager {
         return getGroup(this.DEFAULT);
     }
 
+    public boolean checkRank(CommandSender sender, CommandSender target) {
+        return getRank(sender) >= getRank(target) || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
+    }
+    
+    public boolean checkRank(CommandSender sender, int rank) {
+        return getRank(sender) >= rank || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
+    }
+    
+    public boolean isRankTaken(int rank) {
+        return promotion.get(rank) != null;
+    }
+    
     /**
      * Promotes the specified player to the next higher ranked group
      * @param sender The CommandSender issuing the promotion
@@ -78,26 +90,22 @@ public class GroupManager {
     }
 
     /**
-     *
-     * Removes all groups from the specified player.
-     * @param player
-     * The player whose groups we're removing
-     */
-    public void removePlayer(String player) {
-        this.players.remove(player);
-    }
-
-    /**
      * Gets the specified sender's rank
      * @param sender The sender (player or console) to get
      * @return the sender's group rank, 2^32-1 for console, or 0 for unknown
      */
     public int getRank(CommandSender sender) {
-        if (sender instanceof Player) {
-            return players.get(sender.getName()).getRank();
-        } else if (sender instanceof ConsoleCommandSender) {
-            return Integer.MAX_VALUE;
-        } else {
+        try {
+            if (sender instanceof Player) {
+                return getGroup((Player)sender).getRank();
+            } else if (sender instanceof ConsoleCommandSender) {
+                return Integer.MAX_VALUE;
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            plugin.warn("An exception was thrown while fetching a group rank; check groups.yml.");
+            plugin.warn("Defaulting to 0: " + e.getLocalizedMessage());
             return 0;
         }
     }
@@ -121,8 +129,6 @@ public class GroupManager {
         // reload the permissions
         plugin.getPermissionManager().registerPlayer(player);
 
-        // throw a group change event to let other plugins know of the change
-        plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(getGroup(group), plugin.getServer().getPlayer(player)));
     }
 
     /**
@@ -135,7 +141,7 @@ public class GroupManager {
         try {
             plugin.debug("-> trying Group.getName() for '" + group + "'");
             createGroup(group).getName();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             plugin.debug("Group.getName() for '" + group + "' was null.");
             return null;
         }
@@ -148,7 +154,6 @@ public class GroupManager {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (players.get(player.getName()).equals(g)) {
                 players.put(player.getName(), getDefaultGroup());
-                plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(getDefaultGroup(), player));
             }
         }
         plugin.getPermissionManager().reload();
@@ -163,7 +168,7 @@ public class GroupManager {
     public Group getGroup(Player player) {
         try {
             return players.get(player.getName());
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -177,7 +182,7 @@ public class GroupManager {
                 return null;
             }
             List<String> tree = plugin.getPermissionManager().calculateGroupTree(group, "");
-            groupList.put(group.toLowerCase(), new RankedGroup(group, plugin.getGroupNode(group).getInt("rank", 1), tree));
+            groupList.put(group.toLowerCase(), new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
             perm.setDescription("A permission node that relates directly to the group: " + group);
             if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {

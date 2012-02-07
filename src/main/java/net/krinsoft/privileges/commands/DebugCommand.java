@@ -25,10 +25,14 @@ public class DebugCommand extends PrivilegesCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (args.isEmpty()) {
-            plugin.toggleDebug("--flip");
-        } else {
-            plugin.toggleDebug(args.get(0));
+        try {
+            if (args.isEmpty()) {
+                plugin.toggleDebug();
+            } else {
+                plugin.toggleDebug(Boolean.parseBoolean(args.get(0)));
+            }
+        } catch (Exception e) {
+            plugin.debug("Invalid argument.");
         }
     }
 

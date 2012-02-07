@@ -20,5 +20,24 @@ public abstract class GroupPermCommand extends GroupCommand {
 
     @Override
     public abstract void runCommand(CommandSender sender, List<String> args);
+    
+    public String[] validateParam(String param) {
+        String[] thing = new String[2];
+        if (param.contains(":")) {
+            try {
+                thing[0] = param.split(":")[0];
+                thing[1] = param.split(":")[1];
+                if (plugin.getServer().getWorld(thing[0]) == null) {
+                    return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        } else {
+            thing[0] = null;
+            thing[1] = param;
+        }
+        return thing;
+    }
 
 }

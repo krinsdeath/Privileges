@@ -1,7 +1,9 @@
-package net.krinsoft.privileges;
+package net.krinsoft.privileges.listeners;
 
+import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,7 +14,7 @@ import org.bukkit.event.player.*;
  * @author krinsdeath
  */
 @SuppressWarnings("unused")
-class PlayerListener implements Listener {
+public class PlayerListener implements Listener {
 
     private Privileges plugin;
 
@@ -38,9 +40,14 @@ class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void playerInteract(PlayerInteractEvent event) {
         if (event.isCancelled()) { return; }
+        Player p = event.getPlayer();
         Block b = event.getClickedBlock();
-        if (!event.getPlayer().hasPermission("privileges.interact") || (b != null && !event.getPlayer().hasPermission("privileges.interact." + b.getTypeId()))) {
-            event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that!");
+        if (!p.hasPermission("privileges.interact")) {
+            p.sendMessage(ChatColor.RED + "You do not have permission to interact with things!");
+            event.setCancelled(true);
+        }
+        if (b != null && p.isPermissionSet("privileges.interact." + b.getTypeId()) && !p.hasPermission("privileges.interact." + b.getTypeId())) {
+            p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + b.getType().name());
             event.setCancelled(true);
         }
     }

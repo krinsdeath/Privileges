@@ -4,6 +4,8 @@ import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
+import net.krinsoft.privileges.listeners.BlockListener;
+import net.krinsoft.privileges.listeners.PlayerListener;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -92,7 +94,6 @@ public class Privileges extends JavaPlugin {
     }
     
     public void registerPermissions() {
-        if (this.permissionManager != null) { this.permissionManager.disable(); }
         this.permissionManager = new PermissionManager(this);
         this.groupManager = new GroupManager(this);
         this.permissionManager.reload();
@@ -132,6 +133,10 @@ public class Privileges extends JavaPlugin {
             getConfig().set("debug", false);
             saveConfig();
         }
+        if (getConfig().get("help.hide_noperms") == null) {
+            getConfig().set("help.hide_noperms", true);
+            saveConfig();
+        }
         debug = getConfig().getBoolean("debug", false);
     }
 
@@ -150,35 +155,40 @@ public class Privileges extends JavaPlugin {
     private void registerCommands() {
         PermissionHandler permissionHandler = new PermissionHandler();
         commandHandler = new CommandHandler(this, permissionHandler);
-        commandHandler.registerCommand(new ReloadCommand(this));
-        commandHandler.registerCommand(new VersionCommand(this));
-        commandHandler.registerCommand(new DebugCommand(this));
-        commandHandler.registerCommand(new ListCommand(this));
+        // miscellaneous commands
         commandHandler.registerCommand(new CheckCommand(this));
+        commandHandler.registerCommand(new DebugCommand(this));
         commandHandler.registerCommand(new HelpCommand(this));
+        commandHandler.registerCommand(new InfoCommand(this));
+        commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new PromoteCommand(this));
+        commandHandler.registerCommand(new ReloadCommand(this));
+        commandHandler.registerCommand(new SaveCommand(this));
+        commandHandler.registerCommand(new VersionCommand(this));
+        // group related commands
         commandHandler.registerCommand(new GroupCreateCommand(this));
         commandHandler.registerCommand(new GroupRemoveCommand(this));
+        commandHandler.registerCommand(new GroupRenameCommand(this));
         commandHandler.registerCommand(new GroupSetCommand(this));
-        commandHandler.registerCommand(new GroupShowCommand(this));
+        commandHandler.registerCommand(new GroupListCommand(this));
         commandHandler.registerCommand(new GroupPermSetCommand(this));
         commandHandler.registerCommand(new GroupPermRemoveCommand(this));
+        // user related commands
         commandHandler.registerCommand(new UserPermSetCommand(this));
         commandHandler.registerCommand(new UserPermRemoveCommand(this));
-        commandHandler.registerCommand(new UserInfoCommand(this));
+        commandHandler.registerCommand(new UserResetCommand(this));
     }
 
     public ConfigurationSection getUserNode(String player) {
-        if (getUsers().getConfigurationSection("users." + player) == null) {
-            FileConfiguration c = getUsers();
+        if (getUsers().getConfigurationSection("users." + player) == null || getUsers().getString("users." + player + ".group") == null) {
             String path = "users." + player;
-            c.set(path + ".permissions", null);
-            c.set(path + ".group", getConfig().getString("default_group", "default"));
+            getUsers().set(path + ".group", getConfig().getString("default_group", "default"));
+            getUsers().set(path + ".permissions", null);
             for (World w : getServer().getWorlds()) {
-                c.set(path + ".worlds." + w.getName(), null);
+                getUsers().set(path + ".worlds." + w.getName(), null);
             }
             saveUsers();
-            debug("Empty user node for '" + player + "' created.");
+            debug("New user node for '" + player + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
         }
         return getUsers().getConfigurationSection("users." + player);
     }
@@ -238,7 +248,12 @@ public class Privileges extends JavaPlugin {
         message = "[" + this + "] " + message;
         LOGGER.info(message);
     }
-
+    
+    public void warn(String message) {
+        message = "[" + this + "] " + message;
+        LOGGER.warning(message);
+    }
+    
     public void debug(String message) {
         if (debug) {
             message = "[" + this + "] [Debug] " + message;
@@ -246,12 +261,13 @@ public class Privileges extends JavaPlugin {
         }
     }
 
-    public void toggleDebug(String flip) {
-        if (flip.equals("--flip")) {
-            debug = !debug;
-        } else {
-            debug = Boolean.valueOf(flip);
-        }
+    public void toggleDebug(boolean val) {
+        debug = !val;
+        toggleDebug();
+    }
+    
+    public void toggleDebug() {
+        debug = !debug;
         getConfig().set("debug", debug);
         saveConfig();
         info("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
