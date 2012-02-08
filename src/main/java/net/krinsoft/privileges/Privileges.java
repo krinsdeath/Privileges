@@ -30,7 +30,6 @@ public class Privileges extends JavaPlugin {
 
     private final static Logger LOGGER = Logger.getLogger("Privileges");
     private boolean debug = false;
-    public static Privileges instance;
 
     // managers and handlers
     private PermissionManager permissionManager;
@@ -41,11 +40,6 @@ public class Privileges extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
-        if (!validateCommandHandler()) {
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
         registerConfiguration();
         performImports();
         registerPermissions();
@@ -75,24 +69,6 @@ public class Privileges extends JavaPlugin {
         return commandHandler.locateAndRunCommand(sender, allArgs);
     }
 
-    private boolean validateCommandHandler() {
-        double chVersion = 1;
-        try {
-            commandHandler = new CommandHandler(this, null);
-            if (this.commandHandler.getVersion() >= chVersion) {
-                return true;
-            } else {
-                LOGGER.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
-                LOGGER.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
-                return false;
-            }
-        } catch (Throwable t) {
-            LOGGER.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
-            LOGGER.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
-            return false;
-        }
-    }
-    
     public void registerPermissions() {
         this.permissionManager = new PermissionManager(this);
         this.groupManager = new GroupManager(this);
