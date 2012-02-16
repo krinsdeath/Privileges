@@ -35,6 +35,7 @@ public class Privileges extends JavaPlugin {
     private PermissionManager permissionManager;
     private GroupManager groupManager;
     private CommandHandler commandHandler;
+    private FileConfiguration config;
     private FileConfiguration users;
     private FileConfiguration groups;
 
@@ -62,6 +63,14 @@ public class Privileges extends JavaPlugin {
     }
 
     @Override
+    public FileConfiguration getConfig() {
+        if (config == null) {
+            config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+        }
+        return config;
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> allArgs = new ArrayList<String>();
         allArgs.addAll(Arrays.asList(args));
@@ -77,6 +86,7 @@ public class Privileges extends JavaPlugin {
 
     public void registerConfiguration(boolean val) {
         if (val) {
+            config = null;
             users = null;
             groups = null;
             registerConfiguration();
@@ -84,33 +94,38 @@ public class Privileges extends JavaPlugin {
     }
     
     public void registerConfiguration() {
+        getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/config")));
+        if (!new File(getDataFolder(), "config.yml").exists()) {
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        }
+
         getUsers().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/users.yml")));
         if (!new File(getDataFolder(), "users.yml").exists()) {
             getUsers().options().copyDefaults(true);
+            saveUsers();
         }
-        saveUsers();
-        
+
         getGroups().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/groups.yml")));
         if (!new File(getDataFolder(), "groups.yml").exists()) {
+            groups.options().header(
+                    "Group ranks determine the order they are promoted in.\n" +
+                            "Lowest rank is 1, highest rank is 2,147,483,647.\n" +
+                            "Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration\n" +
+                            "World nodes override global nodes for that group\n" +
+                            "Inherited groups are calculated first. Each group in the tree overrides any nodes\n" +
+                            "from the previous group.");
             getGroups().options().copyDefaults(true);
+            saveGroups();
         }
-        groups.options().header(
-                "Group ranks determine the order they are promoted in.\n" +
-                        "Lowest rank is 1, highest rank is 2,147,483,647.\n" +
-                        "Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration\n" +
-                        "World nodes override global nodes for that group\n" +
-                        "Inherited groups are calculated first. Each group in the tree overrides any nodes\n" +
-                        "from the previous group.");
-        saveGroups();
 
-        getConfig();
         if (getConfig().get("default_group") == null) {
             getConfig().set("default_group", "default");
             getConfig().set("debug", false);
             saveConfig();
         }
         if (getConfig().get("help.hide_noperms") == null) {
-            getConfig().set("help.hide_noperms", true);
+            getConfig().set("help.hide_noperms", false);
             saveConfig();
         }
         debug = getConfig().getBoolean("debug", false);
