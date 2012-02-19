@@ -29,6 +29,8 @@ public class SaveCommand extends PrivilegesCommand {
         plugin.saveUsers();
         plugin.saveGroups();
         plugin.saveConfig();
-        sender.sendMessage(ChatColor.GREEN + "All config files saved. (" + ChatColor.AQUA + (System.currentTimeMillis() - t) + ChatColor.GREEN + "ms)");
+        t = System.currentTimeMillis() - t;
+        sender.sendMessage(ChatColor.GREEN + "All config files saved. (" + ChatColor.AQUA + t + ChatColor.GREEN + "ms)");
+        plugin.log(">> " + sender.getName() + ": All config files saved. (" + t + "ms)");
     }
 }

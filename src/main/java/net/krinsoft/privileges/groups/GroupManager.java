@@ -47,7 +47,12 @@ public class GroupManager {
     public boolean checkRank(CommandSender sender, int rank) {
         return getRank(sender) >= rank || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
     }
-    
+
+    /**
+     * Checks if the specified rank is already taken
+     * @param rank The rank to check
+     * @return true if the rank is taken, otherwise false
+     */
     public boolean isRankTaken(int rank) {
         return promotion.get(rank) != null;
     }
@@ -72,6 +77,30 @@ public class GroupManager {
         }
         if (rank < send) {
             setGroup(player.getName(), promotion.get(rank));
+            return getRank(player);
+        } else {
+            sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
+            return -1;
+        }
+    }
+
+    public int demote(CommandSender sender, Player player) {
+        int send = getRank(sender);
+        int rank = getRank(player);
+        if (rank >= send) {
+            sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
+            return -1;
+        }
+        int last = getDefaultGroup().getRank();
+        for (Integer i : promotion.keySet()) {
+            plugin.debug("Rank iteration... " + i);
+            if (i == rank) { break; }
+            last = i;
+        }
+        if (last < send) {
+            if (last != rank) {
+                setGroup(player.getName(), promotion.get(last));
+            }
             return getRank(player);
         } else {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");

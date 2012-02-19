@@ -27,7 +27,9 @@ public class ReloadCommand extends PrivilegesCommand {
         long t = System.currentTimeMillis();
         plugin.registerConfiguration(true);
         plugin.registerPermissions();
-        sender.sendMessage(ChatColor.GREEN + "Privileges has been reloaded. (" + (System.currentTimeMillis() - t) + "ms)");
+        t = System.currentTimeMillis() - t;
+        sender.sendMessage(ChatColor.GREEN + "Privileges has been reloaded. (" + t + "ms)");
+        plugin.log(">> " + sender.getName() + ": Privileges has been reloaded. (" + t + "ms)");
     }
 
 }

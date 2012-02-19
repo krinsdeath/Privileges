@@ -65,6 +65,7 @@ public class UserPermRemoveCommand extends UserPermCommand {
         plugin.saveUsers();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from " + user + (world == null ? "" : " on " + ChatColor.GREEN + world));
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + node + "' has been removed.");
     }
 
 }

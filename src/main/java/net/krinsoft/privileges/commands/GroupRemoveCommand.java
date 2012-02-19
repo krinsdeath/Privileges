@@ -16,11 +16,10 @@ public class GroupRemoveCommand extends GroupCommand {
     public GroupRemoveCommand(Privileges plugin) {
         super(plugin);
         this.setName("Privileges: Group Remove");
-        this.setCommandUsage("/privileges group remove [group] [--safe]");
+        this.setCommandUsage("/privileges group remove [group]");
         this.addCommandExample("/pgr ? -- show command help");
-        this.addCommandExample("/pgr user --safe -- removes the 'user' group and deletes all inheritance references, and sets all users with this group to the default group");
-        this.addCommandExample("/pgr admin -- deletes the admin group, but leaves any inheritance and user references");
-        this.setArgRange(1, 2);
+        this.addCommandExample("/pgr user -- removes the 'user' group and deletes all inheritance references, and sets all users with this group to the default group");
+        this.setArgRange(1, 1);
         this.addKey("privileges group remove");
         this.addKey("priv group remove");
         this.addKey("pg remove");
@@ -46,6 +45,7 @@ public class GroupRemoveCommand extends GroupCommand {
         for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
             if (plugin.getUserNode(user).getString("group").equals(group.getName())) {
                 plugin.getUserNode(user).set("group", groupManager.getDefaultGroup().getName());
+                plugin.debug("Set " + user + "'s group to default");
             }
         }
         plugin.saveUsers();
@@ -54,12 +54,14 @@ public class GroupRemoveCommand extends GroupCommand {
             if (inherit.contains(group.getName())) {
                 inherit.remove(group.getName());
                 plugin.getGroupNode(g).set("inheritance", inherit);
+                plugin.debug("Removed inheritance entry for group " + g);
             }
         }
         plugin.getGroups().set("groups." + group.getName(), null);
         plugin.saveGroups();
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, group.getName()) + " has been removed.");
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+        plugin.log(">> " + sender.getName() + ": Removed group '" + group.getName() + "'");
     }
 
 }

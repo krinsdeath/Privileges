@@ -39,6 +39,6 @@ public class UserResetCommand extends PrivilegesCommand {
         plugin.saveUsers();
         plugin.getPermissionManager().registerPlayer(p.getName());
         sender.sendMessage(ChatColor.GREEN + "The user '" + p.getName() + "' has been reset to default.");
-        plugin.log(p.getName() + " has been reset by " + sender.getName());
+        plugin.log(">> " + sender.getName() + ": " + p.getName() + " has been reset.");
     }
 }

@@ -94,7 +94,7 @@ public class Privileges extends JavaPlugin {
     }
     
     public void registerConfiguration() {
-        getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/config")));
+        getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/config.yml")));
         if (!new File(getDataFolder(), "config.yml").exists()) {
             getConfig().options().copyDefaults(true);
             saveConfig();
@@ -132,7 +132,8 @@ public class Privileges extends JavaPlugin {
     }
 
     private void performImports() {
-        new ImportManager(this);
+        // broken until I can improve it
+        //new ImportManager(this);
     }
 
     private void registerEvents() {
@@ -147,13 +148,16 @@ public class Privileges extends JavaPlugin {
         PermissionHandler permissionHandler = new PermissionHandler();
         commandHandler = new CommandHandler(this, permissionHandler);
         // miscellaneous commands
+        commandHandler.registerCommand(new BackupCommand(this));
         commandHandler.registerCommand(new CheckCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
+        commandHandler.registerCommand(new DemoteCommand(this));
         commandHandler.registerCommand(new HelpCommand(this));
         commandHandler.registerCommand(new InfoCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new PromoteCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));
+        commandHandler.registerCommand(new RestoreCommand(this));
         commandHandler.registerCommand(new SaveCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
         // group related commands

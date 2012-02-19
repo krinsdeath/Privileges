@@ -79,6 +79,7 @@ public class RankedGroup implements Group {
     
     @Override
     public boolean equals(Object that) {
+        if (that == null) { return false; }
         if (this == that) { return true; }
         if (this.getClass() != that.getClass()) { return false; }
         RankedGroup group = (RankedGroup) that;

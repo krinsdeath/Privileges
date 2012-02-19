@@ -59,6 +59,6 @@ public class GroupRenameCommand extends GroupCommand {
         }
         plugin.registerPermissions();
         sender.sendMessage("'" + colorize(ChatColor.GREEN, o) + "' has been renamed to '" + colorize(ChatColor.GREEN, n) + "'");
-        plugin.log(sender.getName() + " has renamed the group '" + o + "' to '" + n + "'");
+        plugin.log(">> " + sender.getName() + ": Renamed group '" + o + "' -> '" + n + "'");
     }
 }

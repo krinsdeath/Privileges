@@ -1,0 +1,46 @@
+package net.krinsoft.privileges.commands;
+
+import net.krinsoft.privileges.Privileges;
+import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.PermissionDefault;
+
+import java.io.File;
+import java.util.List;
+
+/**
+ * @author krinsdeath
+ */
+public class BackupCommand extends PrivilegesCommand {
+
+    public BackupCommand(Privileges plugin) {
+        super(plugin);
+        setName("Privileges: Backup");
+        setCommandUsage("priv backup");
+        setArgRange(0, 1);
+        addKey("privileges backup");
+        addKey("priv backup");
+        setPermission("privileges.backup", "Backs up Privileges' config files.", PermissionDefault.OP);
+    }
+
+    @Override
+    public void runCommand(CommandSender sender, List<String> args) {
+        String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
+        backup = backup.replaceAll("[\\s./\\\\]", "");
+        try {
+            File folder = new File("plugins/Privileges/backups/" + backup);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            plugin.getConfig().save(new File(folder, "config.yml"));
+            plugin.getUsers().save(new File(folder, "users.yml"));
+            plugin.getGroups().save(new File(folder, "groups.yml"));
+        } catch (Exception e) {
+            plugin.warn("An error occurred while backing the config files up.");
+            plugin.warn(e.getLocalizedMessage());
+            return;
+        }
+        sender.sendMessage("Privileges has been backed up.");
+        plugin.log(">> " + sender.getName() + ": Privileges config files have been backed up to 'plugins/Privileges/backups/" + backup + "'.");
+    }
+
+}

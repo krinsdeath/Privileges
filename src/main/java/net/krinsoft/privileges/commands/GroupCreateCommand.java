@@ -45,7 +45,7 @@ public class GroupCreateCommand extends GroupCommand {
             return;
         }
         // make sure the rank is not already taken
-        if (!groupManager.isRankTaken(rank)) {
+        if (groupManager.isRankTaken(rank)) {
             sender.sendMessage(ChatColor.RED + "A group with that rank already exists.");
             return;
         }
@@ -55,14 +55,14 @@ public class GroupCreateCommand extends GroupCommand {
             return;
         }
         // alright, group name is unique and rank isn't used!
-        groups.set("groups." + args.get(0) + ".rank", rank);
-        groups.set("groups." + args.get(0) + ".permissions", null);
-        groups.set("groups." + args.get(0) + ".worlds", null);
-        groups.set("groups." + args.get(0) + ".inheritance", null);
+        groups.set(args.get(0) + ".rank", rank);
+        groups.set(args.get(0) + ".permissions", null);
+        groups.set(args.get(0) + ".worlds", null);
+        groups.set(args.get(0) + ".inheritance", null);
         plugin.saveGroups();
         plugin.getGroupManager().getGroup(args.get(0));
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, args.get(0)) + " has been created.");
-        plugin.log(sender.getName() + " created the group '" + args.get(0) + "'");
+        plugin.log(">> " + sender.getName() + ": Created group '" + args.get(0) + "'");
     }
 
 }

@@ -33,6 +33,10 @@ commands:
     description: Promotes the specified player to the next higher rank
     permission: privileges.promote
     usage: /<command> [player]
+  demote:
+    description: Demotes the specified player to the next lowest rank
+    permission: privileges.demote
+    usage: /<command> [player]
   pgl:
     description: Lists all available groups.
     permission: privileges.group.list
@@ -73,8 +77,10 @@ commands:
 permissions:
   privileges.build:
     description: Determines whether or not a player can build.
+    default: true
   privileges.interact:
     description: Determines whether or not a player can interact with the game objects.
+    default: true
   privileges.list.other:
     description: Allows viewing other peoples permissions node lists.
   privileges.check.other:

@@ -74,7 +74,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
-        plugin.log(sender.getName() + " set " + node + " to " + val + " for '" + group.getName() + "'");
+        plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' is now '" + val + "'");
     }
 
 }
