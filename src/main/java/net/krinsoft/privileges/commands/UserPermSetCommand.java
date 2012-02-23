@@ -20,7 +20,7 @@ public class UserPermSetCommand extends UserPermCommand {
         this.setCommandUsage("/privileges user perm set [user] [world:]node [val]");
         this.addCommandExample("/priv user perm set Player example.node true");
         this.addCommandExample("/pups Player world:example.node false");
-        this.setArgRange(3, 3);
+        this.setArgRange(2, 3);
         this.addKey("privileges user perm set");
         this.addKey("priv user perm set");
         this.addKey("pu perm set");
@@ -36,44 +36,41 @@ public class UserPermSetCommand extends UserPermCommand {
             sender.sendMessage("I don't know about that user.");
             return;
         }
-        String node = args.get(1);
-        String world = null;
-        boolean val = Boolean.valueOf(args.get(2));
-        if (node.contains(":")) {
+        String[] param = validateParam(args.get(1));
+        if (param == null) {
+            showHelp(sender);
+            return;
+        }
+        boolean val = true;
+        if (args.size() == 3) {
             try {
-                world = node.split(":")[0];
-                node = node.split(":")[1];
-                if (plugin.getServer().getWorld(world) == null) {
-                    sender.sendMessage("Invalid world.");
-                    return;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                sender.sendMessage("Invalid node string.");
+                val = Boolean.parseBoolean(args.get(2));
+            } catch (Exception e) {
+                sender.sendMessage(ChatColor.RED + "Value must be a boolean, true or false.");
                 return;
             }
         }
-        if (node.equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
+        if (param[0].equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
         }
         List<String> nodes;
-        if (world == null) {
+        if (param[1] == null) {
             nodes = plugin.getUserNode(user).getStringList("permissions");
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            nodes.add((val ? "" : "-") + node);
+            nodes.remove(param[0]);
+            nodes.remove("-" + param[0]);
+            nodes.add((val ? "" : "-") + param[0]);
             plugin.getUserNode(user).set("permissions", nodes);
         } else {
-            nodes = plugin.getUserNode(user).getStringList("worlds." + world);
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            nodes.add((val ? "" : "-") + node);
-            plugin.getUserNode(user).set("worlds." + world, nodes);
+            nodes = plugin.getUserNode(user).getStringList("worlds." + param[1]);
+            nodes.remove(param[0]);
+            nodes.remove("-" + param[0]);
+            nodes.add((val ? "" : "-") + param[0]);
+            plugin.getUserNode(user).set("worlds." + param[1], nodes);
         }
-        plugin.saveUsers();
-        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + user + (world == null ? "" : " on " + ChatColor.GREEN + world));
+        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
-        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + node + "' is now '" + val + "'");
+        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' is now '" + val + "'");
     }
 
 }

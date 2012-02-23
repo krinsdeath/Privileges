@@ -14,17 +14,21 @@ public class ReloadCommand extends PrivilegesCommand {
 
     public ReloadCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Reload");
-        this.setCommandUsage("/priv reload");
-        this.setArgRange(0, 0);
-        this.addKey("privileges reload");
-        this.addKey("priv reload");
-        this.setPermission("privileges.reload", "Allows this user to access '/priv reload'", PermissionDefault.OP);
+        setName("Privileges: Reload");
+        setCommandUsage("/priv reload");
+        setArgRange(0, 0);
+        addKey("privileges reload");
+        addKey("priv reload");
+        addKey("preload");
+        setPermission("privileges.reload", "Writes the current config file to disk, and then reloads all files and permissions.", PermissionDefault.OP);
     }
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         long t = System.currentTimeMillis();
+        plugin.saveGroups();
+        plugin.saveUsers();
+        plugin.saveConfig();
         plugin.registerConfiguration(true);
         plugin.registerPermissions();
         t = System.currentTimeMillis() - t;

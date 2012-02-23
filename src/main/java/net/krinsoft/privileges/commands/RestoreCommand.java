@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -15,10 +16,12 @@ public class RestoreCommand extends PrivilegesCommand {
     public RestoreCommand(Privileges plugin) {
         super(plugin);
         setName("Privileges: Restore");
-        setCommandUsage("priv restore [backup]");
+        setCommandUsage("/priv restore [backup]");
+        addCommandExample(ChatColor.GREEN + "/priv restore" + ChatColor.AQUA + " feb22 " + ChatColor.WHITE + "-- Restore the backup in the folder 'feb22'");
         setArgRange(0, 1);
         addKey("privileges restore");
         addKey("priv restore");
+        addKey("prestore");
         setPermission("privileges.restore", "Allows users to restore past privileges backups.", PermissionDefault.OP);
     }
 
@@ -28,7 +31,7 @@ public class RestoreCommand extends PrivilegesCommand {
         String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
         backup = backup.replaceAll("[\\s./\\\\]", "");
         try {
-            File folder = new File("plugins/Privileges/backups/" + backup);
+            File folder = new File("privbackups/" + backup);
             if (!folder.exists()) {
                 sender.sendMessage("There is no backup with that name.");
                 plugin.log(">> " + sender.getName() + ": Tried to restore a non-existent backup.");

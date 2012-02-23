@@ -20,6 +20,8 @@ public class GroupRenameCommand extends GroupCommand {
         setArgRange(2, 2);
         addKey("privileges group rename");
         addKey("priv group rename");
+        addKey("pgroup rename");
+        addKey("pgroup ren");
         addKey("pg rename");
         addKey("pg ren");
         setPermission("privileges.group.rename", "Allows this user to rename groups.", PermissionDefault.OP);
@@ -45,20 +47,17 @@ public class GroupRenameCommand extends GroupCommand {
                 plugin.getGroupNode(group).set("inheritance", inherit);
             }
         }
-        plugin.saveGroups();
         for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
             String group = plugin.getUserNode(user).getString("group");
             if (group.equalsIgnoreCase(o)) {
                 plugin.getUserNode(user).set("group", n);
             }
         }
-        plugin.saveUsers();
         if (groupManager.getGroup(o).equals(groupManager.getDefaultGroup())) {
             plugin.getConfig().set("default_group", n);
-            plugin.saveConfig();
         }
-        plugin.registerPermissions();
         sender.sendMessage("'" + colorize(ChatColor.GREEN, o) + "' has been renamed to '" + colorize(ChatColor.GREEN, n) + "'");
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
         plugin.log(">> " + sender.getName() + ": Renamed group '" + o + "' -> '" + n + "'");
     }
 }

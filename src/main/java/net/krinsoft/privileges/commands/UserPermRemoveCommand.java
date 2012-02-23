@@ -35,37 +35,26 @@ public class UserPermRemoveCommand extends UserPermCommand {
             sender.sendMessage("I don't know about that user.");
             return;
         }
-        String node = args.get(1);
-        String world = null;
-        if (node.contains(":")) {
-            try {
-                world = node.split(":")[0];
-                node = node.split(":")[1];
-                if (plugin.getServer().getWorld(world) == null) {
-                    sender.sendMessage("Invalid world.");
-                    return;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                sender.sendMessage("Invalid node string.");
-                return;
-            }
+        String[] param = validateParam(args.get(1));
+        if (param == null) {
+            showHelp(sender);
+            return;
         }
         List<String> nodes;
-        if (world == null) {
+        if (param[1] == null) {
             nodes = plugin.getUserNode(user).getStringList("permissions");
-            nodes.remove(node);
-            nodes.remove("-" + node);
+            nodes.remove(param[0]);
+            nodes.remove("-" + param[0]);
             plugin.getUserNode(user).set("permissions", nodes);
         } else {
-            nodes = plugin.getUserNode(user).getStringList("worlds." + world);
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            plugin.getUserNode(user).set("worlds." + world, nodes);
+            nodes = plugin.getUserNode(user).getStringList("worlds." + param[1]);
+            nodes.remove(param[0]);
+            nodes.remove("-" + param[0]);
+            plugin.getUserNode(user).set("worlds." + param[1], nodes);
         }
-        plugin.saveUsers();
-        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from " + user + (world == null ? "" : " on " + ChatColor.GREEN + world));
+        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' has been removed from " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
-        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + node + "' has been removed.");
+        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' has been removed.");
     }
 
 }

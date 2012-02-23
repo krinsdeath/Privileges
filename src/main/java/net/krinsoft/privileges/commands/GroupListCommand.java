@@ -20,7 +20,9 @@ public class GroupListCommand extends GroupCommand {
         setArgRange(0, 0);
         addKey("privileges group list");
         addKey("priv group list");
+        addKey("pgroup list");
         addKey("pg list");
+        addKey("pgroupl");
         addKey("pgl");
         setPermission("privileges.group.list", "Allows this user to list all groups", PermissionDefault.OP);
     }

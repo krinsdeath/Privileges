@@ -21,6 +21,7 @@ public class DemoteCommand extends GroupCommand {
         addKey("privileges demote");
         addKey("priv demote");
         addKey("demote");
+        addKey("dem");
         setPermission("privileges.demote", "Allows the sender to demote other users.", PermissionDefault.OP);
     }
 

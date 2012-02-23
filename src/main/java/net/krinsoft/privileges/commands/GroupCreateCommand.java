@@ -16,16 +16,17 @@ public class GroupCreateCommand extends GroupCommand {
 
     public GroupCreateCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Group Create");
-        this.setCommandUsage("/privileges group create [name] [rank]");
-        this.addCommandExample("/pgc ? -- show command help");
-        this.addCommandExample("/pgc admin 10 -- creates the 'admin' group at rank 10");
-        this.setArgRange(2, 2);
-        this.addKey("privileges group create");
-        this.addKey("priv group create");
-        this.addKey("pg create");
-        this.addKey("pgc");
-        this.setPermission("privileges.group.create", "Allows the user to create new groups.", PermissionDefault.OP);
+        setName("Privileges: Group Create");
+        setCommandUsage("/pg create [name] [rank]");
+        addCommandExample("/pgc admin 10 -- creates the 'admin' group at rank 10");
+        setArgRange(2, 2);
+        addKey("privileges group create");
+        addKey("priv group create");
+        addKey("pgroup create");
+        addKey("pg create");
+        addKey("pgroupc");
+        addKey("pgc");
+        setPermission("privileges.group.create", "Allows the user to create new groups.", PermissionDefault.OP);
     }
 
     @Override
@@ -59,9 +60,9 @@ public class GroupCreateCommand extends GroupCommand {
         groups.set(args.get(0) + ".permissions", null);
         groups.set(args.get(0) + ".worlds", null);
         groups.set(args.get(0) + ".inheritance", null);
-        plugin.saveGroups();
         plugin.getGroupManager().getGroup(args.get(0));
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, args.get(0)) + " has been created.");
+        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
         plugin.log(">> " + sender.getName() + ": Created group '" + args.get(0) + "'");
     }
 

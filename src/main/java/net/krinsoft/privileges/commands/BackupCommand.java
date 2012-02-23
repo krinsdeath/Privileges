@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -15,10 +16,12 @@ public class BackupCommand extends PrivilegesCommand {
     public BackupCommand(Privileges plugin) {
         super(plugin);
         setName("Privileges: Backup");
-        setCommandUsage("priv backup");
+        setCommandUsage("/priv backup [name]");
+        addCommandExample(ChatColor.GREEN + "/priv backup " + ChatColor.AQUA + "feb22 " + ChatColor.WHITE + "-- Backup to a folder called 'feb22'");
         setArgRange(0, 1);
         addKey("privileges backup");
         addKey("priv backup");
+        addKey("pbackup");
         setPermission("privileges.backup", "Backs up Privileges' config files.", PermissionDefault.OP);
     }
 
@@ -27,7 +30,7 @@ public class BackupCommand extends PrivilegesCommand {
         String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
         backup = backup.replaceAll("[\\s./\\\\]", "");
         try {
-            File folder = new File("plugins/Privileges/backups/" + backup);
+            File folder = new File("privbackups/" + backup);
             if (!folder.exists()) {
                 folder.mkdirs();
             }

@@ -3,7 +3,6 @@ package net.krinsoft.privileges;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
-import net.krinsoft.privileges.importer.ImportManager;
 import net.krinsoft.privileges.listeners.BlockListener;
 import net.krinsoft.privileges.listeners.PlayerListener;
 import org.bukkit.ChatColor;
@@ -147,12 +146,16 @@ public class Privileges extends JavaPlugin {
     private void registerCommands() {
         PermissionHandler permissionHandler = new PermissionHandler();
         commandHandler = new CommandHandler(this, permissionHandler);
+        // base & informational
+        commandHandler.registerCommand(new BaseCommand(this));
+        commandHandler.registerCommand(new GroupBaseCommand(this));
+        commandHandler.registerCommand(new GroupPermBaseCommand(this));
+        commandHandler.registerCommand(new UserBaseCommand(this));
         // miscellaneous commands
         commandHandler.registerCommand(new BackupCommand(this));
         commandHandler.registerCommand(new CheckCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
         commandHandler.registerCommand(new DemoteCommand(this));
-        commandHandler.registerCommand(new HelpCommand(this));
         commandHandler.registerCommand(new InfoCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new PromoteCommand(this));

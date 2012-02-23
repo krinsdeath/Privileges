@@ -5,75 +5,106 @@ version: maven-version-number
 load: startup
 
 commands:
+  ################
+  # BASE COMMAND #
+  ################
   privileges:
-    aliases:
-      - priv
-      # /priv check
-      - pc
-      # /priv list
-      - plist
-      # /priv group*
-      - pg
-      - pgp
-      # /priv user*
-      - pu
-      - pup
     description: The commands for manipulating player permissions
+    aliases: [priv]
     usage: /<command> [section] [options]...
+  ############################
+  # BACKUP & FILE MANAGEMENT #
+  ############################
+  pbackup:
+    description: Creates a snapshot of the current config files with the specified name.
+    usage: /<command> [backup]
+  prestore:
+    description: Restores a snapshot with the specified name.
+    usage: /<command> [backup]
+  psave:
+    description: Saves all of the Privileges config files.
+    usage: /<command>
+  pload:
+    description: Loads all of Privileges config files without first saving them.
+    usage: /<command>
+  preload:
+    description: Saves and reloads all of the Privileges config files.
+    usage: /<command>
+  ##########################
+  # GENERAL ADMINISTRATION #
+  ##########################
+  pdebug:
+    description: Toggles debug mode for additional information in the logger.
+    usage: /<command> [boolean]
+  pcheck: 
+    description: Checks the status of a permission node for yourself or the specified user.
+    aliases: [pc]
+    usage: /<command> [player] [node]
   plist:
     description: Lists all nodes for the specified user.
-    permission: privileges.list
+    aliases: [pl]
     usage: /<command> [player] [page]
   pinfo:
-    aliases: [pi]
     description: Shows miscellaneous info about the given user
-    permission: privileges.info
+    aliases: [pi]
     usage: /<command> [player]
+  ##################
+  # GROUP COMMANDS #
+  ##################
+  pgroup:
+    description: Shows a basic list of available group-based commands.
+    aliases: [pg]
+    usage: /<command>
+  pgroupl:
+    description: Lists all available groups.
+    aliases: [pgl]
+    usage: /<command>
+  pggroups:
+    description: Sets the specified player's group
+    aliases: [pgs]
+    usage: /<command> [player] [group]
+  pgroupr:
+    description: Removes the specified group
+    aliases: [pgr]
+    usage: /<command> [group] --safe
+  pgroupc:
+    description: Creates the specified group with the given rank
+    aliases: [pgc]
+    usage: /<command> [group] [rank]
+  pgroupps:
+    description: Sets the specified permission for the given group
+    aliases: [pgps]
+    usage: /<command> [group] [node] [true|false]
+  pgrouppr:
+    description: Removes the specified permission from the given group
+    aliases: [pgpr]
+    usage: /<command> [group] [node]
+  #################
+  # USER COMMANDS #
+  #################
+  puser:
+    description: Shows a basic list of all available user-based commands.
+    aliases: [pu]
+    usage: /<command>
+  puserpr:
+    description: Removes the specified permission from the given user
+    aliases: [pupr]
+    usage: /<command> [player] [node]
+  puserps:
+    description: Sets the specified permission for the given user
+    aliases: [pups]
+    usage: /<command> [player] [node] [true|false]
+  ##########################
+  # MISCELLANEOUS COMMANDS #
+  ##########################
   promote:
     description: Promotes the specified player to the next higher rank
-    permission: privileges.promote
+    aliases: [pro]
     usage: /<command> [player]
   demote:
     description: Demotes the specified player to the next lowest rank
-    permission: privileges.demote
+    aliases: [dem]
     usage: /<command> [player]
-  pgl:
-    description: Lists all available groups.
-    permission: privileges.group.list
-    usage: /<command>
-  pgs:
-    description: Sets the specified player's group
-    permission: privileges.group.set
-    usage: /<command> [player] [group]
-  pgr:
-    description: Removes the specified group
-    permission: privileges.group.remove
-    usage: /<command> [group] --safe
-  pgc:
-    description: Creates the specified group with the given rank
-    permission: privileges.group.create
-    usage: /<command> [group] [rank]
-  pgps:
-    description: Sets the specified permission for the given group
-    permission: privileges.group.perm.set
-    usage: /<command> [group] [node] [true|false]
-  pgpr:
-    description: Removes the specified permission from the given group
-    permission: privileges.group.perm.remove
-    usage: /<command> [group] [node]
-  pupr:
-    description: Removes the specified permission from the given user
-    permission: privileges.user.perm.remove
-    usage: /<command> [player] [node]
-  pups:
-    description: Sets the specified permission for the given user
-    permission: privileges.user.perm.set
-    usage: /<command> [player] [node] [true|false]
-  help:
-    aliases: [h]
-    description: Displays help for available commands
-    permission: privileges.help
-    usage: /<command> [page]
 permissions:
   privileges.build:
     description: Determines whether or not a player can build.
@@ -87,7 +118,6 @@ permissions:
     description: Allows checking whether a node is set on another user.
   privileges.self.edit:
     description: Allows any user with this node to edit any permission they want, regardless of rank.
-    default: false
   privileges.restricted:
     description: A set of nodes that restrict a user from interacting and building
     children:

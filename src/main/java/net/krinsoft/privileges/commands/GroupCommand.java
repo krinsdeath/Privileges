@@ -1,9 +1,7 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.GroupManager;
-import org.bukkit.command.CommandSender;
 
 /**
  *
@@ -15,9 +13,6 @@ public abstract class GroupCommand extends PrivilegesCommand {
 
     public GroupCommand(Privileges plugin) {
         super(plugin);
-        this.groupManager = plugin.getGroupManager();
+        groupManager = plugin.getGroupManager();
     }
-
-    @Override
-    public abstract void runCommand(CommandSender sender, List<String> args);
 }

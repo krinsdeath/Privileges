@@ -16,17 +16,18 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
 
     public GroupPermRemoveCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Group Perm Remove");
-        this.setCommandUsage("/privileges group perm remove [group] [world:]node");
-        this.addCommandExample("/priv group perm remove user privileges.build");
-        this.addCommandExample("/pgpr user world_nether:privileges.interact");
-        this.setArgRange(2, 2);
-        this.addKey("privileges group perm remove");
-        this.addKey("priv group perm remove");
-        this.addKey("pg perm remove");
-        this.addKey("pgp remove");
-        this.addKey("pgpr");
-        this.setPermission("privileges.group.perm.remove", "Allows this user to remove permissions nodes.", PermissionDefault.OP);
+        setName("Privileges: Group Perm Remove");
+        setCommandUsage("/pg perm remove [group] [world:]node");
+        addCommandExample("/pgpr user privileges.build");
+        addCommandExample("/pgpr default world_nether:privileges.interact");
+        setArgRange(2, 2);
+        addKey("privileges group perm remove");
+        addKey("priv group perm remove");
+        addKey("pgroup perm remove");
+        addKey("pg perm remove");
+        addKey("pgp remove");
+        addKey("pgpr");
+        setPermission("privileges.group.perm.remove", "Allows this user to remove permissions nodes.", PermissionDefault.OP);
     }
 
     @Override
@@ -60,7 +61,6 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
             nodes.remove("-" + node);
             plugin.getGroupNode(group.getName()).set("worlds." + world, nodes);
         }
-        plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from the group " + group.getName());
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
         plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' has been removed.");

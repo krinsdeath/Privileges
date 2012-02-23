@@ -16,17 +16,18 @@ public class GroupPermSetCommand extends GroupPermCommand {
 
     public GroupPermSetCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Group Perm Set");
-        this.setCommandUsage("/privileges group perm set [group] [world:]node [val]");
-        this.addCommandExample("/pgps user privileges.version true -- sets 'privileges.version' to true for the group 'user'");
-        this.addCommandExample("/pgps user world:example.node false -- sets 'example.node' to false for 'user' on the world 'world'");
-        this.setArgRange(2, 3);
-        this.addKey("privileges group perm set");
-        this.addKey("priv group perm set");
-        this.addKey("pg perm set");
-        this.addKey("pgp set");
-        this.addKey("pgps");
-        this.setPermission("privileges.group.perm.set", "Allows this user to set permission nodes.", PermissionDefault.OP);
+        setName("Privileges: Group Perm Set");
+        setCommandUsage("/pg perm set [group] [world:]node [val]");
+        addCommandExample("/pgps user privileges.version true -- sets 'privileges.version' to true for the group 'user'");
+        addCommandExample("/pgps admin world:example.node false -- sets 'example.node' to false for 'user' on the world 'world'");
+        setArgRange(2, 3);
+        addKey("privileges group perm set");
+        addKey("priv group perm set");
+        addKey("pgroup perm set");
+        addKey("pg perm set");
+        addKey("pgp set");
+        addKey("pgps");
+        setPermission("privileges.group.perm.set", "Allows this user to set permission nodes.", PermissionDefault.OP);
     }
 
     @Override
@@ -36,12 +37,14 @@ public class GroupPermSetCommand extends GroupPermCommand {
             sender.sendMessage(ChatColor.RED + "That group does not exist.");
             return;
         }
-        boolean val;
-        try {
-            val = Boolean.parseBoolean(args.get(2));
-        } catch (Exception e) {
-            sender.sendMessage(ChatColor.RED + "Value must be a boolean, true or false.");
-            return;
+        boolean val = true;
+        if (args.size() > 2) {
+            try {
+                val = Boolean.parseBoolean(args.get(2));
+            } catch (Exception e) {
+                sender.sendMessage(ChatColor.RED + "Value must be a boolean, true or false.");
+                return;
+            }
         }
         if (!groupManager.checkRank(sender, group.getRank())) {
             sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
@@ -71,7 +74,6 @@ public class GroupPermSetCommand extends GroupPermCommand {
             nodes.add((val ? "" : "-") + node);
             plugin.getGroupNode(group.getName()).set("worlds." + world, nodes);
         }
-        plugin.saveGroups();
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
         sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
         plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' is now '" + val + "'");

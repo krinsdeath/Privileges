@@ -15,14 +15,16 @@ public class GroupSetCommand extends GroupCommand {
 
     public GroupSetCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Group Set");
-        this.setCommandUsage("/privileges group set [player] [group]");
-        this.setArgRange(2, 2);
-        this.addKey("privileges group set");
-        this.addKey("priv group set");
-        this.addKey("pg set");
-        this.addKey("pgs");
-        this.setPermission("privileges.group.set", "Allows this user to change other users' groups.", PermissionDefault.OP);
+        setName("Privileges: Group Set");
+        setCommandUsage("/pgs [player] [group]");
+        setArgRange(2, 2);
+        addKey("privileges group set");
+        addKey("priv group set");
+        addKey("pgroup set");
+        addKey("pgroups");
+        addKey("pg set");
+        addKey("pgs");
+        setPermission("privileges.group.set", "Allows this user to change other users' groups.", PermissionDefault.OP);
     }
 
     @Override

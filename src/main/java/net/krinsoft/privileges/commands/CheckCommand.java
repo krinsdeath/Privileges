@@ -17,15 +17,16 @@ public class CheckCommand extends PrivilegesCommand {
 
     public CheckCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Check");
-        this.setCommandUsage("/privileges check [player] [node]");
-        this.addCommandExample("/priv check Player privileges.build -- Checks Player's 'privileges.build' node");
-        this.addCommandExample("/priv check privileges.reload -- Checks your own 'privileges.reload' node");
-        this.setArgRange(1, 2);
-        this.addKey("privileges check");
-        this.addKey("priv check");
-        this.addKey("pc");
-        this.setPermission("privileges.check", "Allows this user to use '/perm check'", PermissionDefault.FALSE);
+        setName("Privileges: Check");
+        setCommandUsage("/pc [player] [node]");
+        addCommandExample(ChatColor.GREEN + "/pc" + ChatColor.AQUA + " Njodi privileges.build " + ChatColor.WHITE + "-- Checks Njodi's 'privileges.build' node");
+        addCommandExample(ChatColor.GREEN + "/pc" + ChatColor.AQUA + " privileges.reload " + ChatColor.WHITE + "-- Checks your own 'privileges.reload' node");
+        setArgRange(1, 2);
+        addKey("privileges check");
+        addKey("priv check");
+        addKey("pcheck");
+        addKey("pc");
+        setPermission("privileges.check", "Allows this user to use '/perm check'", PermissionDefault.FALSE);
     }
 
     @Override

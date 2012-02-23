@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import java.util.List;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -13,14 +14,15 @@ public class DebugCommand extends PrivilegesCommand {
 
     public DebugCommand(Privileges plugin) {
         super(plugin);
-        this.setName("Privileges: Debug");
-        this.setCommandUsage("/privileges debug [val]");
-        this.addCommandExample("/priv debug -- flip the current debug setting");
-        this.addCommandExample("/priv debug true -- turn debug mode on");
-        this.setArgRange(0, 1);
-        this.addKey("privileges debug");
-        this.addKey("priv debug");
-        this.setPermission("privileges.debug", "Allows this user to toggle debug mode.", PermissionDefault.OP);
+        setName("Privileges: Debug");
+        setCommandUsage("/privileges debug [val]");
+        addCommandExample(ChatColor.GREEN + "/priv debug" + ChatColor.WHITE + " -- flip the current debug setting");
+        addCommandExample(ChatColor.GREEN + "/priv debug" + ChatColor.AQUA + " true" + ChatColor.WHITE + " -- turn debug mode on");
+        setArgRange(0, 1);
+        addKey("privileges debug");
+        addKey("priv debug");
+        addKey("pdebug");
+        setPermission("privileges.debug", "Allows this user to toggle debug mode.", PermissionDefault.OP);
     }
 
     @Override
