@@ -36,7 +36,7 @@ public class UserPermSetCommand extends UserPermCommand {
             sender.sendMessage("I don't know about that user.");
             return;
         }
-        String[] param = validateParam(args.get(1));
+        String[] param = validateNode(args.get(1));
         if (param == null) {
             showHelp(sender);
             return;

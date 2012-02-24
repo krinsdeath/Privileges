@@ -25,7 +25,7 @@ public class ImportManager {
         File file = new File("plugins/PermissionsBukkit/config.yml");
         if (file.exists()) {
             long imp = System.currentTimeMillis();
-            plugin.info("Beginning PermissionsBukkit configuration import...");
+            plugin.log("Beginning PermissionsBukkit configuration import...");
             FileConfiguration config = YamlConfiguration.loadConfiguration(file);
             ConfigurationSection groups = config.getConfigurationSection("groups");
             for (String group : groups.getKeys(false)) {
@@ -65,14 +65,14 @@ public class ImportManager {
                         node.set("worlds." + world, tmp);
                     }
                 }
-                plugin.info("Imported " + group + " in " + (System.currentTimeMillis() - time) + "ms");
+                plugin.log("Imported " + group + " in " + (System.currentTimeMillis() - time) + "ms");
                 plugin.saveGroups();
             }
             file.getParentFile().renameTo(new File("plugins/PermissionsBukkit_OLD"));
             //new File("plugins/PermissionsBukkit.jar").renameTo(new File("plugins/PermissionsBukkit.jar.old"));
-            plugin.info("PermissionsBukkit import finished in " + (System.currentTimeMillis() - imp) + "ms");
-            plugin.info("You can now delete PermissionsBukkit.");
-            plugin.info("Please view plugins/Privileges/groups.yml, and edit the ranks of the imported groups.");
+            plugin.log("PermissionsBukkit import finished in " + (System.currentTimeMillis() - imp) + "ms");
+            plugin.log("You can now delete PermissionsBukkit.");
+            plugin.log("Please view plugins/Privileges/groups.yml, and edit the ranks of the imported groups.");
         }
     }
 
@@ -81,7 +81,7 @@ public class ImportManager {
         if (file.exists()) {
             File[] files = file.listFiles();
             long imp = System.currentTimeMillis();
-            plugin.info("Beginning Permissions 3 configuration import...");
+            plugin.log("Beginning Permissions 3 configuration import...");
             File gGroups = new File("plugins/Permissions/globalGroups.yml");
             if (gGroups.exists()) {
                 FileConfiguration conf = YamlConfiguration.loadConfiguration(gGroups);
@@ -95,7 +95,7 @@ public class ImportManager {
                         if (globals == null) { globals = new ArrayList<String>(); }
                         tmp.addAll(globals);
                         if (node.getBoolean("default", false)) {
-                            plugin.info("Setting default group to '" + group + "'");
+                            plugin.log("Setting default group to '" + group + "'");
                             plugin.getConfig().set("default_group", group);
                         }
                         for (String n : nodes) {
@@ -163,15 +163,15 @@ public class ImportManager {
                             node.set("rank", node.getInt("info.rank", 0));
                             node.set("worlds." + folder.getName(), worldNodes);
                             node.set("inheritance", parents);
-                            plugin.info("Imported '" + group + "' from Permissions 3 in " + (System.currentTimeMillis() - groupTIME) + "ms");
+                            plugin.log("Imported '" + group + "' from Permissions 3 in " + (System.currentTimeMillis() - groupTIME) + "ms");
                         }
                     }
                 }
             }
             file.renameTo(new File("plugins/Permissions_OLD"));
-            plugin.info("Permissions 3 import finished in " + (System.currentTimeMillis() - imp) + "ms");
-            plugin.info("Permissions 3 can now be deleted.");
-            plugin.info("Please check plugin/Privileges/groups.yml. Some groups may have unset 'rank' keys.");
+            plugin.log("Permissions 3 import finished in " + (System.currentTimeMillis() - imp) + "ms");
+            plugin.log("Permissions 3 can now be deleted.");
+            plugin.log("Please check plugin/Privileges/groups.yml. Some groups may have unset 'rank' keys.");
             plugin.saveGroups();
             plugin.saveConfig();
         }

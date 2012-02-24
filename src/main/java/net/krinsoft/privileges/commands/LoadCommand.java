@@ -28,7 +28,7 @@ public class LoadCommand extends PrivilegesCommand {
         long t = System.currentTimeMillis();
         plugin.registerConfiguration(true);
         plugin.registerPermissions();
-        t = t - System.currentTimeMillis();
+        t = System.currentTimeMillis() - t;
         sender.sendMessage(ChatColor.GREEN + "Privileges was loaded successfully. (" + t + "ms)");
         plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully. (" + t + "ms)");
     }

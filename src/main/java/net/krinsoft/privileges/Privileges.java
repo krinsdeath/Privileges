@@ -19,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,7 +26,6 @@ import java.util.logging.Logger;
  */
 public class Privileges extends JavaPlugin {
 
-    private final static Logger LOGGER = Logger.getLogger("Privileges");
     private boolean debug = false;
 
     // managers and handlers
@@ -50,15 +48,13 @@ public class Privileges extends JavaPlugin {
         } catch (NullPointerException e) {
             debug("Error setting default permission for 'privileges.*'");
         }
-        info("Is now enabled.");
-        // since 1.1-R2, this line is required to pick up the proper default attachments
-        //permissionManager.reload();
+        log("Is now enabled.");
     }
 
     @Override
     public void onDisable() {
         this.permissionManager.disable();
-        info("Is now disabled.");
+        log("Is now disabled.");
     }
 
     @Override
@@ -158,6 +154,7 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new DemoteCommand(this));
         commandHandler.registerCommand(new InfoCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
+        commandHandler.registerCommand(new LoadCommand(this));
         commandHandler.registerCommand(new PromoteCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new RestoreCommand(this));
@@ -238,24 +235,19 @@ public class Privileges extends JavaPlugin {
         }
     }
 
-    public void info(Object message) {
-        LOGGER.info(String.valueOf("[" + this + "] " + message));
-    }
-
     public void log(String message) {
-        message = "[" + this + "] " + message;
-        LOGGER.info(message);
+        getLogger().info(message);
     }
     
     public void warn(String message) {
         message = "[" + this + "] " + message;
-        LOGGER.warning(message);
+        getLogger().warning(message);
     }
     
     public void debug(String message) {
         if (debug) {
-            message = "[" + this + "] [Debug] " + message;
-            LOGGER.info(message);
+            message = "[Debug] " + message;
+            getLogger().info(message);
         }
     }
 
@@ -268,7 +260,7 @@ public class Privileges extends JavaPlugin {
         debug = !debug;
         getConfig().set("debug", debug);
         saveConfig();
-        info("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
+        log("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
     }
 
     public PermissionManager getPermissionManager() {

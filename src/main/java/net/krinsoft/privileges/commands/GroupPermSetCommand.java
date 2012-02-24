@@ -50,7 +50,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
             sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
             return;
         }
-        String[] param = validateParam(args.get(1));
+        String[] param = validateNode(args.get(1));
         if (param == null) {
             sender.sendMessage(ChatColor.RED + "Invalid node string.");
             return;
