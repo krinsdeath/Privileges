@@ -46,8 +46,8 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
             sender.sendMessage(ChatColor.RED + "Invalid node string.");
             return;
         }
-        String world = param[0];
-        String node = param[1];
+        String node = param[0];
+        String world = param[1];
         if (node.startsWith("-")) { node = node.substring(1); }
         List<String> nodes;
         if (world == null) {

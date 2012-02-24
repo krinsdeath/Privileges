@@ -55,8 +55,8 @@ public class GroupPermSetCommand extends GroupPermCommand {
             sender.sendMessage(ChatColor.RED + "Invalid node string.");
             return;
         }
-        String world = param[0];
-        String node = param[1];
+        String node = param[0];
+        String world = param[1];
         if (node.equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
