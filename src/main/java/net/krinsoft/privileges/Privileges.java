@@ -32,9 +32,12 @@ public class Privileges extends JavaPlugin {
     private PermissionManager permissionManager;
     private GroupManager groupManager;
     private CommandHandler commandHandler;
-    private FileConfiguration config;
-    private FileConfiguration users;
-    private FileConfiguration groups;
+    private FileConfiguration   configuration;
+    private File                configFile;
+    private FileConfiguration   users;
+    private File                userFile;
+    private FileConfiguration   groups;
+    private File                groupFile;
 
     @Override
     public void onEnable() {
@@ -48,21 +51,67 @@ public class Privileges extends JavaPlugin {
         } catch (NullPointerException e) {
             debug("Error setting default permission for 'privileges.*'");
         }
+
+        try {
+            // initialize the plugin metrics tracker
+            Metrics metrics = new Metrics();
+
+            // track the number of groups
+            metrics.addCustomData(this, new Metrics.Plotter() {
+                @Override
+                public String getColumnName() {
+                    return "Groups";
+                }
+
+                @Override
+                public int getValue() {
+                    return getGroups().getConfigurationSection("groups").getKeys(false).size();
+                }
+            });
+
+            // track the number of users
+            metrics.addCustomData(this, new Metrics.Plotter() {
+                @Override
+                public String getColumnName() {
+                    return "Users";
+                }
+
+                @Override
+                public int getValue() {
+                    return getUsers().getConfigurationSection("users").getKeys(false).size();
+                }
+            });
+
+            metrics.beginMeasuringPlugin(this);
+        } catch (IOException e) {
+            log("An error occurred while posting results to the Metrics.");
+            warn(e.getLocalizedMessage());
+        }
+
         log("Is now enabled.");
     }
 
     @Override
     public void onDisable() {
-        this.permissionManager.disable();
+        permissionManager.disable();
         log("Is now disabled.");
     }
 
     @Override
     public FileConfiguration getConfig() {
-        if (config == null) {
-            config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+        if (configuration == null) {
+            configuration = YamlConfiguration.loadConfiguration(configFile);
         }
-        return config;
+        return configuration;
+    }
+
+    @Override
+    public void saveConfig() {
+        try {
+            getConfig().save(configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -74,14 +123,14 @@ public class Privileges extends JavaPlugin {
     }
 
     public void registerPermissions() {
-        this.permissionManager = new PermissionManager(this);
-        this.groupManager = new GroupManager(this);
-        this.permissionManager.reload();
+        permissionManager = new PermissionManager(this);
+        groupManager = new GroupManager(this);
+        permissionManager.reload();
     }
 
     public void registerConfiguration(boolean val) {
         if (val) {
-            config = null;
+            configuration = null;
             users = null;
             groups = null;
             registerConfiguration();
@@ -89,21 +138,24 @@ public class Privileges extends JavaPlugin {
     }
     
     public void registerConfiguration() {
-        getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/config.yml")));
-        if (!new File(getDataFolder(), "config.yml").exists()) {
+        configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/config.yml")));
             getConfig().options().copyDefaults(true);
             saveConfig();
         }
 
-        getUsers().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/users.yml")));
-        if (!new File(getDataFolder(), "users.yml").exists()) {
+        userFile = new File(getDataFolder(), "users.yml");
+        if (!userFile.exists()) {
+            getUsers().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/users.yml")));
             getUsers().options().copyDefaults(true);
             saveUsers();
         }
 
-        getGroups().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/groups.yml")));
-        if (!new File(getDataFolder(), "groups.yml").exists()) {
-            groups.options().header(
+        groupFile = new File(getDataFolder(), "groups.yml");
+        if (!groupFile.exists()) {
+            getGroups().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/groups.yml")));
+            getGroups().options().header(
                     "Group ranks determine the order they are promoted in.\n" +
                             "Lowest rank is 1, highest rank is 2,147,483,647.\n" +
                             "Visit https://github.com/krinsdeath/Privileges/wiki for help with configuration\n" +
@@ -207,31 +259,31 @@ public class Privileges extends JavaPlugin {
 
     public FileConfiguration getUsers() {
         if (users == null) {
-            users = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "users.yml"));
+            users = YamlConfiguration.loadConfiguration(userFile);
         }
         return users;
     }
 
     public void saveUsers() {
         try {
-            users.save(new File(this.getDataFolder(), "users.yml"));
-        } catch (IOException ex) {
-            debug(ex.getLocalizedMessage());
+            users.save(userFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public FileConfiguration getGroups() {
         if (groups == null) {
-            groups = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "groups.yml"));
+            groups = YamlConfiguration.loadConfiguration(groupFile);
         }
         return groups;
     }
 
     public void saveGroups() {
         try {
-            groups.save(new File(this.getDataFolder(), "groups.yml"));
-        } catch (IOException ex) {
-            debug(ex.getLocalizedMessage());
+            groups.save(groupFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -240,7 +292,6 @@ public class Privileges extends JavaPlugin {
     }
     
     public void warn(String message) {
-        message = "[" + this + "] " + message;
         getLogger().warning(message);
     }
     

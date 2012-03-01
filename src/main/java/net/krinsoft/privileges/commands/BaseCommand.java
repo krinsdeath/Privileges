@@ -20,6 +20,7 @@ public class BaseCommand extends PrivilegesCommand {
         addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " user    " + ChatColor.RED  + "?");
         addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " list    " + ChatColor.GOLD + "[player] [page]");
         addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " check   " + ChatColor.GOLD + "[player] [node]");
+        addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " info    " + ChatColor.GOLD + "[player]");
         addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " version ");
         addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " reload  ");
         addCommandExample(ChatColor.GREEN + "/priv" + ChatColor.AQUA + " save    ");

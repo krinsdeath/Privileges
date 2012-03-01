@@ -1,13 +1,16 @@
 package net.krinsoft.privileges.groups;
 
-import java.util.*;
-
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -133,6 +136,9 @@ public class GroupManager {
                 return 0;
             }
         } catch (Exception e) {
+            if (sender == null) {
+                plugin.warn("It seems that your target was null! (Possible causes: offline, didn't exist)");
+            }
             plugin.warn("An exception was thrown while fetching a group rank; check groups.yml.");
             plugin.warn("Defaulting to 0: " + e.getLocalizedMessage());
             return 0;

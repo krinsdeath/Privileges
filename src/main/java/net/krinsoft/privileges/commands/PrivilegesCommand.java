@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,33 +13,8 @@ import java.util.List;
  * @author krinsdeath
  */
 public abstract class PrivilegesCommand extends Command {
-    private final static int DEFAULT_PAGE_SIZE = 7;
-
-    class Page {
-
-        private List<String> examples;
-        public Page(List<String> examples) {
-            this.examples = examples;
-        }
-
-        public List<String> getPage(int page) {
-            List<String> lines = new ArrayList<String>();
-            if ((page_size * page) > examples.size()) {
-                page = 0;
-            }
-            for (int i = (page_size * page); lines.size() <= page_size && i < examples.size(); i++) {
-                lines.add(examples.get(i));
-            }
-            return lines;
-        }
-
-        public int getPages() {
-            return Math.round(examples.size() / page_size);
-        }
-    }
 
     protected Privileges plugin;
-    private int page_size = DEFAULT_PAGE_SIZE;
 
     public PrivilegesCommand(Privileges instance) {
         super(instance);

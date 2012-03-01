@@ -1,23 +1,18 @@
 package net.krinsoft.privileges;
 
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  *
  * @author krinsdeath
  */
 public class PermissionManager {
-    private final static Pattern NEGATIVE = Pattern.compile("-(.*)");
 
     private Privileges plugin;
     private HashMap<String, String> players = new HashMap<String, String>();

@@ -1,22 +1,16 @@
 package net.krinsoft.privileges;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class FancyPage {
     
     private List<String> contents = new ArrayList<String>();
     private int pageSize = 8;
-
-    public FancyPage(String... msg) {
-        contents.addAll(Arrays.asList(msg));
-    }
 
     public FancyPage(List<String> msg) {
         contents.addAll(msg);
