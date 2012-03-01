@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.krinsoft</groupId>
-    <artifactId>privileges</artifactId>
+    <artifactId>Privileges</artifactId>
     <packaging>jar</packaging>
     <version>1.4.0</version>
     <name>Privileges</name>
@@ -128,7 +128,7 @@
     <distributionManagement>
         <repository>
             <id>OnARandomBox</id>
-            <url>http://repo.onarandombox.com/content/repositories/privileges</url>
+            <url>http://repo.onarandombox.com/content/repositories/chatsuite</url>
         </repository>
     </distributionManagement>
 
