@@ -30,8 +30,8 @@ public class RestoreCommand extends PrivilegesCommand {
         long t = System.currentTimeMillis();
         String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
         backup = backup.replaceAll("[\\s./\\\\]", "");
+        File folder = new File("privbackups/" + backup);
         try {
-            File folder = new File("privbackups/" + backup);
             if (!folder.exists()) {
                 sender.sendMessage("There is no backup with that name.");
                 plugin.log(">> " + sender.getName() + ": Tried to restore a non-existent backup.");
@@ -51,7 +51,7 @@ public class RestoreCommand extends PrivilegesCommand {
             return;
         }
         t = System.currentTimeMillis() - t;
-        sender.sendMessage("The backup for 'plugins/Privileges/backups/" + backup + "' has been restored. (" + t + "ms)");
+        sender.sendMessage("The backup for '" + folder.getPath() + "' has been restored. (" + t + "ms)");
         plugin.log(">> " + sender.getName() + ": A Privileges backup has been restored. (" + t + "ms)");
     }
 

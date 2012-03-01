@@ -29,8 +29,8 @@ public class BackupCommand extends PrivilegesCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
         backup = backup.replaceAll("[\\s./\\\\]", "");
+        File folder = new File("privbackups/" + backup);
         try {
-            File folder = new File("privbackups/" + backup);
             if (!folder.exists()) {
                 folder.mkdirs();
             }
@@ -43,7 +43,7 @@ public class BackupCommand extends PrivilegesCommand {
             return;
         }
         sender.sendMessage("Privileges has been backed up.");
-        plugin.log(">> " + sender.getName() + ": Privileges config files have been backed up to 'plugins/Privileges/backups/" + backup + "'.");
+        plugin.log(">> " + sender.getName() + ": Privileges config files have been backed up to '" + folder.getPath() + "'.");
     }
 
 }
