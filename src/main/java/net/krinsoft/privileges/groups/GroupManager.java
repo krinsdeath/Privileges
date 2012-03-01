@@ -61,15 +61,15 @@ public class GroupManager {
      * Promotes the specified player to the next higher ranked group
      * @param sender The CommandSender issuing the promotion
      * @param player The player to promote
-     * @return The new rank of the player after promotion
+     * @return The new group of the player after promotion, or null if the promotion failed
      */
-    public int promote(CommandSender sender, Player player) {
+    public Group promote(CommandSender sender, Player player) {
         int send = getRank(sender);
         int rank = getRank(player);
         boolean next = false;
         if (rank >= send) {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
-            return -1;
+            return null;
         }
         for (Integer i : promotion.keySet()) {
             if (next) { rank = i; break; }
@@ -77,19 +77,25 @@ public class GroupManager {
         }
         if (rank < send) {
             setGroup(player.getName(), promotion.get(rank));
-            return getRank(player);
+            return getGroup(player);
         } else {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
-            return -1;
+            return null;
         }
     }
 
-    public int demote(CommandSender sender, Player player) {
+    /**
+     * Demotes the specified player to the next lowest ranked group
+     * @param sender The person issuing the command
+     * @param player The player we're demoting
+     * @return The new group of the player that has been demoted, or null if the demotion failed
+     */
+    public Group demote(CommandSender sender, Player player) {
         int send = getRank(sender);
         int rank = getRank(player);
         if (rank >= send) {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
-            return -1;
+            return null;
         }
         int last = getDefaultGroup().getRank();
         for (Integer i : promotion.keySet()) {
@@ -101,10 +107,10 @@ public class GroupManager {
             if (last != rank) {
                 setGroup(player.getName(), promotion.get(last));
             }
-            return getRank(player);
+            return getGroup(player);
         } else {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
-            return -1;
+            return null;
         }
     }
     
@@ -175,7 +181,7 @@ public class GroupManager {
             createGroup(group).getName();
         } catch (Exception e) {
             plugin.debug("Group.getName() for '" + group + "' was null.");
-            return null;
+            return getDefaultGroup();
         }
         return groupList.get(group.toLowerCase());
     }

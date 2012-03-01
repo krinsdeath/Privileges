@@ -221,6 +221,7 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new GroupPermSetCommand(this));
         commandHandler.registerCommand(new GroupPermRemoveCommand(this));
         // user related commands
+        commandHandler.registerCommand(new UserListCommand(this));
         commandHandler.registerCommand(new UserPermSetCommand(this));
         commandHandler.registerCommand(new UserPermRemoveCommand(this));
         commandHandler.registerCommand(new UserResetCommand(this));

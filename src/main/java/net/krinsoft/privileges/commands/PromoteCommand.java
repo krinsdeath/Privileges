@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +32,10 @@ public class PromoteCommand extends GroupCommand {
             sender.sendMessage(ChatColor.RED + "The target '" + ChatColor.DARK_RED + args.get(0) + ChatColor.RED + "' doesn't exist.");
             return;
         }
-        groupManager.promote(sender, target);
-        plugin.log(">> " + sender.getName() + ": " + target.getName() + " has been promoted.");
+        Group group = groupManager.promote(sender, target);
+        if (group != null) {
+            sender.sendMessage(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been promoted to '" + ChatColor.AQUA + group.getName() + ChatColor.GREEN + "'");
+            plugin.log(">> " + sender.getName() + ": " + target.getName() + " has been promoted to '" + group.getName() + "'");
+        }
     }
 }

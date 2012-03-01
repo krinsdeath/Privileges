@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,7 +33,10 @@ public class DemoteCommand extends GroupCommand {
             sender.sendMessage(ChatColor.RED + "The target '" + ChatColor.DARK_RED + args.get(0) + ChatColor.RED + "' doesn't exist.");
             return;
         }
-        groupManager.demote(sender, target);
-        plugin.log(">> " + sender.getName() + ": " + target.getName() + " has been demoted.");
+        Group group = groupManager.demote(sender, target);
+        if (group != null) {
+            sender.sendMessage(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been demoted to '" + ChatColor.AQUA + group.getName() + ChatColor.GREEN + "'");
+            plugin.log(">> " + sender.getName() + ": " + target.getName() + " has been demoted to '" + group.getName() + "'");
+        }
     }
 }

@@ -52,6 +52,9 @@ public class InfoCommand extends PrivilegesCommand {
         }
         lines.add("=== User Info: " + ChatColor.BLUE + target.getName() + ChatColor.WHITE + " ===");
         lines.add("Is " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + " an op? " + ChatColor.GREEN + (target.isOp() ? "Yes." : "No."));
+        if (!target.getName().equals(((Player)target).getDisplayName())) {
+            lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + " is currently known as '" + ChatColor.AQUA + ((Player)target).getDisplayName() + ChatColor.WHITE + "'");
+        }
         lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + "'s group is: " + ChatColor.GREEN + plugin.getGroupManager().getGroup((Player)target).getName());
         lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + "'s current world is: " + ChatColor.GREEN + ((Player)target).getWorld().getName() + ChatColor.WHITE + ".");
         for (String line : lines) {
