@@ -6,6 +6,7 @@ import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.listeners.BlockListener;
 import net.krinsoft.privileges.listeners.PlayerListener;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -46,6 +47,21 @@ public class Privileges extends JavaPlugin {
         registerPermissions();
         registerEvents();
         registerCommands();
+        getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                log("Removing old users from users.yml...");
+                long timeout = 1000L * 60L * 60L * 24L * 30L;
+                for (OfflinePlayer player : getServer().getOfflinePlayers()) {
+                    if (System.currentTimeMillis() - player.getLastPlayed() >= timeout) {
+                        getUsers().set(player.getName(), null);
+                        debug("'" + player.getName() + "' removed from users.yml");
+                    }
+                }
+                saveUsers();
+                log("... done!");
+            }
+        }, 1L);
         try {
             getServer().getPluginManager().getPermission("privileges.*").setDefault(PermissionDefault.OP);
         } catch (NullPointerException e) {
