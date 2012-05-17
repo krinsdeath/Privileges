@@ -29,7 +29,7 @@ public class PermissionManager {
     }
 
 
-    final public void registerPlayer(String player) {
+    final public boolean registerPlayer(String player) {
         // build attachment
         PermissionAttachment attachment = plugin.getServer().getPlayer(player).addAttachment(plugin);
         if (perms.containsKey(player)) {
@@ -40,7 +40,7 @@ public class PermissionManager {
         }
         if (attachment == null) { // make sure nothing has gone awry
             plugin.debug("Attachment cannot be null.");
-            return;
+            return false;
         }
         // clear the attachment
         for (String node : attachment.getPermissions().keySet()) {
@@ -61,6 +61,7 @@ public class PermissionManager {
         calculatePlayerPermissions(attachment, player);
         plugin.getServer().getPlayer(player).recalculatePermissions();
         perms.put(player, attachment);
+        return true;
     }
 
     public List<String> calculateGroupTree(String group, String next) {
@@ -165,6 +166,7 @@ public class PermissionManager {
     }
 
     private void calculatePlayerPermissions(PermissionAttachment attachment, String player) {
+        plugin.debug("Calculating player-specific permissions...");
         try {
             for (String node : plugin.getUserNode(player).getStringList("permissions")) {
                 attachNode(attachment, node);
@@ -172,6 +174,7 @@ public class PermissionManager {
         } catch (NullPointerException e) {
             plugin.debug("Encountered null path at '" + player + ".permissions' in users.yml");
         }
+        plugin.debug("Calculating player-specific world permissions...");
         try {
             if (plugin.getUserNode(player).getConfigurationSection("worlds").getKeys(false) == null) {
                 for (World w : plugin.getServer().getWorlds()) {
@@ -203,13 +206,14 @@ public class PermissionManager {
         if (node.startsWith("-")) {
             val = false;
             debug = node.substring(1);
-            attachment.setPermission(debug, false);
         } else {
             val = true;
             debug = node;
-            attachment.setPermission(node, true);
         }
-        debug = "setting " + debug + " to " + val;
+        String mod = (attachment.getPermissions().containsKey(debug) ? "overriding" : "setting");
+        attachment.unsetPermission(debug);
+        attachment.setPermission(debug, val);
+        debug = mod + " " + debug + " to " + val;
         plugin.debug(debug);
     }
 

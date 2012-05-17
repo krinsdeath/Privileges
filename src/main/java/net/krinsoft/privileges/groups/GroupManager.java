@@ -207,7 +207,7 @@ public class GroupManager {
         try {
             return players.get(player.getName());
         } catch (Exception e) {
-            return null;
+            return getDefaultGroup();
         }
     }
 
