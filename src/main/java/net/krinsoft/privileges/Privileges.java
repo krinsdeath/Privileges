@@ -339,34 +339,4 @@ public class Privileges extends JavaPlugin {
         return this.groupManager;
     }
 
-    /**
-     * Warning! This method is probably inefficient!
-     * Fetches a list of permissions nodes contained in groups.yml for the specified group
-     * @param group The group whose nodes we're checking.
-     * @param world The world (or null) to check nodes on
-     * @return A list of the nodes available for the specified group (optional: on the given world)
-     */
-    public List<String> calculateNodeList(String group, String world) {
-        List<String> tree = permissionManager.calculateGroupTree(group, "-");
-        Set<String> nodes = new HashSet<String>();
-        for (String g : tree) {
-            Set<String> nodeList = new HashSet<String>(getGroupNode(g).getStringList("permissions"));
-            for (String node : nodeList) {
-                if (node.startsWith("-")) {
-                    nodes.remove(node.substring(1));
-                }
-                nodes.add(node);
-            }
-            if (world != null) {
-                nodeList = new HashSet<String>(getGroupNode(g).getStringList("worlds." + world));
-                for (String node : nodeList) {
-                    if (node.startsWith("-") && nodes.contains(node.substring(1))) {
-                        nodes.remove(node.substring(1));
-                    }
-                    nodes.add(node);
-                }
-            }
-        }
-        return new ArrayList<String>(nodes);
-    }
 }

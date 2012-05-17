@@ -24,12 +24,4 @@ public interface Group {
     // Returns whether this group's inheritance tree contains the specified group's name
     public boolean isMemberOf(Group group);
 
-    // Returns whether this group has the specified permission
-    // please don't use this method
-    public boolean has(String node);
-    
-    // returns whether this group has the specified permission that world
-    // please don't use this method
-    public boolean has(String node, String world);
-    
 }

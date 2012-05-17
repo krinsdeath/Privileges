@@ -30,13 +30,20 @@ public class PermissionManager {
 
 
     final public boolean registerPlayer(String player) {
+        // validate the player
+        Player ply = plugin.getServer().getPlayer(player);
+        if (ply == null) {
+            plugin.debug("Player '" + player + "' couldn't be found.");
+            return false;
+        }
+        player = ply.getName();
         // build attachment
-        PermissionAttachment attachment = plugin.getServer().getPlayer(player).addAttachment(plugin);
+        PermissionAttachment attachment = ply.addAttachment(plugin);
         if (perms.containsKey(player)) {
             attachment = perms.get(player);
         }
         if (!players.containsKey(player)) {
-            players.put(player, plugin.getServer().getPlayer(player).getWorld().getName());
+            players.put(player, ply.getWorld().getName());
         }
         if (attachment == null) { // make sure nothing has gone awry
             plugin.debug("Attachment cannot be null.");
@@ -59,7 +66,7 @@ public class PermissionManager {
         // calculate player's permissions
         // overrides group and world permissions
         calculatePlayerPermissions(attachment, player);
-        plugin.getServer().getPlayer(player).recalculatePermissions();
+        ply.recalculatePermissions();
         perms.put(player, attachment);
         return true;
     }

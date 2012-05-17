@@ -18,7 +18,7 @@ public class RankedGroup implements Group {
     private int rank;
     // this group's inheritance tree, as strings
     private List<String> tree;
-    
+
     private Privileges plugin;
 
     public RankedGroup(Privileges plugin, String name, int rank, List<String> tree) {
@@ -49,20 +49,6 @@ public class RankedGroup implements Group {
 
     public boolean isMemberOf(Group group) {
         return (this.tree.contains(group.getName()));
-    }
-    
-    public boolean has(String node) {
-        return has(node, "permissions");
-    }
-    
-    public boolean has(String node, String world) {
-        List<String> nodes;
-        if (world.equals("permissions")) {
-            nodes = plugin.calculateNodeList(name, null);
-        } else {
-            nodes = plugin.calculateNodeList(name, world);
-        }
-        return nodes.contains(node);
     }
     
     @Override
