@@ -54,8 +54,10 @@ public class Privileges extends JavaPlugin {
                 long timeout = 1000L * 60L * 60L * 24L * 30L;
                 for (OfflinePlayer player : getServer().getOfflinePlayers()) {
                     if (System.currentTimeMillis() - player.getLastPlayed() >= timeout) {
-                        getUsers().set(player.getName(), null);
-                        debug("'" + player.getName() + "' removed from users.yml");
+                        if (getUsers().get(player.getName()) != null && !getUsers().getString(player.getName() + ".group").equals(getConfig().getString("default_group", "default"))) {
+                            getUsers().set(player.getName(), null);
+                            debug("'" + player.getName() + "' removed from users.yml");
+                        }
                     }
                 }
                 saveUsers();
