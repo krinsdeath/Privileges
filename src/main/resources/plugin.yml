@@ -107,23 +107,28 @@ commands:
     usage: /<command> [player]
 permissions:
   privileges.build:
+    default: true
     description: Determines whether or not a player can build.
-    default: true
   privileges.interact:
-    description: Determines whether or not a player can interact with the game objects.
     default: true
+    description: Determines whether or not a player can interact with the game objects.
   privileges.list.other:
+    default: false
     description: Allows viewing other peoples permissions node lists.
   privileges.check.other:
+    default: false
     description: Allows checking whether a node is set on another user.
   privileges.self.edit:
+    default: false
     description: Allows any user with this node to edit any permission they want, regardless of rank.
   privileges.restricted:
+    default: false
     description: A set of nodes that restrict a user from interacting and building
     children:
       privileges.build: false
       privileges.interact: false
   privileges.users:
+    default: false
     description: A set of nodes for the typical user
     children:
       privileges.build: true
@@ -134,17 +139,22 @@ permissions:
       privileges.list: true
       privileges.version: true
   privileges.mods:
+    default: false
     description: A set of nodes useful for a typical moderator
     children:
+      privileges.users: true
       privileges.check.other: true
       privileges.debug: true
       privileges.group.list: true
       privileges.info.other: true
       privileges.list.other: true
       privileges.promote: true
+      privileges.demote: true
       privileges.reload: true
   privileges.admins:
+    default: false
     description: Sets all user and group permission editing nodes.
     children:
+      privileges.mods: true
       privileges.group.*: true
       privileges.user.*: true

@@ -2,10 +2,12 @@ package net.krinsoft.privileges.importer;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -17,8 +19,59 @@ public class ImportManager {
 
     public ImportManager(Privileges plugin) {
         this.plugin = plugin;
-        locatePermissionsBukkit();
-        locatePermissions3();
+        importPermissionsBukkit();
+        //locatePermissions3();
+    }
+
+    private void importPermissionsBukkit() {
+        File configFile = new File("plugins/PermissionsBukkit/config.yml");
+        if (configFile.exists()) {
+            long importer = System.currentTimeMillis();
+            plugin.log("Beginning PermissionsBukkit configuration import!");
+            FileConfiguration config = new YamlConfiguration();
+            config.options().pathSeparator('/');
+            try {
+                config.load(configFile);
+            } catch (IOException e) {
+            } catch (InvalidConfigurationException e) {
+            }
+            // get the whole group section
+            ConfigurationSection groupSection = config.getConfigurationSection("groups");
+            if (groupSection != null) {
+                for (String group : groupSection.getKeys(false)) {
+                    // permissions section
+                    ConfigurationSection groupPerms = groupSection.getConfigurationSection(group + "/permissions");
+                    if (groupPerms != null) {
+                        for (String node : groupPerms.getKeys(false)) {
+                            boolean val = groupPerms.getBoolean(node);
+                            if (!val) {
+                                node = "-"+node;
+                            }
+                            plugin.debug("[" + group + "] Importing (permissions): " + node);
+                        }
+                    }
+                    // worlds section
+                    ConfigurationSection groupWorlds = groupSection.getConfigurationSection(group + "/worlds");
+                    if (groupWorlds != null) {
+                        for (String world : groupWorlds.getKeys(false)) {
+                            ConfigurationSection groupWorldKey = groupWorlds.getConfigurationSection(world);
+                            if (groupWorldKey != null) {
+                                for (String node : groupWorldKey.getKeys(false)) {
+                                    boolean val = groupWorlds.getBoolean(world + "/" + node);
+                                    if (!val) {
+                                        node = "-"+node;
+                                    }
+                                    plugin.debug("[" + group + "] Importing (worlds." + world + "): " + node);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // rename the config file to prevent multiple imports
+            configFile.renameTo(new File("plugins/PermissionsBukkit/config-imported.yml"));
+            plugin.log("PermissionsBukkit configuration import complete. (" + (System.currentTimeMillis() - importer) + "ms)");
+        }
     }
 
     private void locatePermissionsBukkit() {

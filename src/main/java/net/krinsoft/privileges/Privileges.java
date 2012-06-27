@@ -3,6 +3,7 @@ package net.krinsoft.privileges;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
+import net.krinsoft.privileges.importer.ImportManager;
 import net.krinsoft.privileges.listeners.BlockListener;
 import net.krinsoft.privileges.listeners.PlayerListener;
 import org.bukkit.ChatColor;
@@ -19,7 +20,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -28,6 +31,7 @@ import java.util.*;
 public class Privileges extends JavaPlugin {
 
     private boolean debug = false;
+    private boolean profile = false;
 
     // managers and handlers
     private PermissionManager permissionManager;
@@ -45,6 +49,16 @@ public class Privileges extends JavaPlugin {
         registerConfiguration();
         performImports();
         registerPermissions();
+        getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                boolean tmp = debug;
+                debug = false;
+                registerPermissions();
+                updatePermissions();
+                debug = tmp;
+            }
+        }, 2L);
         registerEvents();
         registerCommands();
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
@@ -143,6 +157,10 @@ public class Privileges extends JavaPlugin {
     public void registerPermissions() {
         permissionManager = new PermissionManager(this);
         groupManager = new GroupManager(this);
+    }
+
+    public void updatePermissions() {
+        groupManager.reload();
         permissionManager.reload();
     }
 
@@ -187,18 +205,16 @@ public class Privileges extends JavaPlugin {
         if (getConfig().get("default_group") == null) {
             getConfig().set("default_group", "default");
             getConfig().set("debug", false);
-            saveConfig();
-        }
-        if (getConfig().get("help.hide_noperms") == null) {
-            getConfig().set("help.hide_noperms", false);
+            getConfig().set("profiler", false);
             saveConfig();
         }
         debug = getConfig().getBoolean("debug", false);
+        profile = getConfig().getBoolean("profiler", false);
     }
 
     private void performImports() {
         // broken until I can improve it
-        //new ImportManager(this);
+        new ImportManager(this);
     }
 
     private void registerEvents() {
@@ -317,6 +333,13 @@ public class Privileges extends JavaPlugin {
     public void debug(String message) {
         if (debug) {
             message = "[Debug] " + message;
+            getLogger().info(message);
+        }
+    }
+
+    public void profile(String message) {
+        if (profile) {
+            message = "[Profiler] " + message;
             getLogger().info(message);
         }
     }

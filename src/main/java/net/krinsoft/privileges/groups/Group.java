@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.groups;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -23,5 +24,11 @@ public interface Group {
 
     // Returns whether this group's inheritance tree contains the specified group's name
     public boolean isMemberOf(Group group);
+
+    // Checks whether this group has the specified permission on the given world
+    public boolean hasPermission(String permission, String world);
+
+    // Gets a map of this group's permissions on the specified world
+    public Map<String, Boolean> getEffectivePermissions(String world);
 
 }

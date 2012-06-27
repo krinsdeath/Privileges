@@ -1,10 +1,10 @@
 package net.krinsoft.privileges.groups;
 
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -19,6 +19,8 @@ public class RankedGroup implements Group {
     // this group's inheritance tree, as strings
     private List<String> tree;
 
+    private Map<String, Map<String, Boolean>>   permissions       = new HashMap<String, Map<String, Boolean>>();
+
     private Privileges plugin;
 
     public RankedGroup(Privileges plugin, String name, int rank, List<String> tree) {
@@ -26,6 +28,30 @@ public class RankedGroup implements Group {
         this.name = name;
         this.rank = rank;
         this.tree = tree;
+        for (World world : plugin.getServer().getWorlds()) {
+            Map<String, Boolean> nodes = new HashMap<String, Boolean>();
+            for (String g : tree) {
+                ConfigurationSection group = plugin.getGroupNode(g);
+                if (group == null) { continue; }
+                for (String node : group.getStringList("permissions")) {
+                    if (node.startsWith("-")) {
+                        nodes.put(node.substring(1), false);
+                    } else {
+                        nodes.put(node, true);
+                    }
+                }
+                for (String node : group.getStringList("worlds." + world.getName())) {
+                    if (node.startsWith("-")) {
+                        nodes.put(node.substring(1), false);
+                    } else {
+                        nodes.put(node, true);
+                    }
+                }
+            }
+            plugin.debug("Group{" + name + "}@" +world.getName() + " permission list length: " + nodes.size());
+            permissions.put(world.getName(), nodes);
+        }
+        plugin.debug("Group construction for " + name + " completed!");
     }
 
     public List<String> getGroupTree() {
@@ -48,7 +74,17 @@ public class RankedGroup implements Group {
     }
 
     public boolean isMemberOf(Group group) {
-        return (this.tree.contains(group.getName()));
+        return (group != null && this.tree.contains(group.getName()));
+    }
+
+    public boolean hasPermission(String permission, String world) {
+        Map<String, Boolean> nodes = permissions.get(world);
+        return (nodes.get(permission) != null ? nodes.get(permission) : false);
+    }
+
+    public Map<String, Boolean> getEffectivePermissions(String world) {
+        Map<String, Boolean> nodes = permissions.get(world);
+        return (nodes != null ? nodes : new HashMap<String, Boolean>());
     }
     
     @Override

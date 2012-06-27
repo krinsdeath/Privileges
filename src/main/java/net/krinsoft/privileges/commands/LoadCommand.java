@@ -3,6 +3,7 @@ package net.krinsoft.privileges.commands;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
@@ -28,9 +29,12 @@ public class LoadCommand extends PrivilegesCommand {
         long t = System.currentTimeMillis();
         plugin.registerConfiguration(true);
         plugin.registerPermissions();
+        plugin.updatePermissions();
         t = System.currentTimeMillis() - t;
+        if (!(sender instanceof ConsoleCommandSender)) {
+            plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully. (" + t + "ms)");
+        }
         sender.sendMessage(ChatColor.GREEN + "Privileges was loaded successfully. (" + t + "ms)");
-        plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully. (" + t + "ms)");
     }
 
 }

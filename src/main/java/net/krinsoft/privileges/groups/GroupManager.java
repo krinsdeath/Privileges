@@ -6,8 +6,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -23,6 +27,9 @@ public class GroupManager {
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
         this.DEFAULT = plugin.getConfig().getString("default_group", "default");
+    }
+
+    public void reload() {
         for (String group : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
             Group g = getGroup(group);
             if (g == null) {
@@ -118,10 +125,12 @@ public class GroupManager {
      * Adds the specified player to the specified group
      * @param player The player to change
      * @param group The group to set
+     * @return The new group for the player
      */
-    public void addPlayer(String player, String group) {
+    public Group addPlayer(String player, String group) {
         Group g = createGroup(group);
         players.put(player, g);
+        return players.get(player);
     }
 
     /**
@@ -136,7 +145,7 @@ public class GroupManager {
             } else if (sender instanceof ConsoleCommandSender) {
                 return Integer.MAX_VALUE;
             } else {
-                return 0;
+                return Integer.MIN_VALUE;
             }
         } catch (Exception e) {
             if (sender == null) {
@@ -217,12 +226,13 @@ public class GroupManager {
         } else {
             if (plugin.getGroupNode(group) == null) {
                 plugin.debug("Group node for '" + group + "' was null.");
-                return null;
+                return getDefaultGroup();
             }
             List<String> tree = plugin.getPermissionManager().calculateGroupTree(group, "");
             groupList.put(group.toLowerCase(), new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
-            perm.setDescription("A permission node that relates directly to the group: " + group);
+            perm.setDescription("If true, the attached player is a member of the group: " + group);
+            perm.setDefault(PermissionDefault.FALSE);
             if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
                 plugin.getServer().getPluginManager().addPermission(perm);
             }
