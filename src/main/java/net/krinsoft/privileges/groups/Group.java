@@ -29,6 +29,6 @@ public interface Group {
     public boolean hasPermission(String permission, String world);
 
     // Gets a map of this group's permissions on the specified world
-    public Map<String, Boolean> getEffectivePermissions(String world);
+    public String getMasterPermission(String world);
 
 }

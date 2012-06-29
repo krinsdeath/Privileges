@@ -3,6 +3,8 @@ package net.krinsoft.privileges.groups;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.*;
 
@@ -30,30 +32,36 @@ public class RankedGroup implements Group {
         this.rank = rank;
         this.tree = tree;
         for (World world : plugin.getServer().getWorlds()) {
-            LinkedHashMap<String, Boolean> nodes = new LinkedHashMap<String, Boolean>();
+            Permission worldPerm = new Permission("master." + name + "." + world.getName());
+            worldPerm.setDefault(PermissionDefault.FALSE);
+            LinkedHashMap<String, Boolean> children = (LinkedHashMap<String, Boolean>) worldPerm.getChildren();
             for (String g : tree) {
                 ConfigurationSection group = plugin.getGroupNode(g);
                 if (group == null) { continue; }
                 for (String node : group.getStringList("permissions")) {
                     if (node.startsWith("-")) {
-                        nodes.remove(node.substring(1));
-                        nodes.put(node.substring(1), false);
+                        children.remove(node.substring(1));
+                        children.put(node.substring(1), false);
                     } else {
-                        nodes.remove(node);
-                        nodes.put(node, true);
+                        children.remove(node);
+                        children.put(node, true);
                     }
                 }
                 for (String node : group.getStringList("worlds." + world.getName())) {
                     if (node.startsWith("-")) {
-                        nodes.remove(node.substring(1));
-                        nodes.put(node.substring(1), false);
+                        children.remove(node.substring(1));
+                        children.put(node.substring(1), false);
                     } else {
-                        nodes.remove(node);
-                        nodes.put(node, true);
+                        children.remove(node);
+                        children.put(node, true);
                     }
                 }
             }
-            permissions.put(world.getName(), nodes);
+            worldPerm.getChildren().putAll(children);
+            if (plugin.getServer().getPluginManager().getPermission(worldPerm.getName()) == null) {
+                plugin.getServer().getPluginManager().addPermission(worldPerm);
+            }
+            worldPerm.recalculatePermissibles();
         }
         time = System.nanoTime() - time;
         plugin.profile(name + " constructor took: " + time + "ns (" + (time / 1000000L) + "ms)");
@@ -87,9 +95,8 @@ public class RankedGroup implements Group {
         return (nodes.get(permission) != null ? nodes.get(permission) : false);
     }
 
-    public LinkedHashMap<String, Boolean> getEffectivePermissions(String world) {
-        LinkedHashMap<String, Boolean> nodes = permissions.get(world);
-        return (nodes != null ? nodes : new LinkedHashMap<String, Boolean>());
+    public String getMasterPermission(String world) {
+        return "master." + name + "." + world;
     }
     
     @Override

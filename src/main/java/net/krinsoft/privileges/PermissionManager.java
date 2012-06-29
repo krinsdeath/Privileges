@@ -72,9 +72,7 @@ public class PermissionManager {
         Group group = plugin.getGroupManager().addPlayer(player, g);
         plugin.debug("Group tree: " + group.getGroupTree().toString());
         // calculate group's permissions
-        for (Map.Entry<String, Boolean> node : group.getEffectivePermissions(ply.getWorld().getName()).entrySet()) {
-            attachNode(attachment, node.getKey(), node.getValue());
-        }
+        attachNode(attachment, group.getMasterPermission(ply.getWorld().getName()), true);
         // calculate player's permissions
         // overrides group and world permissions
         calculatePlayerPermissions(attachment, player);
