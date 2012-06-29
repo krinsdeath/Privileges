@@ -19,39 +19,44 @@ public class RankedGroup implements Group {
     // this group's inheritance tree, as strings
     private List<String> tree;
 
-    private Map<String, Map<String, Boolean>>   permissions       = new HashMap<String, Map<String, Boolean>>();
+    private LinkedHashMap<String, LinkedHashMap<String, Boolean>>   permissions       = new LinkedHashMap<String, LinkedHashMap<String, Boolean>>();
 
     private Privileges plugin;
 
     public RankedGroup(Privileges plugin, String name, int rank, List<String> tree) {
+        long time = System.nanoTime();
         this.plugin = plugin;
         this.name = name;
         this.rank = rank;
         this.tree = tree;
         for (World world : plugin.getServer().getWorlds()) {
-            Map<String, Boolean> nodes = new HashMap<String, Boolean>();
+            LinkedHashMap<String, Boolean> nodes = new LinkedHashMap<String, Boolean>();
             for (String g : tree) {
                 ConfigurationSection group = plugin.getGroupNode(g);
                 if (group == null) { continue; }
                 for (String node : group.getStringList("permissions")) {
                     if (node.startsWith("-")) {
+                        nodes.remove(node.substring(1));
                         nodes.put(node.substring(1), false);
                     } else {
+                        nodes.remove(node);
                         nodes.put(node, true);
                     }
                 }
                 for (String node : group.getStringList("worlds." + world.getName())) {
                     if (node.startsWith("-")) {
+                        nodes.remove(node.substring(1));
                         nodes.put(node.substring(1), false);
                     } else {
+                        nodes.remove(node);
                         nodes.put(node, true);
                     }
                 }
             }
-            plugin.debug("Group{" + name + "}@" +world.getName() + " permission list length: " + nodes.size());
             permissions.put(world.getName(), nodes);
         }
-        plugin.debug("Group construction for " + name + " completed!");
+        time = System.nanoTime() - time;
+        plugin.profile(name + " constructor took: " + time + "ns (" + (time / 1000000L) + "ms)");
     }
 
     public List<String> getGroupTree() {
@@ -82,9 +87,9 @@ public class RankedGroup implements Group {
         return (nodes.get(permission) != null ? nodes.get(permission) : false);
     }
 
-    public Map<String, Boolean> getEffectivePermissions(String world) {
-        Map<String, Boolean> nodes = permissions.get(world);
-        return (nodes != null ? nodes : new HashMap<String, Boolean>());
+    public LinkedHashMap<String, Boolean> getEffectivePermissions(String world) {
+        LinkedHashMap<String, Boolean> nodes = permissions.get(world);
+        return (nodes != null ? nodes : new LinkedHashMap<String, Boolean>());
     }
     
     @Override

@@ -4,13 +4,11 @@ import net.krinsoft.privileges.groups.Group;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
-import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +27,12 @@ public class PermissionManager {
     }
 
     public void reload() {
+        long time = System.nanoTime();
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             registerPlayer(p.getName());
         }
+        time = System.nanoTime() - time;
+        plugin.profile("Registration of ALL players took: " + time + "ns (" + (time / 1000000L) + "ms)");
     }
 
 
@@ -60,18 +61,7 @@ public class PermissionManager {
             Field f = org.bukkit.craftbukkit.entity.CraftHumanEntity.class.getDeclaredField("perm");
             f.setAccessible(true);
             PermissibleBase permissible = (PermissibleBase) f.get(ply);
-            f = PermissibleBase.class.getDeclaredField("attachments");
-            f.setAccessible(true);
-            List<PermissionAttachment> attachments = (List<PermissionAttachment>) f.get(permissible);
-            if (attachments != null) {
-                for (PermissionAttachment att : attachments) {
-                    plugin.debug("Attachment registered by: " + att.getPlugin());
-                    for (String node : new HashSet<String>(att.getPermissions().keySet())) {
-                        att.unsetPermission(node);
-                    }
-                }
-                attachments.clear();
-            }
+            permissible.clearPermissions();
         } catch (NoSuchFieldException e) {
             plugin.warn("Unknown field: " + e.getMessage());
         } catch (IllegalAccessException e) {
@@ -90,7 +80,8 @@ public class PermissionManager {
         calculatePlayerPermissions(attachment, player);
         ply.recalculatePermissions();
         perms.put(player, attachment);
-        plugin.profile("Registration took: " + (System.nanoTime() - time) + "ns");
+        time = System.nanoTime() - time;
+        plugin.profile("Player registration (" + ply.getEffectivePermissions().size() + " nodes) took: " + time + "ns (" + (time / 1000000L) + "ms)");
         return true;
     }
 

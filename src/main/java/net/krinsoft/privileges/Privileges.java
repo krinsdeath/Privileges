@@ -47,6 +47,7 @@ public class Privileges extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        long time = System.nanoTime();
         registerConfiguration();
         performImports();
         registerPermissions();
@@ -120,8 +121,8 @@ public class Privileges extends JavaPlugin {
             log("An error occurred while posting results to the Metrics.");
             warn(e.getLocalizedMessage());
         }
-
-        log("Is now enabled.");
+        time = System.nanoTime() - time;
+        profile("Startup took: " + time + "ns (" + (time / 1000000L) + "ms)");
     }
 
     @Override

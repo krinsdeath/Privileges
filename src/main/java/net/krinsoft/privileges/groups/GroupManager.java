@@ -30,17 +30,21 @@ public class GroupManager {
     }
 
     public void reload() {
+        long time = System.nanoTime();
         for (String group : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
             Group g = getGroup(group);
             if (g == null) {
                 plugin.getGroups().set("groups." + group, null);
                 continue;
             }
-            if (promotion.get(g.getRank()) != null) {
-                plugin.debug("Duplicate rank found! " + group + "->" + promotion.get(g.getRank()));
+            String rank = promotion.get(g.getRank());
+            if (rank != null) {
+                plugin.warn("Duplicate rank found! " + group + "->" + rank);
             }
             promotion.put(g.getRank(), g.getName());
         }
+        time = System.nanoTime() - time;
+        plugin.profile("Groups registration took: " + (time) + "ns (" + (time / 1000000L) + "ms)");
     }
 
     public Group getDefaultGroup() {
