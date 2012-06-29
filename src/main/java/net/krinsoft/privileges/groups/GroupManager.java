@@ -21,7 +21,7 @@ public class GroupManager {
     private Privileges plugin;
     private String DEFAULT;
     private Map<String, Group> groupList = new HashMap<String, Group>();
-    private Map<String, Group> players = new HashMap<String, Group>();
+    private Map<String, String> players = new HashMap<String, String>();
     private Map<Integer, String> promotion = new TreeMap<Integer, String>();
 
     public GroupManager(Privileges plugin) {
@@ -129,8 +129,8 @@ public class GroupManager {
      */
     public Group addPlayer(String player, String group) {
         Group g = createGroup(group);
-        players.put(player, g);
-        return players.get(player);
+        players.put(player, g.getName());
+        return g;
     }
 
     /**
@@ -149,7 +149,7 @@ public class GroupManager {
             }
         } catch (Exception e) {
             if (sender == null) {
-                plugin.warn("It seems that your target was null! (Possible causes: offline, didn't exist)");
+                plugin.warn("It seems that the sender was null! (Possible causes: offline, didn't exist)");
             }
             plugin.warn("An exception was thrown while fetching a group rank; check groups.yml.");
             plugin.warn("Defaulting to 0: " + e.getLocalizedMessage());
@@ -171,7 +171,7 @@ public class GroupManager {
         plugin.saveUsers();
 
         // update the player's values
-        players.put(player, getGroup(group));
+        players.put(player, group);
 
         // reload the permissions
         plugin.getPermissionManager().registerPlayer(player);
@@ -199,8 +199,8 @@ public class GroupManager {
         Group g = getGroup(group);
         if (g == null) { return null; }
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (players.get(player.getName()).equals(g)) {
-                players.put(player.getName(), getDefaultGroup());
+            if (players.get(player.getName()).equals(g.getName())) {
+                players.put(player.getName(), getDefaultGroup().getName());
             }
         }
         plugin.getPermissionManager().reload();
@@ -214,7 +214,7 @@ public class GroupManager {
      */
     public Group getGroup(Player player) {
         try {
-            return players.get(player.getName());
+            return getGroup(players.get(player.getName()));
         } catch (Exception e) {
             return getDefaultGroup();
         }

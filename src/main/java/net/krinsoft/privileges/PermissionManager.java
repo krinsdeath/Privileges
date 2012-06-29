@@ -4,6 +4,7 @@ import net.krinsoft.privileges.groups.Group;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 
 import java.lang.reflect.Field;
@@ -56,7 +57,6 @@ public class PermissionManager {
             return false;
         }
         try {
-
             Field f = org.bukkit.craftbukkit.entity.CraftHumanEntity.class.getDeclaredField("perm");
             f.setAccessible(true);
             PermissibleBase permissible = (PermissibleBase) f.get(ply);
@@ -65,6 +65,7 @@ public class PermissionManager {
             List<PermissionAttachment> attachments = (List<PermissionAttachment>) f.get(permissible);
             if (attachments != null) {
                 for (PermissionAttachment att : attachments) {
+                    plugin.debug("Attachment registered by: " + att.getPlugin());
                     for (String node : new HashSet<String>(att.getPermissions().keySet())) {
                         att.unsetPermission(node);
                     }

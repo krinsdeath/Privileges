@@ -113,10 +113,10 @@ permissions:
     default: true
     description: Determines whether or not a player can interact with the game objects.
   privileges.list.other:
-    default: false
+    default: op
     description: Allows viewing other peoples permissions node lists.
   privileges.check.other:
-    default: false
+    default: op
     description: Allows checking whether a node is set on another user.
   privileges.self.edit:
     default: false

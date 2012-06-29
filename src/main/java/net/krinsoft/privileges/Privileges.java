@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -157,11 +158,21 @@ public class Privileges extends JavaPlugin {
     public void registerPermissions() {
         permissionManager = new PermissionManager(this);
         groupManager = new GroupManager(this);
+        registerDynamicPermissions();
     }
 
     public void updatePermissions() {
         groupManager.reload();
         permissionManager.reload();
+    }
+
+    private void registerDynamicPermissions() {
+        Permission root = new Permission("privileges.*");
+        if (getServer().getPluginManager().getPermission(root.getName()) == null) {
+            getServer().getPluginManager().addPermission(root);
+        }
+        root.getChildren().put("privileges.admins", true);
+        root.recalculatePermissibles();
     }
 
     public void registerConfiguration(boolean val) {
