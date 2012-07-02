@@ -33,44 +33,74 @@ public class ImportManager {
             try {
                 config.load(configFile);
             } catch (IOException e) {
+                return;
             } catch (InvalidConfigurationException e) {
+                return;
             }
             // get the whole group section
             ConfigurationSection groupSection = config.getConfigurationSection("groups");
             if (groupSection != null) {
                 for (String group : groupSection.getKeys(false)) {
+                    String header = "[" + group + "] Importing (permissions): ";
                     // permissions section
                     ConfigurationSection groupPerms = groupSection.getConfigurationSection(group + "/permissions");
+                    List<String> permSet = new ArrayList<String>();
                     if (groupPerms != null) {
+                        if (plugin.getGroupNode(group) != null) {
+                            permSet.addAll(plugin.getGroupNode(group).getStringList("permissions"));
+                        }
                         for (String node : groupPerms.getKeys(false)) {
                             boolean val = groupPerms.getBoolean(node);
+                            if (node.equalsIgnoreCase("permissions.build")) {
+                                node = "privileges.build";
+                            }
+                            if (node.equalsIgnoreCase("permissions.*")) {
+                                node = "privileges.*";
+                            }
                             if (!val) {
                                 node = "-"+node;
                             }
-                            plugin.debug("[" + group + "] Importing (permissions): " + node);
+                            permSet.add(node);
+                            plugin.debug(header + node);
                         }
+                        plugin.getGroups().set("groups." + group + ".permissions", permSet);
                     }
                     // worlds section
                     ConfigurationSection groupWorlds = groupSection.getConfigurationSection(group + "/worlds");
                     if (groupWorlds != null) {
                         for (String world : groupWorlds.getKeys(false)) {
+                            permSet.clear();
+                            if (plugin.getGroupNode(group) != null) {
+                                permSet.addAll(plugin.getGroupNode(group).getStringList("worlds." + world));
+                            }
+                            header = "[" + group + "] Importing (worlds." + world + "): ";
                             ConfigurationSection groupWorldKey = groupWorlds.getConfigurationSection(world);
                             if (groupWorldKey != null) {
                                 for (String node : groupWorldKey.getKeys(false)) {
                                     boolean val = groupWorlds.getBoolean(world + "/" + node);
+                                    if (node.equalsIgnoreCase("permissions.build")) {
+                                        node = "privileges.build";
+                                    }
+                                    if (node.equalsIgnoreCase("permissions.*")) {
+                                        node = "privileges.*";
+                                    }
                                     if (!val) {
                                         node = "-"+node;
                                     }
-                                    plugin.debug("[" + group + "] Importing (worlds." + world + "): " + node);
+                                    permSet.add(node);
+                                    plugin.debug(header + node);
                                 }
                             }
+                            plugin.getGroups().set("groups." + group + ".worlds." + world, permSet);
                         }
                     }
                 }
             }
+            plugin.saveGroups();
             // rename the config file to prevent multiple imports
             configFile.renameTo(new File("plugins/PermissionsBukkit/config-imported.yml"));
             plugin.log("PermissionsBukkit configuration import complete. (" + (System.currentTimeMillis() - importer) + "ms)");
+            plugin.log("Please check plugins/Privileges/groups.yml to configure your group ranks.");
         }
     }
 
