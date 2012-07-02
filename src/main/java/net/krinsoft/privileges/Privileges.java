@@ -86,10 +86,10 @@ public class Privileges extends JavaPlugin {
 
         try {
             // initialize the plugin metrics tracker
-            Metrics metrics = new Metrics();
+            Metrics metrics = new Metrics(this);
 
             // track the number of groups
-            metrics.addCustomData(this, new Metrics.Plotter() {
+            metrics.addCustomData(new Metrics.Plotter() {
                 @Override
                 public String getColumnName() {
                     return "Groups";
@@ -102,7 +102,7 @@ public class Privileges extends JavaPlugin {
             });
 
             // track the number of users
-            metrics.addCustomData(this, new Metrics.Plotter() {
+            metrics.addCustomData(new Metrics.Plotter() {
                 @Override
                 public String getColumnName() {
                     return "Users";
@@ -114,7 +114,7 @@ public class Privileges extends JavaPlugin {
                 }
             });
 
-            metrics.beginMeasuringPlugin(this);
+            metrics.start();
         } catch (IOException e) {
             log("An error occurred while posting results to the Metrics.");
             warn(e.getLocalizedMessage());
