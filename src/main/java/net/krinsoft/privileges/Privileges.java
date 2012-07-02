@@ -52,7 +52,6 @@ public class Privileges extends JavaPlugin {
         performImports();
         registerPermissions();
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
-            @Override
             public void run() {
                 //boolean tmp = debug;
                 //debug = false;
@@ -64,7 +63,6 @@ public class Privileges extends JavaPlugin {
         registerEvents();
         registerCommands();
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
-            @Override
             public void run() {
                 log("Removing old users from users.yml...");
                 long timeout = 1000L * 60L * 60L * 24L * 30L;
