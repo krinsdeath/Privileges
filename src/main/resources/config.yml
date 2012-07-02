@@ -1,4 +1,3 @@
 default_group: default
 debug: false
-help:
-  hide_noperms: false
+profiler: false

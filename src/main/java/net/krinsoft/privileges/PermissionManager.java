@@ -79,7 +79,7 @@ public class PermissionManager {
         ply.recalculatePermissions();
         perms.put(player, attachment);
         time = System.nanoTime() - time;
-        plugin.profile("Player registration (" + ply.getEffectivePermissions().size() + " nodes) took: " + time + "ns (" + (time / 1000000L) + "ms)");
+        plugin.profile("Player registration (" + ply.getName() + ": " + ply.getEffectivePermissions().size() + " nodes) took: " + time + "ns (" + (time / 1000000L) + "ms)");
         return true;
     }
 
