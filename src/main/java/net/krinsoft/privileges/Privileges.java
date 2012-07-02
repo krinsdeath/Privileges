@@ -54,13 +54,13 @@ public class Privileges extends JavaPlugin {
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                boolean tmp = debug;
-                debug = false;
+                //boolean tmp = debug;
+                //debug = false;
                 registerPermissions();
                 updatePermissions();
-                debug = tmp;
+                //debug = tmp;
             }
-        }, 2L);
+        }, 5L);
         registerEvents();
         registerCommands();
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
@@ -162,11 +162,6 @@ public class Privileges extends JavaPlugin {
         registerDynamicPermissions();
     }
 
-    public void updatePermissions() {
-        groupManager.reload();
-        permissionManager.reload();
-    }
-
     private void registerDynamicPermissions() {
         Permission root = new Permission("privileges.*");
         if (getServer().getPluginManager().getPermission(root.getName()) == null) {
@@ -174,6 +169,11 @@ public class Privileges extends JavaPlugin {
         }
         root.getChildren().put("privileges.admins", true);
         root.recalculatePermissibles();
+    }
+
+    public void updatePermissions() {
+        groupManager.reload();
+        permissionManager.reload();
     }
 
     public void registerConfiguration(boolean val) {

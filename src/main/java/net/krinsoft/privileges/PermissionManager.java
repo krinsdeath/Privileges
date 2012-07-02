@@ -10,15 +10,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author krinsdeath
  */
 public class PermissionManager {
-
     private Privileges plugin;
+
     private HashMap<String, String> players = new HashMap<String, String>();
     private HashMap<String, PermissionAttachment> perms = new HashMap<String, PermissionAttachment>();
 
@@ -37,6 +36,7 @@ public class PermissionManager {
 
 
     final public boolean registerPlayer(String player) {
+        plugin.debug("Attempting registration of player " + player + "...");
         long time = System.nanoTime();
         // validate the player
         Player ply = plugin.getServer().getPlayer(player);
@@ -69,8 +69,7 @@ public class PermissionManager {
         }
         // iterate through the player's groups, and add them to a list
         String g = plugin.getUserNode(player).getString("group");
-        Group group = plugin.getGroupManager().addPlayer(player, g);
-        plugin.debug("Group tree: " + group.getGroupTree().toString());
+        Group group = plugin.getGroupManager().addPlayerToGroup(player, g);
         // calculate group's permissions
         attachNode(attachment, group.getMasterPermission(ply.getWorld().getName()), true);
         // calculate player's permissions

@@ -33,7 +33,7 @@ public class GroupListCommand extends GroupCommand {
         Set<String> groups = plugin.getGroups().getConfigurationSection("groups").getKeys(false);
         for (String group : groups) {
             if (line.length() > 0) { line.append(", "); }
-            Group g = groupManager.getGroup(group);
+            Group g = plugin.getGroupManager().getGroup(group);
             line.append(g.getName()).append(" (").append(g.getRank()).append(")");
         }
         sender.sendMessage(line.toString());

@@ -29,11 +29,11 @@ public class GroupRenameCommand extends GroupCommand {
     
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (groupManager.getGroup(args.get(0)) == null || groupManager.getGroup(args.get(1)) != null) {
+        if (plugin.getGroupManager().getGroup(args.get(0)) == null || plugin.getGroupManager().getGroup(args.get(1)) != null) {
             sender.sendMessage(ChatColor.RED + "Invalid group(s).");
             return;
         }
-        if (groupManager.getRank(sender) <= groupManager.getGroup(args.get(0)).getRank() && !sender.hasPermission("privileges.self.edit")) {
+        if (plugin.getGroupManager().getRank(sender) <= plugin.getGroupManager().getGroup(args.get(0)).getRank() && !sender.hasPermission("privileges.self.edit")) {
             sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
             return;
         }
@@ -53,7 +53,7 @@ public class GroupRenameCommand extends GroupCommand {
                 plugin.getUserNode(user).set("group", n);
             }
         }
-        if (groupManager.getGroup(o).equals(groupManager.getDefaultGroup())) {
+        if (plugin.getGroupManager().getGroup(o).equals(plugin.getGroupManager().getDefaultGroup())) {
             plugin.getConfig().set("default_group", n);
         }
         sender.sendMessage("'" + colorize(ChatColor.GREEN, o) + "' has been renamed to '" + colorize(ChatColor.GREEN, n) + "'");

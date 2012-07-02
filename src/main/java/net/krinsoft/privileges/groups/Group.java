@@ -31,4 +31,12 @@ public interface Group {
     // Gets a map of this group's permissions on the specified world
     public String getMasterPermission(String world);
 
+    public boolean hasPromotion();
+
+    public boolean hasDemotion();
+
+    public String getPromotion();
+
+    public String getDemotion();
+
 }

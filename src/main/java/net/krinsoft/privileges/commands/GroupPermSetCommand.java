@@ -32,7 +32,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        Group group = groupManager.getGroup(args.get(0));
+        Group group = plugin.getGroupManager().getGroup(args.get(0));
         if (group == null) {
             sender.sendMessage(ChatColor.RED + "That group does not exist.");
             return;
@@ -46,7 +46,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
                 return;
             }
         }
-        if (!groupManager.checkRank(sender, group.getRank())) {
+        if (!plugin.getGroupManager().checkRank(sender, group.getRank())) {
             sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
             return;
         }

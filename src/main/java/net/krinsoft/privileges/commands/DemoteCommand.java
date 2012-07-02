@@ -33,10 +33,6 @@ public class DemoteCommand extends GroupCommand {
             sender.sendMessage(ChatColor.RED + "The target '" + ChatColor.DARK_RED + args.get(0) + ChatColor.RED + "' doesn't exist.");
             return;
         }
-        Group group = groupManager.demote(sender, target);
-        if (group != null) {
-            sender.sendMessage(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been demoted to '" + ChatColor.AQUA + group.getName() + ChatColor.GREEN + "'");
-            plugin.log(">> " + sender.getName() + ": " + target.getName() + " has been demoted to '" + group.getName() + "'");
-        }
+        plugin.getGroupManager().demote(sender, target);
     }
 }

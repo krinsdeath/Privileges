@@ -46,12 +46,12 @@ public class GroupCreateCommand extends GroupCommand {
             return;
         }
         // make sure the rank is not already taken
-        if (groupManager.isRankTaken(rank)) {
+        if (plugin.getGroupManager().isRankTaken(rank)) {
             sender.sendMessage(ChatColor.RED + "A group with that rank already exists.");
             return;
         }
         // check that the user can create a group of this rank
-        if (!groupManager.checkRank(sender, rank)) {
+        if (!plugin.getGroupManager().checkRank(sender, rank)) {
             sender.sendMessage("That rank is too high for you.");
             return;
         }

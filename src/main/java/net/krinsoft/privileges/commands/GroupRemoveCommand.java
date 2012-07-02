@@ -30,22 +30,22 @@ public class GroupRemoveCommand extends GroupCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (groupManager.getDefaultGroup().equals(groupManager.getGroup(args.get(0)))) {
+        if (plugin.getGroupManager().getDefaultGroup().equals(plugin.getGroupManager().getGroup(args.get(0)))) {
             sender.sendMessage(ChatColor.RED + "You can't delete the default group.");
             return;
         }
-        Group group = groupManager.getGroup(args.get(0));
+        Group group = plugin.getGroupManager().getGroup(args.get(0));
         if (group == null) {
             sender.sendMessage("No such group exists.");
             return;
         }
-        if (!groupManager.checkRank(sender, group.getRank())) {
+        if (!plugin.getGroupManager().checkRank(sender, group.getRank())) {
             sender.sendMessage(ChatColor.RED + "That rank is too high for you.");
             return;
         }
         for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
             if (plugin.getUserNode(user).getString("group").equals(group.getName())) {
-                plugin.getUserNode(user).set("group", groupManager.getDefaultGroup().getName());
+                plugin.getUserNode(user).set("group", plugin.getGroupManager().getDefaultGroup().getName());
                 plugin.debug("Set " + user + "'s group to default");
             }
         }

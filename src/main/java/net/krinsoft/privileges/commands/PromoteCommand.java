@@ -32,10 +32,6 @@ public class PromoteCommand extends GroupCommand {
             sender.sendMessage(ChatColor.RED + "The target '" + ChatColor.DARK_RED + args.get(0) + ChatColor.RED + "' doesn't exist.");
             return;
         }
-        Group group = groupManager.promote(sender, target);
-        if (group != null) {
-            sender.sendMessage(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been promoted to '" + ChatColor.AQUA + group.getName() + ChatColor.GREEN + "'");
-            plugin.log(">> " + sender.getName() + ": " + target.getName() + " has been promoted to '" + group.getName() + "'");
-        }
+        plugin.getGroupManager().promote(sender, target);
     }
 }

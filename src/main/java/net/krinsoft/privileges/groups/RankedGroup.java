@@ -20,6 +20,10 @@ public class RankedGroup implements Group {
     private int rank;
     // this group's inheritance tree, as strings
     private List<String> tree;
+    // this group's promotion
+    private String promotion;
+    // this group's demotion
+    private String demotion;
 
     private LinkedHashMap<String, LinkedHashMap<String, Boolean>>   permissions       = new LinkedHashMap<String, LinkedHashMap<String, Boolean>>();
 
@@ -63,6 +67,8 @@ public class RankedGroup implements Group {
             }
             worldPerm.recalculatePermissibles();
         }
+        promotion = plugin.getGroupNode(name).getString("data.promotion", null);
+        demotion = plugin.getGroupNode(name).getString("data.demotion", null);
         time = System.nanoTime() - time;
         plugin.profile(name + " constructor took: " + time + "ns (" + (time / 1000000L) + "ms)");
     }
@@ -97,6 +103,21 @@ public class RankedGroup implements Group {
 
     public String getMasterPermission(String world) {
         return "master." + name + "." + world;
+    }
+
+    public boolean hasPromotion() {
+        return promotion != null;
+    }
+    public String getPromotion() {
+        return promotion;
+    }
+
+    public boolean hasDemotion() {
+        return demotion != null;
+    }
+
+    public String getDemotion() {
+        return demotion;
     }
     
     @Override
