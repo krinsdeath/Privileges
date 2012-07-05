@@ -33,6 +33,7 @@ public class Privileges extends JavaPlugin {
 
     private boolean debug = false;
     private boolean profile = false;
+    private boolean on_start_clean = false;
 
     // managers and handlers
     private PermissionManager permissionManager;
@@ -62,22 +63,24 @@ public class Privileges extends JavaPlugin {
         }, 5L);
         registerEvents();
         registerCommands();
-        getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
-            public void run() {
-                log("Removing old users from users.yml...");
-                long timeout = 1000L * 60L * 60L * 24L * 30L;
-                for (OfflinePlayer player : getServer().getOfflinePlayers()) {
-                    if (System.currentTimeMillis() - player.getLastPlayed() >= timeout) {
-                        if (getUsers().get(player.getName()) != null && !getUsers().getString(player.getName() + ".group").equals(getConfig().getString("default_group", "default"))) {
-                            getUsers().set(player.getName(), null);
-                            debug("'" + player.getName() + "' removed from users.yml");
+        if (on_start_clean) {
+            getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+                public void run() {
+                    log("Removing old users from users.yml...");
+                    long timeout = 1000L * 60L * 60L * 24L * 30L;
+                    for (OfflinePlayer player : getServer().getOfflinePlayers()) {
+                        if (System.currentTimeMillis() - player.getLastPlayed() >= timeout || player.isBanned()) {
+                            if ((getUsers().get(player.getName()) != null && !getUsers().getString(player.getName() + ".group").equals(getConfig().getString("default_group", "default"))) || player.isBanned()) {
+                                getUsers().set(player.getName(), null);
+                                debug("'" + player.getName() + "' removed from users.yml");
+                            }
                         }
                     }
+                    saveUsers();
+                    log("... done!");
                 }
-                saveUsers();
-                log("... done!");
-            }
-        }, 1L);
+            }, 1L);
+        }
         try {
             getServer().getPluginManager().getPermission("privileges.*").setDefault(PermissionDefault.OP);
         } catch (NullPointerException e) {
@@ -220,6 +223,7 @@ public class Privileges extends JavaPlugin {
         }
         debug = getConfig().getBoolean("debug", false);
         profile = getConfig().getBoolean("profiler", false);
+        on_start_clean = getConfig().getBoolean("users_cleanup", false);
     }
 
     private void performImports() {
