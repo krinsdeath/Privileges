@@ -11,11 +11,8 @@ import org.bukkit.command.CommandSender;
  */
 public abstract class GroupPermCommand extends GroupCommand {
 
-    protected PermissionManager permManager;
-
     public GroupPermCommand(Privileges plugin) {
         super(plugin);
-        permManager = plugin.getPermissionManager();
     }
 
     @Override

@@ -54,11 +54,11 @@ public class Privileges extends JavaPlugin {
         registerPermissions();
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
             public void run() {
-                //boolean tmp = debug;
-                //debug = false;
+                boolean tmp = debug;
+                debug = false;
                 registerPermissions();
                 updatePermissions();
-                //debug = tmp;
+                debug = tmp;
             }
         }, 5L);
         registerEvents();
