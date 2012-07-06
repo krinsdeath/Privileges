@@ -2,6 +2,7 @@ package net.krinsoft.privileges.groups;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -221,7 +222,7 @@ public class GroupManager {
      * Gets the specified group by name (case-insensitive)
      * @param group The group's name.
      * @return the group instance, or null
-     * @see #getGroup(org.bukkit.entity.Player)
+     * @see #getGroup(org.bukkit.OfflinePlayer)
      */
     public Group getGroup(String group) {
         plugin.debug("Searching for group " + group + "...");
@@ -239,9 +240,13 @@ public class GroupManager {
      * @param player The player whose group we're fetching
      * @return the group associated with this player
      */
-    public Group getGroup(Player player) {
+    public Group getGroup(OfflinePlayer player) {
         try {
-            return getGroup(players.get(player.getName()));
+            String group = players.get(player.getName());
+            if (group == null) {
+                group = plugin.getUserNode(player.getName()).getString("group");
+            }
+            return getGroup(group);
         } catch (Exception e) {
             return getDefaultGroup();
         }

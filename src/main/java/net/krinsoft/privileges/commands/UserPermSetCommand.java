@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissionDefault;
@@ -31,7 +32,14 @@ public class UserPermSetCommand extends UserPermCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        String user = (plugin.getUsers().getConfigurationSection("users." + args.get(0)) != null ? args.get(0) : null);
+        OfflinePlayer player = plugin.getServer().getOfflinePlayer(args.get(0));
+        String test;
+        if (player != null) {
+            test = player.getName();
+        } else {
+            test = args.get(0);
+        }
+        String user = (plugin.getUsers().getConfigurationSection("users." + test) != null ? test : null);
         if (user == null) {
             sender.sendMessage("I don't know about that user.");
             return;
