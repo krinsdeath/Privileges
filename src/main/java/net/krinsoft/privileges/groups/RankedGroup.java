@@ -105,6 +105,42 @@ public class RankedGroup implements Group {
         return "master." + name + "." + world;
     }
 
+    public boolean addPermission(String world, String node) {
+        if (node != null) {
+            ConfigurationSection config = plugin.getGroupNode(name);
+            List<String> nodes;
+            if (world != null && !world.equals("null")) {
+                nodes = config.getStringList("worlds." + world);
+                nodes.add(node);
+                config.set("worlds." + world, nodes);
+            } else {
+                nodes = config.getStringList("permissions");
+                nodes.add(node);
+                config.set("permissions", nodes);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removePermission(String world, String node) {
+        if (node != null) {
+            ConfigurationSection config = plugin.getGroupNode(name);
+            List<String> nodes;
+            if (world != null && !world.equals("null")) {
+                nodes = config.getStringList("worlds." + world);
+                nodes.remove(node);
+                config.set("worlds." + world, nodes);
+            } else {
+                nodes = config.getStringList("permissions");
+                nodes.remove(node);
+                config.set("permissions", nodes);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean hasPromotion() {
         return promotion != null;
     }
