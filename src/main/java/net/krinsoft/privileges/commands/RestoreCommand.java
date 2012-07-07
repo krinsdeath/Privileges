@@ -43,8 +43,7 @@ public class RestoreCommand extends PrivilegesCommand {
             plugin.getUsers().save(new File(plugin.getDataFolder(), "users.yml"));
             plugin.getGroups().load(new File(folder, "groups.yml"));
             plugin.getGroups().save(new File(plugin.getDataFolder(), "groups.yml"));
-            plugin.registerConfiguration(true);
-            plugin.registerPermissions();
+            plugin.reload();
         } catch (Exception e) {
             plugin.warn("An error occurred when trying to restore a backup for Privileges.");
             plugin.warn(e.getLocalizedMessage());

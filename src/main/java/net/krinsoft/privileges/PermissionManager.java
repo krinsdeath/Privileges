@@ -19,10 +19,13 @@ public class PermissionManager {
     private Privileges plugin;
 
     private HashMap<String, String> players = new HashMap<String, String>();
-    private HashMap<String, PermissionAttachment> perms = new HashMap<String, PermissionAttachment>();
 
     public PermissionManager(Privileges plugin) {
         this.plugin = plugin;
+    }
+
+    public void clean() {
+        players.clear();
     }
 
     public void reload() {
@@ -34,7 +37,11 @@ public class PermissionManager {
         plugin.profile("Registration of ALL players took: " + time + "ns (" + (time / 1000000L) + "ms)");
     }
 
-
+    /**
+     * Attempts to register a player by calculating their groups and permissions nodes
+     * @param player The name of the player we're registering
+     * @return true if the registration succeeds, otherwise false
+     */
     final public boolean registerPlayer(String player) {
         plugin.debug("Attempting registration of player " + player + "...");
         long time = System.nanoTime();
@@ -46,17 +53,6 @@ public class PermissionManager {
         }
         player = ply.getName();
         // build attachment
-        PermissionAttachment attachment = ply.addAttachment(plugin);
-        if (perms.containsKey(player)) {
-            attachment = perms.get(player);
-        }
-        if (!players.containsKey(player)) {
-            players.put(player, ply.getWorld().getName());
-        }
-        if (attachment == null) { // make sure nothing has gone awry
-            plugin.debug("Attachment cannot be null.");
-            return false;
-        }
         try {
             Field f = org.bukkit.craftbukkit.entity.CraftHumanEntity.class.getDeclaredField("perm");
             f.setAccessible(true);
@@ -67,6 +63,7 @@ public class PermissionManager {
         } catch (IllegalAccessException e) {
             plugin.warn("Illegal access: " + e.getMessage());
         }
+        PermissionAttachment attachment = ply.addAttachment(plugin);
         // iterate through the player's groups, and add them to a list
         String g = plugin.getUserNode(player).getString("group");
         Group group = plugin.getGroupManager().addPlayerToGroup(player, g);
@@ -76,14 +73,17 @@ public class PermissionManager {
         // overrides group and world permissions
         calculatePlayerPermissions(attachment, player);
         ply.recalculatePermissions();
-        perms.put(player, attachment);
         time = System.nanoTime() - time;
         plugin.profile("Player registration (" + ply.getName() + ": " + ply.getEffectivePermissions().size() + " nodes) took: " + time + "ns (" + (time / 1000000L) + "ms)");
         return true;
     }
 
-    public List<String> calculateGroupTree(String group, String next) {
-        plugin.debug(next + "> " + group);
+    /**
+     * Calculates the group tree for the player by starting at the base inherited group and calculating upwards
+     * @param group The name of the group whose inheritance tree we're calculating
+     * @return The calculated group inheritance tree
+     */
+    public List<String> calculateGroupTree(String group) {
         List<String> tree = new ArrayList<String>();
         tree.add(0, group);
         List<String> inheritance;
@@ -94,15 +94,19 @@ public class PermissionManager {
         }
         for (String top : inheritance) {
             if (top.equalsIgnoreCase(group)) { continue; }
-            for (String trunk : calculateBackwardTree(top, next + "-")) {
+            for (String trunk : calculateBackwardTree(top)) {
                 tree.add(0, trunk);
             }
         }
         return tree;
     }
-    
-    private List<String> calculateBackwardTree(String group, String next) {
-        plugin.debug(next + "> " + group);
+
+    /**
+     * Calculates the reverse sorted inheritance tree for the specified group
+     * @param group The name of the group that we're reverse sorting
+     * @return The backwards inheritance tree
+     */
+    private List<String> calculateBackwardTree(String group) {
         List<String> tree = new ArrayList<String>();
         tree.add(group);
         List<String> inheritance;
@@ -113,36 +117,39 @@ public class PermissionManager {
         }
         for (String top : inheritance) {
             if (top.equalsIgnoreCase(group)) { continue; }
-            for (String trunk : calculateBackwardTree(top, next + "-")) {
+            for (String trunk : calculateBackwardTree(top)) {
                 tree.add(trunk);
             }
         }
         return tree;
     }
 
+    /**
+     * Removes a player from the internal map and clears out any possibly stale references
+     * @param player The name of the player
+     */
     public void unregisterPlayer(String player) {
         if (players.containsKey(player)) {
-            PermissionAttachment att = perms.get(player); // stupid, this reference has to exist to unset permissions on reload :|
-            if (att == null) {
-                plugin.debug("'" + player + "' unregistering: Attachment is null");
-            } else {
-                for (String key : att.getPermissions().keySet()) {
-                    att.unsetPermission(key);
-                }
-            }
             players.remove(player);
-            perms.remove(player);
         } else {
             plugin.debug("Unregistering '" + player + "': player isn't registered.");
         }
     }
 
+    /**
+     * Unregisters all players.
+     */
     public void disable() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             unregisterPlayer(player.getName());
         }
     }
 
+    /**
+     * Changes a player's world entry in the player map and recalculates their permissions
+     * @param player The name of the player who is changing worlds
+     * @param world The world to which the player is changing
+     */
     public void updatePlayerWorld(String player, String world) {
         if (players.containsKey(player)) {
             String w = players.get(player);
@@ -155,6 +162,11 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Calculates player specific permissions
+     * @param attachment The attachment to which we're adding the permissions
+     * @param player The name of the player we're fetching permissions for
+     */
     private void calculatePlayerPermissions(PermissionAttachment attachment, String player) {
         plugin.debug("Calculating player-specific permissions...");
         try {
@@ -190,6 +202,11 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Attempts to add a permission to the specified attachment
+     * @param attachment The attachment we're adding the permission to
+     * @param node The name of the permission (prefixed with a - for false) we're adding to the attachment
+     */
     private void attachNode(PermissionAttachment attachment, String node) {
         boolean val;
         String debug;
@@ -207,7 +224,13 @@ public class PermissionManager {
         plugin.debug(debug);
     }
 
-    private void attachNode(PermissionAttachment attachment, String node, Boolean value) {
+    /**
+     * Attempts to attach a permission node to the specified attachment, with the specified value (true for on, false for off)
+     * @param attachment The attachment we're adding the permission to
+     * @param node The name of the permission node we're attaching
+     * @param value The value associated with the permission node (true or false)
+     */
+    private void attachNode(PermissionAttachment attachment, String node, boolean value) {
         String mod = (attachment.getPermissions().containsKey(node) ? "overriding" : "setting");
         String msg = mod + " " + node + " to " + value;
         attachment.unsetPermission(node);

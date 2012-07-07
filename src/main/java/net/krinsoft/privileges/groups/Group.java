@@ -25,10 +25,19 @@ public interface Group {
     // Returns whether this group's inheritance tree contains the specified group's name
     public boolean isMemberOf(Group group);
 
-    // Checks whether this group has the specified permission on the given world
-    public boolean hasPermission(String permission, String world);
+    /**
+     * Checks whether this group has the specified permission node on the given world
+     * @param world The name of the world on which we're checking the permission
+     * @param node The permission node
+     * @return true if the group has the permission, otherwise false
+     */
+    public boolean hasPermission(String world, String node);
 
-    // Gets a map of this group's permissions on the specified world
+    /**
+     * Returns the master permission string for this group on the specified world
+     * @param world The name of the world we're fetching the permission master for
+     * @return A string consisting of this group's name and the specified world, prefixed by master -> "master.[group name].[world]"
+     */
     public String getMasterPermission(String world);
 
     /**

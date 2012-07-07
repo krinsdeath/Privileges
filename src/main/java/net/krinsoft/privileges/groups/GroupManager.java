@@ -29,6 +29,11 @@ public class GroupManager {
         this.DEFAULT = plugin.getConfig().getString("default_group", "default");
     }
 
+    public void clean() {
+        groupList.clear();
+        players.clear();
+    }
+
     public void reload() {
         long time = System.nanoTime();
         StringBuilder line = new StringBuilder();

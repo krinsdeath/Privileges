@@ -25,8 +25,6 @@ public class RankedGroup implements Group {
     // this group's demotion
     private String demotion;
 
-    private LinkedHashMap<String, LinkedHashMap<String, Boolean>>   permissions       = new LinkedHashMap<String, LinkedHashMap<String, Boolean>>();
-
     private Privileges plugin;
 
     public RankedGroup(Privileges plugin, String name, int rank, List<String> tree) {
@@ -36,9 +34,13 @@ public class RankedGroup implements Group {
         this.rank = rank;
         this.tree = tree;
         for (World world : plugin.getServer().getWorlds()) {
-            Permission worldPerm = new Permission("master." + name + "." + world.getName());
+            Permission worldPerm = plugin.getServer().getPluginManager().getPermission("master." + name + "." + world.getName());
+            if (worldPerm == null) {
+                worldPerm = new Permission("master." + name + "." + world.getName());
+            }
             worldPerm.setDefault(PermissionDefault.FALSE);
-            LinkedHashMap<String, Boolean> children = (LinkedHashMap<String, Boolean>) worldPerm.getChildren();
+            worldPerm.getChildren().clear();
+            LinkedHashMap<String, Boolean> children = new LinkedHashMap<String, Boolean>();
             for (String g : tree) {
                 ConfigurationSection group = plugin.getGroupNode(g);
                 if (group == null) { continue; }
@@ -97,8 +99,12 @@ public class RankedGroup implements Group {
     }
 
     public boolean hasPermission(String permission, String world) {
-        Map<String, Boolean> nodes = permissions.get(world);
-        return (nodes.get(permission) != null ? nodes.get(permission) : false);
+        Permission perm = plugin.getServer().getPluginManager().getPermission(getMasterPermission(world));
+        boolean val = false;
+        if (perm != null && perm.getChildren().containsKey(permission)) {
+            val = perm.getChildren().get(permission);
+        }
+        return val;
     }
 
     public String getMasterPermission(String world) {

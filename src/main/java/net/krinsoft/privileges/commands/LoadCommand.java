@@ -27,9 +27,7 @@ public class LoadCommand extends PrivilegesCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         long t = System.currentTimeMillis();
-        plugin.registerConfiguration(true);
-        plugin.registerPermissions();
-        plugin.updatePermissions();
+        plugin.reload();
         t = System.currentTimeMillis() - t;
         if (!(sender instanceof ConsoleCommandSender)) {
             plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully. (" + t + "ms)");

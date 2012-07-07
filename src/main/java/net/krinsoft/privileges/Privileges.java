@@ -1,7 +1,34 @@
 package net.krinsoft.privileges;
 
+import com.google.common.io.Files;
 import com.pneumaticraft.commandhandler.CommandHandler;
-import net.krinsoft.privileges.commands.*;
+import net.krinsoft.privileges.commands.BackupCommand;
+import net.krinsoft.privileges.commands.BaseCommand;
+import net.krinsoft.privileges.commands.CheckCommand;
+import net.krinsoft.privileges.commands.DebugCommand;
+import net.krinsoft.privileges.commands.DemoteCommand;
+import net.krinsoft.privileges.commands.GroupBaseCommand;
+import net.krinsoft.privileges.commands.GroupCreateCommand;
+import net.krinsoft.privileges.commands.GroupListCommand;
+import net.krinsoft.privileges.commands.GroupPermBaseCommand;
+import net.krinsoft.privileges.commands.GroupPermRemoveCommand;
+import net.krinsoft.privileges.commands.GroupPermSetCommand;
+import net.krinsoft.privileges.commands.GroupRemoveCommand;
+import net.krinsoft.privileges.commands.GroupRenameCommand;
+import net.krinsoft.privileges.commands.GroupSetCommand;
+import net.krinsoft.privileges.commands.InfoCommand;
+import net.krinsoft.privileges.commands.ListCommand;
+import net.krinsoft.privileges.commands.LoadCommand;
+import net.krinsoft.privileges.commands.PromoteCommand;
+import net.krinsoft.privileges.commands.ReloadCommand;
+import net.krinsoft.privileges.commands.RestoreCommand;
+import net.krinsoft.privileges.commands.SaveCommand;
+import net.krinsoft.privileges.commands.UserBaseCommand;
+import net.krinsoft.privileges.commands.UserListCommand;
+import net.krinsoft.privileges.commands.UserPermRemoveCommand;
+import net.krinsoft.privileges.commands.UserPermSetCommand;
+import net.krinsoft.privileges.commands.UserResetCommand;
+import net.krinsoft.privileges.commands.VersionCommand;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
 import net.krinsoft.privileges.listeners.BlockListener;
@@ -21,6 +48,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -143,6 +172,7 @@ public class Privileges extends JavaPlugin {
     @Override
     public void saveConfig() {
         try {
+            debug("config.yml checksum: " + md5(configFile));
             getConfig().save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,7 +187,21 @@ public class Privileges extends JavaPlugin {
         return commandHandler.locateAndRunCommand(sender, allArgs);
     }
 
-    public void registerPermissions() {
+    public void reload() {
+        permissionManager.clean();
+        groupManager.clean();
+        configuration = null;
+        configFile = null;
+        groups = null;
+        groupFile = null;
+        users = null;
+        userFile = null;
+        registerConfiguration();
+        registerPermissions();
+        updatePermissions();
+    }
+
+    private void registerPermissions() {
         permissionManager = new PermissionManager(this);
         groupManager = new GroupManager(this);
         registerDynamicPermissions();
@@ -172,21 +216,12 @@ public class Privileges extends JavaPlugin {
         root.recalculatePermissibles();
     }
 
-    public void updatePermissions() {
+    private void updatePermissions() {
         groupManager.reload();
         permissionManager.reload();
     }
 
-    public void registerConfiguration(boolean val) {
-        if (val) {
-            configuration = null;
-            users = null;
-            groups = null;
-            registerConfiguration();
-        }
-    }
-    
-    public void registerConfiguration() {
+    private void registerConfiguration() {
         configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/config.yml")));
@@ -315,7 +350,8 @@ public class Privileges extends JavaPlugin {
 
     public void saveUsers() {
         try {
-            users.save(userFile);
+            debug("users.yml checksum: " + md5(userFile));
+            getUsers().save(userFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -330,7 +366,8 @@ public class Privileges extends JavaPlugin {
 
     public void saveGroups() {
         try {
-            groups.save(groupFile);
+            debug("groups.yml checksum: " + md5(groupFile));
+            getGroups().save(groupFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -376,6 +413,20 @@ public class Privileges extends JavaPlugin {
 
     public GroupManager getGroupManager() {
         return this.groupManager;
+    }
+
+    private String md5(File file) {
+        try {
+            byte[] bytes = Files.getDigest(file, MessageDigest.getInstance("SHA-256"));
+            StringBuilder checksum = new StringBuilder();
+            for (byte b : bytes) {
+                checksum.append(b);
+            }
+            return checksum.toString();
+        } catch (NoSuchAlgorithmException e) {
+        } catch (IOException e) {
+        }
+        return null;
     }
 
 }
