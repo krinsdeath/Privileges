@@ -265,7 +265,7 @@ public class GroupManager {
                 plugin.debug("Group node for '" + group + "' was null.");
                 return getDefaultGroup();
             }
-            List<String> tree = plugin.getPermissionManager().calculateGroupTree(group, "");
+            List<String> tree = plugin.getPermissionManager().calculateGroupTree(group);
             groupList.put(group.toLowerCase(), new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
             perm.setDescription("If true, the attached player is a member of the group: " + group);
