@@ -243,6 +243,17 @@ public class GroupManager {
     /**
      * Gets the specified player's group
      * @param player The player whose group we're fetching
+     * @return The player's group
+     * @deprecated since 1.5
+     */
+    @Deprecated
+    public Group getGroup(Player player) {
+        return getGroup((OfflinePlayer)player);
+    }
+
+    /**
+     * Gets the specified player's group
+     * @param player The player whose group we're fetching
      * @return the group associated with this player
      */
     public Group getGroup(OfflinePlayer player) {
@@ -257,6 +268,11 @@ public class GroupManager {
         }
     }
 
+    /**
+     * Creates the specified group, by name
+     * @param group The name of the group to create
+     * @return The new group object, or the default Privileges group if no groups by that name exist
+     */
     protected Group createGroup(String group) {
         if (groupList.containsKey(group.toLowerCase())) {
             return groupList.get(group.toLowerCase());
