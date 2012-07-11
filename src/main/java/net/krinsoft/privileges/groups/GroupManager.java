@@ -51,16 +51,29 @@ public class GroupManager {
         return getGroup(this.DEFAULT);
     }
 
+    /**
+     * Checks whether the specified sender's rank is higher than or equal to the target's rank
+     * @param sender The sender issuing the command
+     * @param target The target whose rank we're checking
+     * @return true if the sender's rank is high enough, otherwise false
+     * @see #checkRank(CommandSender, int)
+     */
     public boolean checkRank(CommandSender sender, CommandSender target) {
         return getRank(sender) >= getRank(target) || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
     }
-    
+
+    /**
+     * Checks whether the specified sender's rank is higher than or equal to the given rank
+     * @param sender The sender issuing the command
+     * @param rank The rank that we're checking against
+     * @return true if the sender's rank is high enough, otherwise false
+     */
     public boolean checkRank(CommandSender sender, int rank) {
         return getRank(sender) >= rank || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
     }
 
     /**
-     * Checks if the specified rank is already taken
+     * Checks if the specified rank is already taken by a group
      * @param rank The rank to check
      * @return true if the rank is taken, otherwise false
      */
