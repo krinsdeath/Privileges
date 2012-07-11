@@ -19,6 +19,7 @@ import net.krinsoft.privileges.commands.GroupSetCommand;
 import net.krinsoft.privileges.commands.InfoCommand;
 import net.krinsoft.privileges.commands.ListCommand;
 import net.krinsoft.privileges.commands.LoadCommand;
+import net.krinsoft.privileges.commands.ProfilingCommand;
 import net.krinsoft.privileges.commands.PromoteCommand;
 import net.krinsoft.privileges.commands.ReloadCommand;
 import net.krinsoft.privileges.commands.RestoreCommand;
@@ -292,6 +293,7 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new InfoCommand(this));
         commandHandler.registerCommand(new ListCommand(this));
         commandHandler.registerCommand(new LoadCommand(this));
+        commandHandler.registerCommand(new ProfilingCommand(this));
         commandHandler.registerCommand(new PromoteCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new RestoreCommand(this));
@@ -455,7 +457,9 @@ public class Privileges extends JavaPlugin {
             }
             return checksum.toString();
         } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
