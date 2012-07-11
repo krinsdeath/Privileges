@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -198,7 +199,7 @@ public class GroupManager {
         try {
             if (sender instanceof Player) {
                 return getGroup((OfflinePlayer)sender).getRank();
-            } else if (sender instanceof ConsoleCommandSender) {
+            } else if (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
                 return Integer.MAX_VALUE;
             } else {
                 return Integer.MIN_VALUE;
