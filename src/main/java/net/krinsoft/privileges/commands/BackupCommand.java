@@ -46,7 +46,7 @@ public class BackupCommand extends PrivilegesCommand {
         sender.sendMessage("Privileges has been backed up.");
         plugin.log(">> " + sender.getName() + ": Privileges config files have been backed up to '" + folder.getPath() + "'.");
         time = System.nanoTime() - time;
-        plugin.profile(time, "backup");
+        plugin.profile(time, "command_backup");
     }
 
 }

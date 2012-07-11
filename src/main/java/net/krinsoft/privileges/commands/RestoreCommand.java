@@ -52,7 +52,7 @@ public class RestoreCommand extends PrivilegesCommand {
         time = System.nanoTime() - time;
         sender.sendMessage("The backup for '" + folder.getPath() + "' has been restored.");
         plugin.log(">> " + sender.getName() + ": A Privileges backup has been restored.");
-        plugin.profile(time, "restore");
+        plugin.profile(time, "command_restore");
     }
 
 }

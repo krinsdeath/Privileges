@@ -32,6 +32,6 @@ public class SaveCommand extends PrivilegesCommand {
         time = System.nanoTime() - time;
         sender.sendMessage(ChatColor.GREEN + "All config files saved.");
         plugin.log(">> " + sender.getName() + ": All config files saved.");
-        plugin.profile(time, "save");
+        plugin.profile(time, "command_save");
     }
 }

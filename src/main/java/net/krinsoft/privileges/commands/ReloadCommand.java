@@ -38,7 +38,7 @@ public class ReloadCommand extends PrivilegesCommand {
         if (!(sender instanceof ConsoleCommandSender)) {
             plugin.log(">> " + sender.getName() + ": " + msg);
         }
-        plugin.profile(time, "reload");
+        plugin.profile(time, "command_reload");
     }
 
 }

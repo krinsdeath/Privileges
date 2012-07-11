@@ -117,43 +117,40 @@ public class Privileges extends JavaPlugin {
             debug("Error setting default permission for 'privileges.*'");
         }
 
-        try {
-            // initialize the plugin metrics tracker
-            Metrics metrics = new Metrics(this);
-
-            // track the number of groups
-            metrics.addCustomData(new Metrics.Plotter() {
-                @Override
-                public String getColumnName() {
-                    return "Groups";
-                }
-
-                @Override
-                public int getValue() {
-                    return getGroups().getConfigurationSection("groups").getKeys(false).size();
-                }
-            });
-
-            // track the number of users
-            metrics.addCustomData(new Metrics.Plotter() {
-                @Override
-                public String getColumnName() {
-                    return "Users";
-                }
-
-                @Override
-                public int getValue() {
-                    return getUsers().getConfigurationSection("users").getKeys(false).size();
-                }
-            });
-
-            metrics.start();
-        } catch (IOException e) {
-            log("An error occurred while posting results to the Metrics.");
-            warn(e.getLocalizedMessage());
+        if (getConfig().getBoolean("metrics")) {
+            try {
+                // initialize the plugin metrics tracker
+                Metrics metrics = new Metrics(this);
+                // track the number of groups
+                metrics.addCustomData(new Metrics.Plotter() {
+                    @Override
+                    public String getColumnName() {
+                        return "Groups";
+                    }
+                    @Override
+                    public int getValue() {
+                        return getGroups().getConfigurationSection("groups").getKeys(false).size();
+                    }
+                });
+                // track the number of users
+                metrics.addCustomData(new Metrics.Plotter() {
+                    @Override
+                    public String getColumnName() {
+                        return "Users";
+                    }
+                    @Override
+                    public int getValue() {
+                        return getUsers().getConfigurationSection("users").getKeys(false).size();
+                    }
+                });
+                metrics.start();
+            } catch (IOException e) {
+                log("An error occurred while posting results to the Metrics.");
+                warn(e.getLocalizedMessage());
+            }
         }
         time = System.nanoTime() - time;
-        profile(time, "enable");
+        profile(time, "plugin_enable");
     }
 
     @Override
@@ -161,7 +158,7 @@ public class Privileges extends JavaPlugin {
         long time = System.nanoTime();
         permissionManager.disable();
         time = System.nanoTime() - time;
-        profile(time, "disable");
+        profile(time, "plugin_disable");
     }
 
     @Override

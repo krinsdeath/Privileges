@@ -33,7 +33,7 @@ public class LoadCommand extends PrivilegesCommand {
             plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully.");
         }
         sender.sendMessage(ChatColor.GREEN + "Privileges was loaded successfully.");
-        plugin.profile(time, "load");
+        plugin.profile(time, "command_load");
     }
 
 }
