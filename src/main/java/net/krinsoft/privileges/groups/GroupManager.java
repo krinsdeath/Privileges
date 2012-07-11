@@ -282,13 +282,13 @@ public class GroupManager {
                 return getDefaultGroup();
             }
             List<String> tree = plugin.getPermissionManager().calculateGroupTree(group);
-            groupList.put(group.toLowerCase(), new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             Permission perm = new Permission("group." + group);
             perm.setDescription("If true, the attached player is a member of the group: " + group);
             perm.setDefault(PermissionDefault.FALSE);
             if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
                 plugin.getServer().getPluginManager().addPermission(perm);
             }
+            groupList.put(group.toLowerCase(), new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree));
             return groupList.get(group.toLowerCase());
         }
     }

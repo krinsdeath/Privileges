@@ -63,6 +63,9 @@ public class RankedGroup implements Group {
                     }
                 }
             }
+            if (!children.containsKey("group." + name)) {
+                children.put("group." + name, true);
+            }
             worldPerm.getChildren().putAll(children);
             if (plugin.getServer().getPluginManager().getPermission(worldPerm.getName()) == null) {
                 plugin.getServer().getPluginManager().addPermission(worldPerm);
