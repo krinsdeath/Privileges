@@ -44,8 +44,7 @@ public class GroupManager {
             line.append(g.getName()).append(" (").append(g.getRank()).append(")");
         }
         time = System.nanoTime() - time;
-        plugin.profile("Groups registration took: " + (time) + "ns (" + (time / 1000000L) + "ms)");
-        plugin.debug("Available groups: " + line.toString());
+        plugin.profile(time, "registration_group_all");
     }
 
     public Group getDefaultGroup() {
@@ -87,7 +86,7 @@ public class GroupManager {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
             return;
         }
-        Group currentGroup = getGroup(player);
+        Group currentGroup = getGroup((OfflinePlayer) player);
         if (currentGroup != null && currentGroup.hasPromotion()) {
             Group proGroup = createGroup(currentGroup.getPromotion());
             if (proGroup != null && (proGroup.getRank() < send || sender.hasPermission("privileges.self.edit"))) {
@@ -132,7 +131,7 @@ public class GroupManager {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high.");
             return;
         }
-        Group currentGroup = getGroup(player);
+        Group currentGroup = getGroup((OfflinePlayer) player);
         if (currentGroup != null && currentGroup.hasDemotion()) {
             Group demGroup = createGroup(currentGroup.getDemotion());
             if (demGroup != null && (demGroup.getRank() < send || sender.hasPermission("privileges.self.edit"))) {
@@ -185,7 +184,7 @@ public class GroupManager {
     public int getRank(CommandSender sender) {
         try {
             if (sender instanceof Player) {
-                return getGroup((Player)sender).getRank();
+                return getGroup((OfflinePlayer)sender).getRank();
             } else if (sender instanceof ConsoleCommandSender) {
                 return Integer.MAX_VALUE;
             } else {

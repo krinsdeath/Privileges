@@ -25,12 +25,13 @@ public class SaveCommand extends PrivilegesCommand {
     
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        long t = System.currentTimeMillis();
+        long time = System.nanoTime();
         plugin.saveUsers();
         plugin.saveGroups();
         plugin.saveConfig();
-        t = System.currentTimeMillis() - t;
-        sender.sendMessage(ChatColor.GREEN + "All config files saved. (" + ChatColor.AQUA + t + ChatColor.GREEN + "ms)");
-        plugin.log(">> " + sender.getName() + ": All config files saved. (" + t + "ms)");
+        time = System.nanoTime() - time;
+        sender.sendMessage(ChatColor.GREEN + "All config files saved.");
+        plugin.log(">> " + sender.getName() + ": All config files saved.");
+        plugin.profile(time, "save");
     }
 }

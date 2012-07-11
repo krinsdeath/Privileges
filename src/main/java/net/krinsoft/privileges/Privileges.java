@@ -152,13 +152,15 @@ public class Privileges extends JavaPlugin {
             warn(e.getLocalizedMessage());
         }
         time = System.nanoTime() - time;
-        profile("Startup took: " + time + "ns (" + (time / 1000000L) + "ms)");
+        profile(time, "enable");
     }
 
     @Override
     public void onDisable() {
+        long time = System.nanoTime();
         permissionManager.disable();
-        log("Is now disabled.");
+        time = System.nanoTime() - time;
+        profile(time, "disable");
     }
 
     @Override
@@ -172,7 +174,7 @@ public class Privileges extends JavaPlugin {
     @Override
     public void saveConfig() {
         try {
-            debug("config.yml checksum: " + md5(configFile));
+            debug("config.yml checksum: " + sha256(configFile));
             getConfig().save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -350,7 +352,7 @@ public class Privileges extends JavaPlugin {
 
     public void saveUsers() {
         try {
-            debug("users.yml checksum: " + md5(userFile));
+            debug("users.yml checksum: " + sha256(userFile));
             getUsers().save(userFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -366,7 +368,7 @@ public class Privileges extends JavaPlugin {
 
     public void saveGroups() {
         try {
-            debug("groups.yml checksum: " + md5(groupFile));
+            debug("groups.yml checksum: " + sha256(groupFile));
             getGroups().save(groupFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -388,6 +390,30 @@ public class Privileges extends JavaPlugin {
         }
     }
 
+    /**
+     * Writes a profiler message and then calculates the average for the specified event
+     * @param time The amount of time the event which triggered the profiler took
+     * @param event The event which triggered the profiler
+     */
+    public void profile(long time, String event) {
+        if (profile) {
+            String message = "[Profiler] [" + event + "] " + (time / 1000000L) + "ms (" + time + "ns)";
+            getLogger().info(message);
+            long average = getConfig().getLong("profiling." + event, 0);
+            average = average + time;
+            average = average / 2;
+            getConfig().set("profiling." + event, average);
+            saveConfig();
+        }
+    }
+
+    /**
+     * Writes a profiler log message to the server.log
+     * @param message The message to write to the log
+     * @see #profile(long, String)
+     * @deprecated since 1.6
+     */
+    @Deprecated
     public void profile(String message) {
         if (profile) {
             message = "[Profiler] " + message;
@@ -415,7 +441,12 @@ public class Privileges extends JavaPlugin {
         return this.groupManager;
     }
 
-    private String md5(File file) {
+    /**
+     * Creates a sha-256 hash of the specified file
+     * @param file The file we're creating a sha-256 hash for
+     * @return The hash, as a string
+     */
+    private String sha256(File file) {
         try {
             byte[] bytes = Files.getDigest(file, MessageDigest.getInstance("SHA-256"));
             StringBuilder checksum = new StringBuilder();

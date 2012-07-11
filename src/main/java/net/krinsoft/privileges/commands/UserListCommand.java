@@ -3,6 +3,7 @@ package net.krinsoft.privileges.commands;
 import net.krinsoft.privileges.FancyPage;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -32,7 +33,7 @@ public class UserListCommand extends UserCommand {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             online.add(
                     // user group
-                    ChatColor.GREEN + "[" + ChatColor.GOLD + plugin.getGroupManager().getGroup(player).getName() + ChatColor.GREEN + "] " +
+                    ChatColor.GREEN + "[" + ChatColor.GOLD + plugin.getGroupManager().getGroup((OfflinePlayer) player).getName() + ChatColor.GREEN + "] " +
                     // user name
                     ChatColor.GREEN + player.getName() + " (~" + ChatColor.GOLD + player.getDisplayName() + ChatColor.GREEN + ")");
         }

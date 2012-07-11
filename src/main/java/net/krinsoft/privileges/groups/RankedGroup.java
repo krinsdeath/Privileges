@@ -75,7 +75,7 @@ public class RankedGroup implements Group {
         promotion = plugin.getGroupNode(name).getString("data.promotion", null);
         demotion = plugin.getGroupNode(name).getString("data.demotion", null);
         time = System.nanoTime() - time;
-        plugin.profile(name + " constructor took: " + time + "ns (" + (time / 1000000L) + "ms)");
+        plugin.profile(time, "registration_group");
     }
 
     public List<String> getGroupTree() {

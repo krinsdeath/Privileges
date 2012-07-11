@@ -27,6 +27,7 @@ public class BackupCommand extends PrivilegesCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
+        long time = System.nanoTime();
         String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
         backup = backup.replaceAll("[\\s./\\\\]", "");
         File folder = new File("privbackups/" + backup);
@@ -44,6 +45,8 @@ public class BackupCommand extends PrivilegesCommand {
         }
         sender.sendMessage("Privileges has been backed up.");
         plugin.log(">> " + sender.getName() + ": Privileges config files have been backed up to '" + folder.getPath() + "'.");
+        time = System.nanoTime() - time;
+        plugin.profile(time, "backup");
     }
 
 }

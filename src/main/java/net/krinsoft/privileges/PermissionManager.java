@@ -34,7 +34,7 @@ public class PermissionManager {
             registerPlayer(p.getName());
         }
         time = System.nanoTime() - time;
-        plugin.profile("Registration of ALL players took: " + time + "ns (" + (time / 1000000L) + "ms)");
+        plugin.profile(time, "registration_player_all");
     }
 
     /**
@@ -74,7 +74,7 @@ public class PermissionManager {
         calculatePlayerPermissions(attachment, player);
         ply.recalculatePermissions();
         time = System.nanoTime() - time;
-        plugin.profile("Player registration (" + ply.getName() + ": " + ply.getEffectivePermissions().size() + " nodes) took: " + time + "ns (" + (time / 1000000L) + "ms)");
+        plugin.profile(time, "registration_player");
         return true;
     }
 
