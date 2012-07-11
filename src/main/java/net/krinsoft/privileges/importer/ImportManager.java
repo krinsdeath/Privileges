@@ -37,11 +37,14 @@ public class ImportManager {
             } catch (InvalidConfigurationException e) {
                 return;
             }
+            /////////////////////////
+            // group import start
             // get the whole group section
             ConfigurationSection groupSection = config.getConfigurationSection("groups");
+            String header;
             if (groupSection != null) {
                 for (String group : groupSection.getKeys(false)) {
-                    String header = "[" + group + "] Importing (permissions): ";
+                    header = "[" + group + "] Importing (permissions): ";
                     // permissions section
                     ConfigurationSection groupPerms = groupSection.getConfigurationSection(group + "/permissions");
                     List<String> permSet = new ArrayList<String>();
@@ -97,6 +100,81 @@ public class ImportManager {
                 }
             }
             plugin.saveGroups();
+            // groups importing done!
+            /////////////////////////
+            // user import start
+            // get the whole users section
+            ConfigurationSection userSection = config.getConfigurationSection("users");
+            if (userSection != null) {
+                // user section not null, iterate through users
+                for (String username : userSection.getKeys(false)) {
+                    List<String> groups = userSection.getStringList(username + "/groups");
+                    if (plugin.getUserNode(username).get("group") == null) {
+                        String group;
+                        if (groups.size() > 0 && plugin.getGroupManager().getGroup(groups.get(0)) != null) {
+                            group = groups.get(0);
+                        } else {
+                            group = plugin.getGroupManager().getDefaultGroup().getName();
+                        }
+                        plugin.getUserNode(username).set("group", group);
+                        plugin.debug("[" + username + "] Set group to '" + group + "'");
+                    }
+                    ConfigurationSection userPerms = userSection.getConfigurationSection(username + "/permissions");
+                    List<String> permList = new ArrayList<String>();
+                    /////////////////////////
+                    // permissions section
+                    permList.addAll(plugin.getUserNode(username).getStringList("permissions"));
+                    if (userPerms != null) {
+                        header = "[" + username + "] Importing (permissions): ";
+                        // user has custom permissions set
+                        for (String node : userPerms.getKeys(false)) {
+                            boolean val = userPerms.getBoolean(node);
+                            if (node.equalsIgnoreCase("permissions.*")) {
+                                node = "privileges.*";
+                            } else if (node.equalsIgnoreCase("permissions.build")) {
+                                node = "privileges.build";
+                            }
+                            if (!val) {
+                                node = "-" + node;
+                            }
+                            permList.add(node);
+                            plugin.debug(header + node);
+                        }
+                    }
+                    plugin.getUserNode(username).set("permissions", permList);
+                    // end permissions section
+                    /////////////////////////
+                    // worlds section
+                    ConfigurationSection userWorlds = userSection.getConfigurationSection(username + "/worlds");
+                    if (userWorlds != null) {
+                        // user has custom world permissions set
+                        for (String world : userWorlds.getKeys(false)) {
+                            header = "[" + username + "] Importing (worlds." + world + "): ";
+                            permList.clear();
+                            permList.addAll(plugin.getUserNode(username).getStringList("worlds." + world));
+                            for (String node : userWorlds.getConfigurationSection(world).getKeys(false)) {
+                                boolean val = userWorlds.getBoolean(world +"/" + node);
+                                if (node.equalsIgnoreCase("permissions.*")) {
+                                    node = "privileges.*";
+                                } else if (node.equalsIgnoreCase("permissions.build")) {
+                                    node = "privileges.build";
+                                }
+                                if (!val) {
+                                    node = "-" + node;
+                                }
+                                permList.add(node);
+                                plugin.debug(header + node);
+                            }
+                            plugin.getUserNode(username).set("worlds." + world, permList);
+                        }
+                    }
+                    // end worlds section
+                    /////////////////////////
+                }
+            }
+            plugin.saveUsers();
+            // users importing done!
+            /////////////////////////
             // rename the config file to prevent multiple imports
             configFile.renameTo(new File("plugins/PermissionsBukkit/config-imported.yml"));
             plugin.log("PermissionsBukkit configuration import complete. (" + (System.currentTimeMillis() - importer) + "ms)");
@@ -104,6 +182,13 @@ public class ImportManager {
         }
     }
 
+
+    //////////////////////////////
+
+    /**
+     * @deprecated since 1.4
+     */
+    @Deprecated
     private void locatePermissionsBukkit() {
         File file = new File("plugins/PermissionsBukkit/config.yml");
         if (file.exists()) {

@@ -79,8 +79,8 @@ public class Privileges extends JavaPlugin {
     public void onEnable() {
         long time = System.nanoTime();
         registerConfiguration();
-        performImports();
         registerPermissions();
+        performImports();
         getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
             public void run() {
                 boolean tmp = debug;
