@@ -19,18 +19,16 @@ public class BlockListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void blockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) { return; }
         if (!event.getPlayer().hasPermission("privileges.build")) {
             event.getPlayer().sendMessage("You don't have permission to do that!");
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void blockBreak(BlockBreakEvent event) {
-        if (event.isCancelled()) { return; }
         if (!event.getPlayer().hasPermission("privileges.build")) {
             event.getPlayer().sendMessage("You don't have permission to do that!");
             event.setCancelled(true);
