@@ -40,9 +40,8 @@ public class PlayerListener implements Listener {
         plugin.getPermissionManager().updatePlayerWorld(event.getPlayer().getName(), event.getPlayer().getWorld().getName());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void playerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled()) { return; }
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
         if (!p.hasPermission("privileges.interact")) {

@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -55,7 +56,7 @@ public class InfoCommand extends PrivilegesCommand {
         if (!target.getName().equals(((Player)target).getDisplayName())) {
             lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + " is currently known as '" + ChatColor.AQUA + ((Player)target).getDisplayName() + ChatColor.WHITE + "'");
         }
-        lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + "'s group is: " + ChatColor.GREEN + plugin.getGroupManager().getGroup((Player)target).getName());
+        lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + "'s group is: " + ChatColor.GREEN + plugin.getGroupManager().getGroup((OfflinePlayer)target).getName());
         lines.add(ChatColor.AQUA + target.getName() + ChatColor.WHITE + "'s current world is: " + ChatColor.GREEN + ((Player)target).getWorld().getName() + ChatColor.WHITE + ".");
         for (String line : lines) {
             sender.sendMessage(line);
