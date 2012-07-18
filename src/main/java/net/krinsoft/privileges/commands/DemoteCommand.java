@@ -1,13 +1,13 @@
 package net.krinsoft.privileges.commands;
 
+import java.util.List;
+
 import net.krinsoft.privileges.Privileges;
-import net.krinsoft.privileges.groups.Group;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
-
-import java.util.List;
 
 /**
  * @author krinsdeath
