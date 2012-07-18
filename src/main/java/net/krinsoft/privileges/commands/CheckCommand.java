@@ -52,16 +52,14 @@ public class CheckCommand extends PrivilegesCommand {
         Permission perm = plugin.getServer().getPluginManager().getPermission(node);
         String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : target.getName() + "&A's");
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
-        msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
-        msg = msg.replaceAll("&([0-9A-F])", "\u00A7$1");
+        msg = (msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)").replaceAll("&([0-9A-F])", "\u00A7$1");
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(ChatColor.stripColor(msg));
         } else {
             sender.sendMessage(msg);
         }
         if (perm != null) {
-            String desc = (perm.getDescription() != null ? perm.getDescription() : perm.getName());
-            sender.sendMessage("Description: " + desc);
+            sender.sendMessage("Description: " + perm.getDescription() != null ? perm.getDescription() : perm.getName()); // We dont need a random var here
         }
     }
 
