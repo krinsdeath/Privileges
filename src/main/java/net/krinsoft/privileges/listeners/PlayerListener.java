@@ -43,11 +43,12 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void playerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        Block b = event.getClickedBlock();
         if (!p.hasPermission("privileges.interact")) {
             p.sendMessage(ChatColor.RED + "You do not have permission to interact with things!");
             event.setCancelled(true);
+            return;
         }
+        Block b = event.getClickedBlock();
         if (b != null && p.isPermissionSet("privileges.interact." + b.getTypeId()) && !p.hasPermission("privileges.interact." + b.getTypeId())) {
             p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + b.getType().name());
             event.setCancelled(true);
