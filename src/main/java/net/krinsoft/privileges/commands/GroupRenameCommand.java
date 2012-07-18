@@ -1,7 +1,6 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
-import net.krinsoft.privileges.groups.GroupManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;

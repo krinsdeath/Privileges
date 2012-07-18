@@ -1,9 +1,9 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
-import net.krinsoft.privileges.PermissionManager;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 /**
  *
