@@ -103,11 +103,10 @@ public class RankedGroup implements Group {
 
     public boolean hasPermission(String permission, String world) {
         Permission perm = plugin.getServer().getPluginManager().getPermission(getMasterPermission(world));
-        boolean val = false;
         if (perm != null && perm.getChildren().containsKey(permission)) {
-            val = perm.getChildren().get(permission);
+            return perm.getChildren().get(permission);
         }
-        return val;
+        return false;
     }
 
     public String getMasterPermission(String world) {
