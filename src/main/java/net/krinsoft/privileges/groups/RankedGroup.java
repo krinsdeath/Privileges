@@ -12,7 +12,6 @@ import java.util.*;
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class RankedGroup implements Group {
     // the name of this group
     private String name;
@@ -103,11 +102,10 @@ public class RankedGroup implements Group {
 
     public boolean hasPermission(String permission, String world) {
         Permission perm = plugin.getServer().getPluginManager().getPermission(getMasterPermission(world));
-        boolean val = false;
         if (perm != null && perm.getChildren().containsKey(permission)) {
-            val = perm.getChildren().get(permission);
+            return perm.getChildren().get(permission); // Lets not make this a boolean if we dont need to; Save some CPU timings
         }
-        return val;
+        return false;
     }
 
     public String getMasterPermission(String world) {
@@ -179,11 +177,9 @@ public class RankedGroup implements Group {
     
     @Override
     public boolean equals(Object that) {
-        if (that == null) { return false; }
-        if (this == that) { return true; }
+        if ((that != null) && (this == that)) { return true; }
         if (this.getClass() != that.getClass()) { return false; }
-        RankedGroup group = (RankedGroup) that;
-        return this.toString().equals(group.toString());
+        return this.toString().equals(((RankedGroup) that).toString()); // We dont want to create a random var 
     }
 
 }
