@@ -70,7 +70,7 @@ public class GroupManager {
      * @return true if the sender's rank is high enough, otherwise false
      */
     public boolean checkRank(CommandSender sender, int rank) {
-        return getRank(sender) >= rank || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
+        return getRank(sender) >= rank || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender || sender.hasPermission("privileges.self.edit");
     }
 
     /**
@@ -226,7 +226,7 @@ public class GroupManager {
         if (test == null) { return; }
 
         // update the player's group in the configuration
-        plugin.getUsers().set("users." + player + ".group", group);
+        plugin.getUsers().set("users." + player + ".group", test.getName());
         plugin.saveUsers();
 
         // update the player's values
@@ -301,8 +301,10 @@ public class GroupManager {
             if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
                 plugin.getServer().getPluginManager().addPermission(perm);
             }
-            groupList.put(group.toLowerCase(), new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree));
-            return groupList.get(group.toLowerCase());
+            Group nGroup = new RankedGroup(plugin, group, plugin.getGroupNode(group).getInt("rank", 1), tree);
+            nGroup.addPermission(null, perm.getName());
+            groupList.put(group.toLowerCase(), nGroup);
+            return nGroup;
         }
     }
 
