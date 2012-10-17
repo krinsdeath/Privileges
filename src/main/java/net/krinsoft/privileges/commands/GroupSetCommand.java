@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -29,8 +30,11 @@ public class GroupSetCommand extends GroupCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        CommandSender target = plugin.getServer().getPlayer(args.get(0));
-        if (target == null) { return; }
+        OfflinePlayer target = plugin.getServer().getOfflinePlayer(args.get(0));
+        if (target == null) {
+            sender.sendMessage("No player with the name '" + args.get(0) + "' could be found.");
+            return;
+        }
         if (!plugin.getGroupManager().checkRank(sender, target)) {
             sender.sendMessage(ChatColor.RED + "That user's rank is too high.");
             return;
