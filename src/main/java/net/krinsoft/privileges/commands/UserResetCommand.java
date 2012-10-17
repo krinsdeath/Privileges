@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -27,7 +28,7 @@ public class UserResetCommand extends PrivilegesCommand {
     
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        Player p = plugin.getServer().getPlayer(args.get(0));
+        OfflinePlayer p = plugin.getServer().getOfflinePlayer(args.get(0));
         if (plugin.getGroupManager().getRank(p) >= plugin.getGroupManager().getRank(sender) && !sender.hasPermission("privileges.self.edit")) {
             sender.sendMessage(ChatColor.RED + "You cannot reset that user.");
             return;

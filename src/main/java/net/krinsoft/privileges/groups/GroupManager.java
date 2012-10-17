@@ -86,13 +86,13 @@ public class GroupManager {
         }
         return false;
     }
-    
+
     /**
      * Promotes the specified player to the next higher ranked group
      * @param sender The person issuing the promotion
-     * @param player The player to promote
+     * @param player The player being promoted
      */
-    public void promote(CommandSender sender, Player player) {
+    public void promote(CommandSender sender, OfflinePlayer player) {
         plugin.debug(sender.getName() + ": Running promotion for " + player.getName() + ".");
         int send = getRank(sender);
         int rank = getRank(player);
@@ -100,12 +100,14 @@ public class GroupManager {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high for you to promote him/her.");
             return;
         }
-        Group currentGroup = getGroup((OfflinePlayer) player);
+        Group currentGroup = getGroup(player);
         if (currentGroup != null && currentGroup.hasPromotion()) {
             Group proGroup = createGroup(currentGroup.getPromotion());
             if (proGroup != null && (proGroup.getRank() < send || sender.hasPermission("privileges.self.edit"))) {
                 sender.sendMessage("You have promoted " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the group " + ChatColor.AQUA + proGroup.getName() + ChatColor.WHITE + ".");
-                player.sendMessage("You have been promoted to " + ChatColor.AQUA + proGroup.getName() + ChatColor.WHITE + ".");
+                if (player.getPlayer() != null) {
+                    player.getPlayer().sendMessage("You have been promoted to " + ChatColor.AQUA + proGroup.getName() + ChatColor.WHITE + ".");
+                }
                 setGroup(player.getName(), proGroup.getName());
                 return;
             }
@@ -125,7 +127,9 @@ public class GroupManager {
         // check that we have a possible rank, and make sure the new player's rank is less than the sender's rank
         if (group != null && (group.getRank() < send || sender.hasPermission("privileges.self.edit"))) {
             sender.sendMessage("You have promoted " + ChatColor.GREEN + player.getName() + ChatColor.WHITE + " to the group " + ChatColor.AQUA + group.getName() + ChatColor.WHITE + ".");
-            player.sendMessage("You have been promoted to " + ChatColor.AQUA + group.getName() + ChatColor.WHITE + ".");
+            if (player.getPlayer() != null) {
+                player.getPlayer().sendMessage("You have been promoted to " + ChatColor.AQUA + group.getName() + ChatColor.WHITE + ".");
+            }
             setGroup(player.getName(), group.getName());
             return;
         }
@@ -133,11 +137,23 @@ public class GroupManager {
     }
 
     /**
+     * Promotes the specified player to the next higher ranked group
+     * @param sender The person issuing the promotion
+     * @param player The player being promoted
+     * @see #promote(CommandSender, OfflinePlayer)
+     * @deprecated since 1.6.1
+     */
+    @Deprecated
+    public void promote(CommandSender sender, Player player) {
+        promote(sender, (OfflinePlayer) player);
+    }
+
+    /**
      * Demotes the specified player to the next lowest ranked group
      * @param sender The person issuing the demotion
-     * @param player The player we're demoting
+     * @param player The player being demoted
      */
-    public void demote(CommandSender sender, Player player) {
+    public void demote(CommandSender sender, OfflinePlayer player) {
         plugin.debug(sender.getName() + ": Running demotion for " + player.getName() + ".");
         int send = getRank(sender);
         int rank = getRank(player);
@@ -145,12 +161,14 @@ public class GroupManager {
             sender.sendMessage(ChatColor.DARK_RED + player.getName() + ChatColor.RED + "'s rank is too high.");
             return;
         }
-        Group currentGroup = getGroup((OfflinePlayer) player);
+        Group currentGroup = getGroup(player);
         if (currentGroup != null && currentGroup.hasDemotion()) {
             Group demGroup = createGroup(currentGroup.getDemotion());
             if (demGroup != null && (demGroup.getRank() < send || sender.hasPermission("privileges.self.edit"))) {
                 sender.sendMessage("You have demoted " + ChatColor.RED + player.getName() + ChatColor.WHITE + " to the group " + ChatColor.DARK_RED + demGroup.getName() + ChatColor.WHITE + ".");
-                player.sendMessage("You have been demoted to " + ChatColor.DARK_RED + demGroup.getName() + ChatColor.WHITE + ".");
+                if (player.getPlayer() != null) {
+                    player.getPlayer().sendMessage("You have been demoted to " + ChatColor.DARK_RED + demGroup.getName() + ChatColor.WHITE + ".");
+                }
                 setGroup(player.getName(), demGroup.getName());
                 return;
             }
@@ -170,13 +188,27 @@ public class GroupManager {
         // check that we have a possible rank, and make sure the new player's rank is less than the sender's rank
         if (group != null && (group.getRank() < send || sender.hasPermission("privileges.self.edit"))) {
             sender.sendMessage("You have demoted " + ChatColor.RED + player.getName() + ChatColor.WHITE + " to the group " + ChatColor.DARK_RED + group.getName() + ChatColor.WHITE + ".");
-            player.sendMessage("You have been demoted to " + ChatColor.DARK_RED + group.getName() + ChatColor.WHITE + ".");
+            if (player.getPlayer() != null) {
+                player.getPlayer().sendMessage("You have been demoted to " + ChatColor.DARK_RED + group.getName() + ChatColor.WHITE + ".");
+            }
             setGroup(player.getName(), group.getName());
             return;
         }
         sender.sendMessage("Demotion failed.");
     }
-    
+
+    /**
+     * Demotes the specified player to the next lowest ranked group
+     * @param sender The person issuing the demotion
+     * @param player The player being promoted
+     * @see #demote(CommandSender, OfflinePlayer)
+     * @deprecated since 1.6.1
+     */
+    @Deprecated
+    public void demote(CommandSender sender, Player player) {
+        demote(sender, (OfflinePlayer) player);
+    }
+
     /**
      * Adds the specified player to the specified group
      * @param player The player to change
@@ -188,6 +220,25 @@ public class GroupManager {
         Group g = createGroup(group);
         players.put(player, g.getName());
         return g;
+    }
+
+    /**
+     * Attempts to get the rank of a player
+     * @param player The player whose rank is being fetched
+     * @return The rank of the player
+     * @see #getRank(CommandSender)
+     */
+    public int getRank(OfflinePlayer player) {
+        try {
+            return getGroup(player).getRank();
+        } catch (Exception e) {
+            if (player == null) {
+                plugin.warn("It seems that the target was null! Did you make a typographical error?");
+            }
+            plugin.warn("An exception was thrown while checking a player's group rank: " + e.getLocalizedMessage());
+            plugin.warn("Defaulting to rank 0.");
+            return 0;
+        }
     }
 
     /**

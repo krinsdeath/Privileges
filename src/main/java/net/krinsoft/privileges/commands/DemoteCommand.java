@@ -2,6 +2,7 @@ package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -27,7 +28,7 @@ public class DemoteCommand extends GroupCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        Player target = plugin.getServer().getPlayer(args.get(0));
+        OfflinePlayer target = plugin.getServer().getOfflinePlayer(args.get(0));
         if (target == null) {
             sender.sendMessage(ChatColor.RED + "The target '" + ChatColor.DARK_RED + args.get(0) + ChatColor.RED + "' doesn't exist.");
             return;
