@@ -33,12 +33,17 @@ public class UserResetCommand extends PrivilegesCommand {
             sender.sendMessage(ChatColor.RED + "You cannot reset that user.");
             return;
         }
-        plugin.getUserNode(p.getName()).set("group", plugin.getGroupManager().getDefaultGroup().getName());
-        plugin.getUserNode(p.getName()).set("permissions", null);
-        plugin.getUserNode(p.getName()).set("worlds", null);
-        plugin.getPermissionManager().registerPlayer(p.getName());
-        sender.sendMessage(ChatColor.GREEN + "The user '" + p.getName() + "' has been reset to default.");
-        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
-        plugin.log(">> " + sender.getName() + ": " + p.getName() + " has been reset.");
+        try {
+            plugin.getUserNode(p.getName()).set("group", plugin.getGroupManager().getDefaultGroup().getName());
+            plugin.getUserNode(p.getName()).set("permissions", null);
+            plugin.getUserNode(p.getName()).set("worlds", null);
+            plugin.getPermissionManager().registerPlayer(p.getName());
+            sender.sendMessage(ChatColor.GREEN + "The user '" + p.getName() + "' has been reset to default.");
+            sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+            plugin.log(">> " + sender.getName() + ": " + p.getName() + " has been reset.");
+        } catch (NullPointerException e) {
+            plugin.warn(">> " + sender.getName() + ": Couldn't reset '" + p.getName() + "'... ");
+            plugin.warn(">> " + e.getLocalizedMessage());
+        }
     }
 }

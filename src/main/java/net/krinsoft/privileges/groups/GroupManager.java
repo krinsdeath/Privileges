@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,11 @@ public class GroupManager {
     }
 
     public Group getDefaultGroup() {
-        return getGroup(this.DEFAULT);
+        Group g = groupList.get(DEFAULT);
+        if (g == null) {
+            throw new NullPointerException("An invalid default group is defined in config.yml.");
+        }
+        return g;
     }
 
     /**
