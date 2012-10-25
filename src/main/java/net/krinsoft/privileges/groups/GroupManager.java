@@ -370,4 +370,12 @@ public class GroupManager {
         }
     }
 
+    /**
+     * Returns a set of groups of which the plugin is currently aware
+     * @return The current groups, as a Set
+     */
+    public Set<Group> getGroups() {
+        return (Set<Group>) groupList.values();
+    }
+
 }
