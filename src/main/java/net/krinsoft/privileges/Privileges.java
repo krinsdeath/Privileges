@@ -129,7 +129,11 @@ public class Privileges extends JavaPlugin {
                     }
                     @Override
                     public int getValue() {
-                        return getGroups().getConfigurationSection("groups").getKeys(false).size();
+                        ConfigurationSection groups = getGroups().getConfigurationSection("groups");
+                        if (groups != null) {
+                            return groups.getKeys(false).size();
+                        }
+                        return 0;
                     }
                 });
                 // track the number of users
@@ -140,7 +144,11 @@ public class Privileges extends JavaPlugin {
                     }
                     @Override
                     public int getValue() {
-                        return getUsers().getConfigurationSection("users").getKeys(false).size();
+                        ConfigurationSection users = getUsers().getConfigurationSection("users");
+                        if (users != null) {
+                            return getUsers().getConfigurationSection("users").getKeys(false).size();
+                        }
+                        return 0;
                     }
                 });
                 metrics.start();
