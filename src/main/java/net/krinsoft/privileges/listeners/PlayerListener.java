@@ -42,16 +42,48 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void playerInteract(PlayerInteractEvent event) {
+        Block b = event.getClickedBlock();
+        if (b == null) { return; }
+        String[] perm = new String[] { "privileges.interact." + b.getTypeId(), "privileges.interact." + b.getType().name() };
         Player p = event.getPlayer();
         if (!p.hasPermission("privileges.interact")) {
-            p.sendMessage(ChatColor.RED + "You do not have permission to interact with things!");
+            plugin.debug("Checking " + perm[0] + "...");
+            if (p.isPermissionSet(perm[0])) {
+                if (!p.hasPermission(perm[0])) {
+                    p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + ChatColor.GOLD + b.getType().name() + ChatColor.RED + "!");
+                    event.setCancelled(true);
+                    return;
+                } else {
+                    return;
+                }
+            }
+            plugin.debug("Checking " + perm[1] + "...");
+            if (p.isPermissionSet(perm[1])) {
+                if (!p.hasPermission(perm[1])) {
+                    p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + ChatColor.GOLD + b.getType().name() + ChatColor.RED + "!");
+                    event.setCancelled(true);
+                } else {
+                    return;
+                }
+            }
+            p.sendMessage(ChatColor.RED + "You do not have permission to interact with that!");
             event.setCancelled(true);
-            return;
-        }
-        Block b = event.getClickedBlock();
-        if (b != null && p.isPermissionSet("privileges.interact." + b.getTypeId()) && !p.hasPermission("privileges.interact." + b.getTypeId())) {
-            p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + b.getType().name());
-            event.setCancelled(true);
+        } else {
+            plugin.debug("Checking " + perm[0] + "...");
+            if (p.isPermissionSet(perm[0])) {
+                if (!p.hasPermission(perm[0])) {
+                    p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + ChatColor.GOLD + b.getType().name() + ChatColor.RED + "!");
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            plugin.debug("Checking " + perm[1] + "...");
+            if (p.isPermissionSet(perm[1])) {
+                if (!p.hasPermission(perm[1])) {
+                    p.sendMessage(ChatColor.RED + "You do not have permission to interact with " + ChatColor.GOLD + b.getType().name() + ChatColor.RED + "!");
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 
