@@ -39,8 +39,13 @@ public class GroupSetCommand extends GroupCommand {
             sender.sendMessage(ChatColor.RED + "That user's rank is too high.");
             return;
         }
-        if (!plugin.getGroupManager().checkRank(sender, plugin.getGroupManager().getGroup(args.get(1)).getRank())) {
-            sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
+        try {
+            if (!plugin.getGroupManager().checkRank(sender, plugin.getGroupManager().getGroup(args.get(1)).getRank())) {
+                sender.sendMessage(ChatColor.RED + "That group's rank is too high.");
+                return;
+            }
+        } catch (NullPointerException e) {
+            sender.sendMessage(ChatColor.RED + "No such group exists.");
             return;
         }
         plugin.getGroupManager().setGroup(target.getName(), args.get(1));

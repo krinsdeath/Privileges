@@ -2,7 +2,7 @@ Privileges
 ===
 Privileges seeks to be a familiar face for Permissions, and uses the Permissions 2.x format of lists of nodes for users. It offers inheritance, multi-world permissions, and promotion tracks
 
-    by **krinsdeath**
+by **krinsdeath**
 
 Want to Contribute?
 ---
