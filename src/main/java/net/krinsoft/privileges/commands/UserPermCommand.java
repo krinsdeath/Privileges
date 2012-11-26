@@ -1,9 +1,10 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
-import net.krinsoft.privileges.PermissionManager;
 import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 /**
  *
@@ -11,14 +12,20 @@ import org.bukkit.command.CommandSender;
  */
 public abstract class UserPermCommand extends UserCommand {
 
-    protected PermissionManager permManager;
-
-    public UserPermCommand(Privileges plugin) {
-        super(plugin);
-        permManager = plugin.getPermissionManager();
+    public UserPermCommand(Privileges instance) {
+        super(instance);
     }
 
     @Override
     public abstract void runCommand(CommandSender sender, List<String> args);
+
+    protected void reload(CommandSender sender) {
+        if (plugin.getConfig().getBoolean("auto_reload")) {
+            plugin.saveUsers();
+            plugin.reload();
+        } else {
+            sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+        }
+    }
 
 }

@@ -76,7 +76,7 @@ public class GroupManager {
      * @see #checkRank(CommandSender, CommandSender)
      */
     public boolean checkRank(CommandSender sender, OfflinePlayer target) {
-        return getRank(sender) >= getRank(target) || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
+        return checkRank(sender, getRank(target));
     }
 
     /**

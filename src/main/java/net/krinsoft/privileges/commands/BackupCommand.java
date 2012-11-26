@@ -33,7 +33,7 @@ public class BackupCommand extends PrivilegesCommand {
         File folder = new File("privbackups/" + backup);
         try {
             if (!folder.exists()) {
-                folder.mkdirs();
+                if (folder.mkdirs()) { plugin.debug("Creating new directory: " + folder.getName()); }
             }
             plugin.getConfig().save(new File(folder, "config.yml"));
             plugin.getUsers().save(new File(folder, "users.yml"));

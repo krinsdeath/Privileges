@@ -3,6 +3,7 @@ debug: false
 profiler: false
 metrics: false
 users_cleanup: false
+auto_reload: false
 
 profiling:
   registration_group: 0

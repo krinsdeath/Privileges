@@ -13,10 +13,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
  */
 @SuppressWarnings("unused")
 public class BlockListener implements Listener {
-    private Privileges plugin;
 
     public BlockListener(Privileges plugin) {
-        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

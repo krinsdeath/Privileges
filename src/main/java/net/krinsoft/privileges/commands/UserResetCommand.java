@@ -4,7 +4,6 @@ import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * @author krinsdeath
  */
-public class UserResetCommand extends PrivilegesCommand {
+public class UserResetCommand extends UserPermCommand {
     
     public UserResetCommand(Privileges plugin) {
         super(plugin);
@@ -39,8 +38,8 @@ public class UserResetCommand extends PrivilegesCommand {
             plugin.getUserNode(p.getName()).set("worlds", null);
             plugin.getPermissionManager().registerPlayer(p.getName());
             sender.sendMessage(ChatColor.GREEN + "The user '" + p.getName() + "' has been reset to default.");
-            sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
             plugin.log(">> " + sender.getName() + ": " + p.getName() + " has been reset.");
+            reload(sender);
         } catch (NullPointerException e) {
             plugin.warn(">> " + sender.getName() + ": Couldn't reset '" + p.getName() + "'... ");
             plugin.warn(">> " + e.getLocalizedMessage());

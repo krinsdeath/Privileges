@@ -259,9 +259,7 @@ public class ImportManager {
                         ConfigurationSection node = conf.getConfigurationSection("groups." + group);
                         List<String> globals = node.getStringList("permissions");
                         List<String> nodes = node.getStringList("permissions");
-                        Set<String> tmp = new LinkedHashSet<String>();
                         if (globals == null) { globals = new ArrayList<String>(); }
-                        tmp.addAll(globals);
                         if (node.getBoolean("default", false)) {
                             plugin.log("Setting default group to '" + group + "'");
                             plugin.getConfig().set("default_group", group);
@@ -292,6 +290,7 @@ public class ImportManager {
                     }
                 }
             }
+            assert files != null;
             for (File folder : files) {
                 if (folder.isDirectory()) {
                     File gConfig = new File("plugins/Permissions/" + folder.getName() + "/groups.yml");
