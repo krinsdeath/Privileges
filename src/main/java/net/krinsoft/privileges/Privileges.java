@@ -48,6 +48,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -464,6 +465,9 @@ public class Privileges extends JavaPlugin {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            if (e instanceof FileNotFoundException) {
+                return e.getLocalizedMessage();
+            }
             e.printStackTrace();
         }
         return null;
