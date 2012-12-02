@@ -5,11 +5,15 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -53,16 +57,13 @@ public class PermissionManager {
         }
         player = ply.getName();
         // build attachment
-        try {
-            Field f = org.bukkit.craftbukkit.entity.CraftHumanEntity.class.getDeclaredField("perm");
-            f.setAccessible(true);
-            PermissibleBase permissible = (PermissibleBase) f.get(ply);
-            permissible.clearPermissions();
-        } catch (NoSuchFieldException e) {
-            plugin.warn("Unknown field: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            plugin.warn("Illegal access: " + e.getMessage());
+        for (PermissionAttachmentInfo info : ply.getEffectivePermissions()) {
+            PermissionAttachment att = info.getAttachment();
+            if (att == null) { continue; }
+            att.unsetPermission(info.getPermission());
         }
+        ply.recalculatePermissions();
+        plugin.debug("Permission list size: " + ply.getEffectivePermissions().size());
         PermissionAttachment attachment = ply.addAttachment(plugin);
         // iterate through the player's groups, and add them to a list
         String g = plugin.getUserNode(player).getString("group");
@@ -72,7 +73,6 @@ public class PermissionManager {
         // calculate player's permissions
         // overrides group and world permissions
         calculatePlayerPermissions(attachment, player);
-        ply.recalculatePermissions();
         time = System.nanoTime() - time;
         plugin.profile(time, "registration_player");
         return true;

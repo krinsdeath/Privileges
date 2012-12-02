@@ -62,7 +62,7 @@ public class GroupCreateCommand extends GroupCommand {
         groups.set(args.get(0) + ".inheritance", null);
         plugin.getGroupManager().getGroup(args.get(0));
         sender.sendMessage("The group " + colorize(ChatColor.GREEN, args.get(0)) + " has been created.");
-        sender.sendMessage("When you're done editing permissions, run: " + ChatColor.GREEN + "/priv reload");
+        reload(sender);
         plugin.log(">> " + sender.getName() + ": Created group '" + args.get(0) + "'");
     }
 

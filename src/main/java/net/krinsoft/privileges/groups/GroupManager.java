@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.groups;
 
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.event.GroupChangeEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -12,6 +13,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -289,6 +291,8 @@ public class GroupManager {
     public void setGroup(String player, String group) {
         plugin.debug("Setting player " + player + " to group " + group + "...");
         // make sure the group is valid
+        OfflinePlayer ply = plugin.getServer().getOfflinePlayer(player);
+        Group orig = getGroup(ply);
         Group test = getGroup(group);
         if (test == null) { return; }
 
@@ -301,6 +305,9 @@ public class GroupManager {
 
         // reload the permissions
         plugin.getPermissionManager().registerPlayer(player);
+
+        // tell other plugins about the group change
+        plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(ply, orig.getName(), test.getName()));
     }
 
     /**
@@ -380,7 +387,7 @@ public class GroupManager {
      * @return The current groups, as a Set
      */
     public Set<Group> getGroups() {
-        return (Set<Group>) groupList.values();
+        return new HashSet<Group>(groupList.values());
     }
 
 }
