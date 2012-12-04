@@ -1,6 +1,9 @@
 package net.krinsoft.privileges.groups;
 
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.event.GroupPermissionAddEvent;
+import net.krinsoft.privileges.event.GroupPermissionEvent;
+import net.krinsoft.privileges.event.GroupPermissionRemoveEvent;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
@@ -117,6 +120,7 @@ public class RankedGroup implements Group {
         if (node != null) {
             ConfigurationSection config = plugin.getGroupNode(name);
             List<String> nodes;
+            boolean value = !node.startsWith("-");
             if (world != null && !world.equals("null")) {
                 nodes = config.getStringList("worlds." + world);
                 if (!nodes.contains(node)) {
@@ -130,6 +134,7 @@ public class RankedGroup implements Group {
                     config.set("permissions", nodes);
                 }
             }
+            plugin.getServer().getPluginManager().callEvent(new GroupPermissionAddEvent(this.name, value ? node : node.substring(1), world, value));
             return true;
         }
         return false;
@@ -139,6 +144,7 @@ public class RankedGroup implements Group {
         if (node != null) {
             ConfigurationSection config = plugin.getGroupNode(name);
             List<String> nodes;
+            boolean value = !node.startsWith("-");
             if (world != null && !world.equals("null")) {
                 nodes = config.getStringList("worlds." + world);
                 nodes.remove(node);
@@ -148,6 +154,7 @@ public class RankedGroup implements Group {
                 nodes.remove(node);
                 config.set("permissions", nodes);
             }
+            plugin.getServer().getPluginManager().callEvent(new GroupPermissionRemoveEvent(this.name, value ? node : node.substring(1), world));
             return true;
         }
         return false;

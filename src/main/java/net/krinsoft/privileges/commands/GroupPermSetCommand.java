@@ -61,19 +61,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
         }
-        if (world == null) {
-            List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            nodes.add((val ? "" : "-") + node);
-            plugin.getGroupNode(group.getName()).set("permissions", nodes);
-        } else {
-            List<String> nodes = plugin.getGroupNode(group.getName()).getStringList("worlds." + world);
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            nodes.add((val ? "" : "-") + node);
-            plugin.getGroupNode(group.getName()).set("worlds." + world, nodes);
-        }
+        group.addPermission(world, (val ? node : "-" + node));
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
         plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' is now '" + val + "'");
         reload(sender);

@@ -49,18 +49,8 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
         String node = param[0];
         String world = param[1];
         if (node.startsWith("-")) { node = node.substring(1); }
-        List<String> nodes;
-        if (world == null) {
-            nodes = plugin.getGroupNode(group.getName()).getStringList("permissions");
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            plugin.getGroupNode(group.getName()).set("permissions", nodes);
-        } else {
-            nodes = plugin.getGroupNode(group.getName()).getStringList("worlds." + world);
-            nodes.remove(node);
-            nodes.remove("-" + node);
-            plugin.getGroupNode(group.getName()).set("worlds." + world, nodes);
-        }
+        group.removePermission(world, node);
+        group.removePermission(world, "-" + node);
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from the group " + group.getName());
         plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' has been removed.");
         reload(sender);
