@@ -121,21 +121,22 @@ public class RankedGroup implements Group {
             ConfigurationSection config = plugin.getGroupNode(name);
             List<String> nodes;
             boolean value = !node.startsWith("-");
+            boolean success = false;
             if (world != null && !world.equals("null")) {
                 nodes = config.getStringList("worlds." + world);
                 if (!nodes.contains(node)) {
-                    nodes.add(node);
+                    success = nodes.add(node);
                     config.set("worlds." + world, nodes);
                 }
             } else {
                 nodes = config.getStringList("permissions");
                 if (!nodes.contains(node)) {
-                    nodes.add(node);
+                    success = nodes.add(node);
                     config.set("permissions", nodes);
                 }
             }
             plugin.getServer().getPluginManager().callEvent(new GroupPermissionAddEvent(this.name, value ? node : node.substring(1), world, value));
-            return true;
+            return success;
         }
         return false;
     }
@@ -145,17 +146,18 @@ public class RankedGroup implements Group {
             ConfigurationSection config = plugin.getGroupNode(name);
             List<String> nodes;
             boolean value = !node.startsWith("-");
+            boolean success;
             if (world != null && !world.equals("null")) {
                 nodes = config.getStringList("worlds." + world);
-                nodes.remove(node);
+                success = nodes.remove(node);
                 config.set("worlds." + world, nodes);
             } else {
                 nodes = config.getStringList("permissions");
-                nodes.remove(node);
+                success = nodes.remove(node);
                 config.set("permissions", nodes);
             }
             plugin.getServer().getPluginManager().callEvent(new GroupPermissionRemoveEvent(this.name, value ? node : node.substring(1), world));
-            return true;
+            return success;
         }
         return false;
     }

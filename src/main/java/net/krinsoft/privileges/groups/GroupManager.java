@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * A group manager that handles the creation and removal of group permissions in Privileges
  * @author krinsdeath
  */
 public class GroupManager {
