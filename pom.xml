@@ -146,6 +146,11 @@
             <name>KrinSoft Releases</name>
             <url>http://files.krinsoft.net:8085/nexus/content/repositories/ks-releases</url>
         </repository>
+        <snapshotRepository>
+            <id>ks-snapshots</id>
+            <name>KrinSoft Snapshots</name>
+            <url>http://files.krinsoft.net:8085/nexus/content/repositories/ks-snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
 </project>
