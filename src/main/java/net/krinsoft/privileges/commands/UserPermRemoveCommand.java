@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.players.Player;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -48,18 +49,9 @@ public class UserPermRemoveCommand extends UserPermCommand {
             showHelp(sender);
             return;
         }
-        List<String> nodes;
-        if (param[1] == null) {
-            nodes = plugin.getUserNode(user).getStringList("permissions");
-            nodes.remove(param[0]);
-            nodes.remove("-" + param[0]);
-            plugin.getUserNode(user).set("permissions", nodes);
-        } else {
-            nodes = plugin.getUserNode(user).getStringList("worlds." + param[1]);
-            nodes.remove(param[0]);
-            nodes.remove("-" + param[0]);
-            plugin.getUserNode(user).set("worlds." + param[1], nodes);
-        }
+        Player priv = plugin.getPlayerManager().getPlayer(test);
+        priv.removePermission(param[1], param[0]);
+        priv.removePermission(param[1], "-" + param[0]);
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' has been removed from " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
         plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' has been removed.");
         reload(sender);

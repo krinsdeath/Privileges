@@ -34,6 +34,7 @@ import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
 import net.krinsoft.privileges.listeners.BlockListener;
 import net.krinsoft.privileges.listeners.PlayerListener;
+import net.krinsoft.privileges.players.PlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -67,7 +68,8 @@ public class Privileges extends JavaPlugin {
     private boolean on_start_clean = false;
 
     // managers and handlers
-    private PermissionManager permissionManager;
+    private PlayerManager playerManager;
+    //private PermissionManager permissionManager;
     private GroupManager groupManager;
     private CommandHandler commandHandler;
     private FileConfiguration   configuration;
@@ -165,7 +167,8 @@ public class Privileges extends JavaPlugin {
     @Override
     public void onDisable() {
         long time = System.nanoTime();
-        permissionManager.disable();
+        playerManager.disable();
+        //permissionManager.disable();
         time = System.nanoTime() - time;
         profile(time, "plugin_disable");
     }
@@ -197,7 +200,8 @@ public class Privileges extends JavaPlugin {
     }
 
     public void reload() {
-        permissionManager.clean();
+        //permissionManager.clean();
+        playerManager.disable();
         groupManager.clean();
         configuration = null;
         configFile = null;
@@ -211,7 +215,8 @@ public class Privileges extends JavaPlugin {
     }
 
     private void registerPermissions() {
-        permissionManager = new PermissionManager(this);
+        playerManager = new PlayerManager(this);
+        //permissionManager = new PermissionManager(this);
         groupManager = new GroupManager(this);
         registerDynamicPermissions();
     }
@@ -227,7 +232,8 @@ public class Privileges extends JavaPlugin {
 
     private void updatePermissions() {
         groupManager.reload();
-        permissionManager.reload();
+        playerManager.reload();
+        //permissionManager.reload();
     }
 
     private void registerConfiguration() {
@@ -441,8 +447,13 @@ public class Privileges extends JavaPlugin {
         log("Debug mode is now " + (debug ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.WHITE + ".");
     }
 
+    public PlayerManager getPlayerManager() {
+        return this.playerManager;
+    }
+
+    @Deprecated
     public PermissionManager getPermissionManager() {
-        return this.permissionManager;
+        return null;
     }
 
     public GroupManager getGroupManager() {

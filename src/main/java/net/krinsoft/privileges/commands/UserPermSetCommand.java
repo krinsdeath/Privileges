@@ -1,6 +1,7 @@
 package net.krinsoft.privileges.commands;
 
 import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.players.Player;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -62,20 +63,8 @@ public class UserPermSetCommand extends UserPermCommand {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
         }
-        List<String> nodes;
-        if (param[1] == null) {
-            nodes = plugin.getUserNode(user).getStringList("permissions");
-            nodes.remove(param[0]);
-            nodes.remove("-" + param[0]);
-            nodes.add((val ? "" : "-") + param[0]);
-            plugin.getUserNode(user).set("permissions", nodes);
-        } else {
-            nodes = plugin.getUserNode(user).getStringList("worlds." + param[1]);
-            nodes.remove(param[0]);
-            nodes.remove("-" + param[0]);
-            nodes.add((val ? "" : "-") + param[0]);
-            plugin.getUserNode(user).set("worlds." + param[1], nodes);
-        }
+        Player priv = plugin.getPlayerManager().getPlayer(test);
+        priv.addPermission(param[1], (val ? param[0] : "-" + param[0]));
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
         plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' is now '" + val + "'");
         reload(sender);

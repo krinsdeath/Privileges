@@ -69,10 +69,10 @@ public class ListCommand extends PrivilegesCommand {
         }); // thanks SpaceManiac!
         for (PermissionAttachmentInfo att : attInfo) {
             String node = att.getPermission();
-            String msg;
-            msg = "&B" + node + "&A - &B" + att.getValue() + "&A ";
-            msg = msg + "&A(" + (att.getAttachment() != null ? "set: &6" + att.getAttachment().getPlugin().getDescription().getName() + "&A" : "&3default&A") + ")";
-            list.add(msg.replaceAll("&([0-9A-F])", "\u00A7$1"));
+            StringBuilder msg = new StringBuilder();
+            msg.append("&B").append(node).append("&A - &B").append(att.getValue()).append("&A ");
+            msg.append("&A(").append(att.getAttachment() != null ? "set: &6" + att.getAttachment().getPlugin().getDescription().getName() + "&A" : "&3default&A").append(")");
+            list.add(ChatColor.translateAlternateColorCodes('&', msg.toString()));
         }
         FancyPage page = new FancyPage(list);
         String header;

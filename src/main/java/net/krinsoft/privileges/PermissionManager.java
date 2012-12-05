@@ -3,22 +3,19 @@ package net.krinsoft.privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
- *
+ * A simple permissions management class that handles registration of players
  * @author krinsdeath
+ * @deprecated since 1.7.3
  */
+@Deprecated
 public class PermissionManager {
     private Privileges plugin;
 

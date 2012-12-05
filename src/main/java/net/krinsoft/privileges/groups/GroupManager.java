@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -286,14 +287,15 @@ public class GroupManager {
      * Set a player's group to the specified group by name
      * @param player The player whose group we're changing
      * @param group The name of the group (case-insensitive) to switch to
+     * @return The new group of the player, or null if the specified group doesn't exist
      */
-    public void setGroup(String player, String group) {
+    public Group setGroup(String player, String group) {
         plugin.debug("Setting player " + player + " to group " + group + "...");
         // make sure the group is valid
         OfflinePlayer ply = plugin.getServer().getOfflinePlayer(player);
         Group orig = getGroup(ply);
         Group test = getGroup(group);
-        if (test == null) { return; }
+        if (test == null) { return null; }
 
         // update the player's group in the configuration
         plugin.getUsers().set("users." + player + ".group", test.getName());
@@ -303,10 +305,17 @@ public class GroupManager {
         players.put(player, test.getName());
 
         // reload the permissions
-        plugin.getPermissionManager().registerPlayer(player);
+        plugin.getPlayerManager().register(player);
+        //plugin.getPermissionManager().registerPlayer(player);
+
+        // add a metadata tag to the player
+        ply.getPlayer().setMetadata("group", new FixedMetadataValue(plugin, test.getName()));
 
         // tell other plugins about the group change
         plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(ply, orig.getName(), test.getName()));
+
+        // return the new group
+        return test;
     }
 
     /**
@@ -367,7 +376,7 @@ public class GroupManager {
                 plugin.debug("Group node for '" + group + "' was null.");
                 return getDefaultGroup();
             }
-            List<String> tree = plugin.getPermissionManager().calculateGroupTree(group);
+            List<String> tree = plugin.getPlayerManager().calculateGroupTree(group);
             Permission perm = new Permission("group." + group);
             perm.setDescription("If true, the attached player is a member of the group: " + group);
             perm.setDefault(PermissionDefault.FALSE);

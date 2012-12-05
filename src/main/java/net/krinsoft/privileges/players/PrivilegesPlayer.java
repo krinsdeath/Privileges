@@ -22,6 +22,9 @@ public class PrivilegesPlayer implements Player {
     private Group group;
 
     public PrivilegesPlayer(Privileges plugin, OfflinePlayer player) {
+        if (player == null) {
+            throw new NullPointerException("The specified player doesn't exist.");
+        }
         this.plugin = plugin;
         this.name = player.getName();
         this.group = plugin.getGroupManager().getGroup(player);
