@@ -309,7 +309,9 @@ public class GroupManager {
         //plugin.getPermissionManager().registerPlayer(player);
 
         // add a metadata tag to the player
-        ply.getPlayer().setMetadata("group", new FixedMetadataValue(plugin, test.getName()));
+        if (ply.getPlayer() != null) {
+            ply.getPlayer().setMetadata("group", new FixedMetadataValue(plugin, test.getName()));
+        }
 
         // tell other plugins about the group change
         plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(ply, orig.getName(), test.getName()));
