@@ -139,6 +139,7 @@ public class Privileges extends JavaPlugin {
                         return 0;
                     }
                 });
+                log("[Metrics] Tracking total number of groups.");
                 // track the number of users
                 metrics.addCustomData(new Metrics.Plotter() {
                     @Override
@@ -154,6 +155,7 @@ public class Privileges extends JavaPlugin {
                         return 0;
                     }
                 });
+                log("[Metrics] Tracking total number of users.");
                 metrics.start();
             } catch (IOException e) {
                 log("An error occurred while posting results to the Metrics.");
