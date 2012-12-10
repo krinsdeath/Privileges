@@ -64,12 +64,10 @@ import java.util.List;
 public class Privileges extends JavaPlugin {
 
     private boolean debug = false;
-    private boolean profile = false;
     private boolean on_start_clean = false;
 
     // managers and handlers
     private PlayerManager playerManager;
-    //private PermissionManager permissionManager;
     private GroupManager groupManager;
     private CommandHandler commandHandler;
     private FileConfiguration   configuration;
@@ -81,7 +79,6 @@ public class Privileges extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        long time = System.nanoTime();
         registerConfiguration();
         registerPermissions();
         performImports();
@@ -162,17 +159,12 @@ public class Privileges extends JavaPlugin {
                 warn(e.getLocalizedMessage());
             }
         }
-        time = System.nanoTime() - time;
-        profile(time, "plugin_enable");
     }
 
     @Override
     public void onDisable() {
-        long time = System.nanoTime();
         playerManager.disable();
         //permissionManager.disable();
-        time = System.nanoTime() - time;
-        profile(time, "plugin_disable");
     }
 
     @Override
@@ -218,7 +210,6 @@ public class Privileges extends JavaPlugin {
 
     private void registerPermissions() {
         playerManager = new PlayerManager(this);
-        //permissionManager = new PermissionManager(this);
         groupManager = new GroupManager(this);
         registerDynamicPermissions();
     }
@@ -274,7 +265,6 @@ public class Privileges extends JavaPlugin {
             saveConfig();
         }
         debug = getConfig().getBoolean("debug", false);
-        profile = getConfig().getBoolean("profiler", false);
         on_start_clean = getConfig().getBoolean("users_cleanup", false);
     }
 
@@ -329,8 +319,20 @@ public class Privileges extends JavaPlugin {
     }
 
     public ConfigurationSection getUserNode(String player) {
-        if (getUsers().getConfigurationSection("users." + player) == null || getUsers().getString("users." + player + ".group") == null) {
-            String path = "users." + player;
+        ConfigurationSection user = getUsers().getConfigurationSection("users." + player);
+        if (!player.equals(player.toLowerCase()) && user != null) {
+            getUsers().set("users." + player.toLowerCase() + ".group", user.getString("group"));
+            getUsers().set("users." + player.toLowerCase() + ".permissions", user.getStringList("permissions"));
+            for (World w : getServer().getWorlds()) {
+                getUsers().set("users." + player.toLowerCase() + ".worlds." + w.getName(), user.getStringList("worlds." + w.getName()));
+            }
+            getUsers().set("users." + player, null);
+            saveUsers();
+            debug("User node for '" + player + "' converted to lower case.");
+            return getUsers().getConfigurationSection("users." + player.toLowerCase());
+        }
+        if (user == null || user.getString("group") == null) {
+            String path = "users." + player.toLowerCase();
             getUsers().set(path + ".group", getConfig().getString("default_group", "default"));
             getUsers().set(path + ".permissions", null);
             for (World w : getServer().getWorlds()) {
@@ -339,7 +341,7 @@ public class Privileges extends JavaPlugin {
             saveUsers();
             debug("New user node for '" + player + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
         }
-        return getUsers().getConfigurationSection("users." + player);
+        return getUsers().getConfigurationSection("users." + player.toLowerCase());
     }
 
     public ConfigurationSection getGroupNode(String group) {
@@ -406,37 +408,6 @@ public class Privileges extends JavaPlugin {
         }
     }
 
-    /**
-     * Writes a profiler message and then calculates the average for the specified event
-     * @param time The amount of time the event which triggered the profiler took
-     * @param event The event which triggered the profiler
-     */
-    public void profile(long time, String event) {
-        if (profile) {
-            String message = "[Profiler] [" + event + "] " + (time / 1000000L) + "ms (" + time + "ns)";
-            getLogger().info(message);
-            long average = getConfig().getLong("profiling." + event, 0);
-            average = average + time;
-            average = average / 2;
-            getConfig().set("profiling." + event, average);
-            saveConfig();
-        }
-    }
-
-    /**
-     * Writes a profiler log message to the server.log
-     * @param message The message to write to the log
-     * @see #profile(long, String)
-     * @deprecated since 1.6
-     */
-    @Deprecated
-    public void profile(String message) {
-        if (profile) {
-            message = "[Profiler] " + message;
-            getLogger().info(message);
-        }
-    }
-
     public void toggleDebug(boolean val) {
         debug = !val;
         toggleDebug();
@@ -451,11 +422,6 @@ public class Privileges extends JavaPlugin {
 
     public PlayerManager getPlayerManager() {
         return this.playerManager;
-    }
-
-    @Deprecated
-    public PermissionManager getPermissionManager() {
-        return null;
     }
 
     public GroupManager getGroupManager() {

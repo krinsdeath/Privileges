@@ -1,19 +1,5 @@
 default_group: default
 debug: false
-profiler: false
 metrics: false
 users_cleanup: false
 auto_reload: false
-
-profiling:
-  registration_group: 0
-  registration_group_all: 0
-  registration_player: 0
-  registration_player_all: 0
-  command_load: 0
-  command_save: 0
-  command_reload: 0
-  command_backup: 0
-  command_restore: 0
-  plugin_enable: 0
-  plugin_disable: 0

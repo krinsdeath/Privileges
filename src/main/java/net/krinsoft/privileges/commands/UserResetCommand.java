@@ -36,7 +36,7 @@ public class UserResetCommand extends UserPermCommand {
             plugin.getUserNode(p.getName()).set("group", plugin.getGroupManager().getDefaultGroup().getName());
             plugin.getUserNode(p.getName()).set("permissions", null);
             plugin.getUserNode(p.getName()).set("worlds", null);
-            plugin.getPermissionManager().registerPlayer(p.getName());
+            plugin.getPlayerManager().register(p.getName());
             sender.sendMessage(ChatColor.GREEN + "The user '" + p.getName() + "' has been reset to default.");
             plugin.log(">> " + sender.getName() + ": " + p.getName() + " has been reset.");
             reload(sender);

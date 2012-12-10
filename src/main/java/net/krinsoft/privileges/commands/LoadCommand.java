@@ -26,14 +26,11 @@ public class LoadCommand extends PrivilegesCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        long time = System.nanoTime();
         plugin.reload();
-        time = System.nanoTime() - time;
         if (!(sender instanceof ConsoleCommandSender)) {
             plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully.");
         }
         sender.sendMessage(ChatColor.GREEN + "Privileges was loaded successfully.");
-        plugin.profile(time, "command_load");
     }
 
 }

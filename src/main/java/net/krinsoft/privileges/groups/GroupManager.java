@@ -39,7 +39,6 @@ public class GroupManager {
     }
 
     public void reload() {
-        long time = System.nanoTime();
         StringBuilder line = new StringBuilder();
         Set<String> groups = plugin.getGroups().getConfigurationSection("groups").getKeys(false);
         for (String group : groups) {
@@ -47,8 +46,6 @@ public class GroupManager {
             Group g = getGroup(group);
             line.append(g.getName()).append(" (").append(g.getRank()).append(")");
         }
-        time = System.nanoTime() - time;
-        plugin.profile(time, "registration_group_all");
     }
 
     public Group getDefaultGroup() {

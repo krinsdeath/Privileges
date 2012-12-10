@@ -2,14 +2,16 @@ package net.krinsoft.privileges.groups;
 
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.event.GroupPermissionAddEvent;
-import net.krinsoft.privileges.event.GroupPermissionEvent;
 import net.krinsoft.privileges.event.GroupPermissionRemoveEvent;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  *
@@ -31,7 +33,6 @@ public class RankedGroup implements Group {
     private Privileges plugin;
 
     public RankedGroup(Privileges plugin, String name, int rank, List<String> tree) {
-        long time = System.nanoTime();
         this.plugin = plugin;
         this.name = name;
         this.rank = rank;
@@ -77,8 +78,6 @@ public class RankedGroup implements Group {
         }
         promotion = plugin.getGroupNode(name).getString("data.promotion", null);
         demotion = plugin.getGroupNode(name).getString("data.demotion", null);
-        time = System.nanoTime() - time;
-        plugin.profile(time, "registration_group");
     }
 
     public List<String> getGroupTree() {

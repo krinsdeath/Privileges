@@ -27,7 +27,6 @@ public class RestoreCommand extends PrivilegesCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        long time = System.nanoTime();
         String backup = (args.size() == 0 ? "main" : args.get(0)) + "/";
         backup = backup.replaceAll("[\\s./\\\\]", "");
         File folder = new File("privbackups/" + backup);
@@ -49,10 +48,8 @@ public class RestoreCommand extends PrivilegesCommand {
             plugin.warn(e.getLocalizedMessage());
             return;
         }
-        time = System.nanoTime() - time;
         sender.sendMessage("The backup for '" + folder.getPath() + "' has been restored.");
         plugin.log(">> " + sender.getName() + ": A Privileges backup has been restored.");
-        plugin.profile(time, "command_restore");
     }
 
 }
