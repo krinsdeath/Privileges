@@ -32,15 +32,16 @@ public class PlayerManager {
             plugin.debug("Attempted permission registration of a player that was offline or didn't exist!");
             return false;
         }
-        Player priv = players.get(ply.getName());
+        String playerName = ply.getName().toLowerCase();
+        Player priv = players.get(playerName);
         if (priv == null) {
             priv = new PrivilegesPlayer(plugin, ply);
-            players.put(ply.getName(), priv);
+            players.put(playerName, priv);
         }
-        Group group = plugin.getGroupManager().addPlayerToGroup(ply.getName(), plugin.getUserNode(ply.getName()).getString("group"));
+        Group group = plugin.getGroupManager().addPlayerToGroup(playerName, plugin.getUserNode(playerName).getString("group"));
         if (group == null) {
             // no group was found for the player, so set them to default
-            group = plugin.getGroupManager().setGroup(ply.getName(), plugin.getGroupManager().getDefaultGroup().getName());
+            group = plugin.getGroupManager().setGroup(playerName, plugin.getGroupManager().getDefaultGroup().getName());
         }
         org.bukkit.entity.Player player = ply.getPlayer();
         // clear the player's permissions
