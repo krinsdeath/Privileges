@@ -331,6 +331,7 @@ public class Privileges extends JavaPlugin {
             debug("User node for '" + player + "' converted to lower case.");
             return getUsers().getConfigurationSection("users." + player.toLowerCase());
         }
+        user = getUsers().getConfigurationSection("users." + player.toLowerCase());
         if (user == null || user.getString("group") == null) {
             String path = "users." + player.toLowerCase();
             getUsers().set(path + ".group", getConfig().getString("default_group", "default"));
@@ -341,7 +342,7 @@ public class Privileges extends JavaPlugin {
             saveUsers();
             debug("New user node for '" + player + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
         }
-        return getUsers().getConfigurationSection("users." + player.toLowerCase());
+        return user;
     }
 
     public ConfigurationSection getGroupNode(String group) {

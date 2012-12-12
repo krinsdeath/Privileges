@@ -295,7 +295,7 @@ public class GroupManager {
         if (test == null) { return null; }
 
         // update the player's group in the configuration
-        plugin.getUsers().set("users." + player + ".group", test.getName());
+        plugin.getUserNode(player).set("group", test.getName());
         plugin.saveUsers();
 
         // update the player's values
@@ -303,7 +303,6 @@ public class GroupManager {
 
         // reload the permissions
         plugin.getPlayerManager().register(player);
-        //plugin.getPermissionManager().registerPlayer(player);
 
         // add a metadata tag to the player
         if (ply.getPlayer() != null) {
