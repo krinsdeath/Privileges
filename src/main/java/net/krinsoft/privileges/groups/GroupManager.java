@@ -30,7 +30,7 @@ public class GroupManager {
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
-        this.DEFAULT = plugin.getConfig().getString("default_group", "default");
+        this.DEFAULT = plugin.getConfig().getString("default_group", "default").toLowerCase();
     }
 
     public void clean() {
