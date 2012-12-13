@@ -32,10 +32,10 @@ public class PlayerManager {
             plugin.debug("Attempted permission registration of a player that was offline or didn't exist!");
             return false;
         }
-        Player priv = players.get(ply.getName());
+        Player priv = players.get(ply.getName().toLowerCase());
         if (priv == null) {
             priv = new PrivilegesPlayer(plugin, ply);
-            players.put(ply.getName(), priv);
+            players.put(ply.getName().toLowerCase(), priv);
         }
         Group group = plugin.getGroupManager().addPlayerToGroup(ply.getName(), plugin.getUserNode(ply.getName()).getString("group"));
         if (group == null) {
@@ -69,7 +69,7 @@ public class PlayerManager {
     }
 
     public void unregister(String name) {
-        Player player = players.remove(name);
+        Player player = players.remove(name.toLowerCase());
         if (player != null) {
             plugin.debug(name + " was successfully unregistered.");
         } else {
@@ -78,7 +78,7 @@ public class PlayerManager {
     }
 
     public Player getPlayer(String name) {
-        Player player = players.get(name);
+        Player player = players.get(name.toLowerCase());
         if (player == null) {
             player = new PrivilegesPlayer(plugin, plugin.getServer().getOfflinePlayer(name));
         }
