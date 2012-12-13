@@ -26,7 +26,7 @@ public class PrivilegesPlayer implements Player {
             throw new NullPointerException("The specified player doesn't exist.");
         }
         this.plugin = plugin;
-        this.name = player.getName();
+        this.name = player.getName().toLowerCase();
         this.group = plugin.getGroupManager().getGroup(player);
         Map<String, Boolean> globals = new HashMap<String, Boolean>();
         ConfigurationSection user = plugin.getUserNode(player.getName());
