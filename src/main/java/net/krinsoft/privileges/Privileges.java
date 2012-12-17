@@ -94,22 +94,7 @@ public class Privileges extends JavaPlugin {
         registerEvents();
         registerCommands();
         if (on_start_clean) {
-            getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
-                public void run() {
-                    log("Removing old users from users.yml...");
-                    long timeout = 1000L * 60L * 60L * 24L * 30L;
-                    for (OfflinePlayer player : getServer().getOfflinePlayers()) {
-                        if (System.currentTimeMillis() - player.getLastPlayed() >= timeout || player.isBanned()) {
-                            if ((getUsers().get(player.getName()) != null && !getUsers().getString(player.getName() + ".group").equals(getConfig().getString("default_group", "default"))) || player.isBanned()) {
-                                getUsers().set(player.getName(), null);
-                                debug("'" + player.getName() + "' removed from users.yml");
-                            }
-                        }
-                    }
-                    saveUsers();
-                    log("... done!");
-                }
-            }, 1L);
+            cleanOldUsers();
         }
         try {
             getServer().getPluginManager().getPermission("privileges.*").setDefault(PermissionDefault.OP);
@@ -451,6 +436,25 @@ public class Privileges extends JavaPlugin {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    private void cleanOldUsers() {
+        getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+            public void run() {
+                log("Removing old users from users.yml...");
+                long timeout = 1000L * 60L * 60L * 24L * 30L;
+                for (OfflinePlayer player : getServer().getOfflinePlayers()) {
+                    if (System.currentTimeMillis() - player.getLastPlayed() >= timeout || player.isBanned()) {
+                        if ((getUsers().get(player.getName()) != null && !getUsers().getString(player.getName() + ".group").equals(getConfig().getString("default_group", "default"))) || player.isBanned()) {
+                            getUsers().set(player.getName(), null);
+                            debug("'" + player.getName() + "' removed from users.yml");
+                        }
+                    }
+                }
+                saveUsers();
+                log("... done!");
+            }
+        }, 1L);
     }
 
 }
