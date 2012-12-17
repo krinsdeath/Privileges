@@ -5,7 +5,7 @@ import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 /**
@@ -57,7 +57,7 @@ public class GroupPermSetCommand extends GroupPermCommand {
         }
         String node = param[0];
         String world = param[1];
-        if (node.equalsIgnoreCase("privileges.self.edit") && !(sender instanceof ConsoleCommandSender)) {
+        if (node.equalsIgnoreCase("privileges.self.edit") && (sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
         }

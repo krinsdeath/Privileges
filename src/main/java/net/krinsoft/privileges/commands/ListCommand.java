@@ -1,17 +1,16 @@
 package net.krinsoft.privileges.commands;
 
-import net.krinsoft.privileges.FancyPage;
-import net.krinsoft.privileges.Privileges;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.permissions.PermissionDefault;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import net.krinsoft.privileges.FancyPage;
+import net.krinsoft.privileges.Privileges;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.permissions.PermissionDefault;
 
 /**
  *
@@ -76,7 +75,7 @@ public class ListCommand extends PrivilegesCommand {
         }
         FancyPage page = new FancyPage(list);
         String header;
-        if (sender instanceof ConsoleCommandSender) {
+        if (!(sender instanceof Player)) {
             header = ChatColor.GREEN + "=== " + ChatColor.WHITE + "Permissions list for " + ChatColor.AQUA + name + ChatColor.GREEN + " ===";
             sender.sendMessage(header.replaceAll("&([0-9A-F])", "\u00A7$1"));
             for (String line : list) {

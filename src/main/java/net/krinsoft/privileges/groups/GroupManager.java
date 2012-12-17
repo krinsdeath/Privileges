@@ -1,22 +1,19 @@
 package net.krinsoft.privileges.groups;
 
-import net.krinsoft.privileges.Privileges;
-import net.krinsoft.privileges.event.GroupChangeEvent;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.RemoteConsoleCommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.krinsoft.privileges.Privileges;
+import net.krinsoft.privileges.event.GroupChangeEvent;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 /**
  * A group manager that handles the creation and removal of group permissions in Privileges
@@ -64,7 +61,7 @@ public class GroupManager {
      * @see #checkRank(CommandSender, int)
      */
     public boolean checkRank(CommandSender sender, CommandSender target) {
-        return getRank(sender) >= getRank(target) || sender instanceof ConsoleCommandSender || sender.hasPermission("privileges.self.edit");
+        return getRank(sender) >= getRank(target) || !(sender instanceof Player) || sender.hasPermission("privileges.self.edit");
     }
 
     /**
@@ -85,7 +82,7 @@ public class GroupManager {
      * @return true if the sender's rank is high enough, otherwise false
      */
     public boolean checkRank(CommandSender sender, int rank) {
-        return getRank(sender) >= rank || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender || sender.hasPermission("privileges.self.edit");
+        return getRank(sender) >= rank || !(sender instanceof Player) || sender.hasPermission("privileges.self.edit");
     }
 
     /**
@@ -259,16 +256,14 @@ public class GroupManager {
     /**
      * Gets the specified sender's rank
      * @param sender The sender (player or console) to get
-     * @return the sender's group rank, 2^32-1 for console, or 0 for unknown
+     * @return the sender's group rank, 2^32-1 for any other (currently: console, command block, and rcon)
      */
     public int getRank(CommandSender sender) {
         try {
             if (sender instanceof Player) {
                 return getGroup((OfflinePlayer)sender).getRank();
-            } else if (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
-                return Integer.MAX_VALUE;
             } else {
-                return Integer.MIN_VALUE;
+                return Integer.MAX_VALUE;
             }
         } catch (Exception e) {
             if (sender == null) {

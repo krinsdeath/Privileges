@@ -1,15 +1,13 @@
 package net.krinsoft.privileges.commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author krinsdeath
@@ -35,15 +33,15 @@ public class InfoCommand extends PrivilegesCommand {
         if (args.size() == 1) {
             target = plugin.getServer().getPlayer(args.get(0));
             if (target == null) {
-                if (sender instanceof ConsoleCommandSender) {
-                    sender.sendMessage(ChatColor.RED + "Target must exist from Console.");
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage(ChatColor.RED + "Target must be specified.");
                     return;
                 }
                 target = sender;
             }
         } else {
-            if (sender instanceof ConsoleCommandSender) {
-                sender.sendMessage(ChatColor.RED + "Target must exist from Console.");
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(ChatColor.RED + "Target must be specified.");
                 return;
             }
         }
