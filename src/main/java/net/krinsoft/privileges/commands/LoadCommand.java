@@ -1,12 +1,11 @@
 package net.krinsoft.privileges.commands;
 
+import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
-
-import java.util.List;
 
 /**
  * @author krinsdeath
@@ -27,7 +26,7 @@ public class LoadCommand extends PrivilegesCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         plugin.reload();
-        if (!(sender instanceof ConsoleCommandSender)) {
+        if (sender instanceof Player) {
             plugin.log(">> " + sender.getName() + ": Privileges was loaded successfully.");
         }
         sender.sendMessage(ChatColor.GREEN + "Privileges was loaded successfully.");

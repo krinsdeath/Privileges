@@ -1,12 +1,11 @@
 package net.krinsoft.privileges.commands;
 
+import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
-
-import java.util.List;
 
 /**
  *
@@ -33,7 +32,7 @@ public class ReloadCommand extends PrivilegesCommand {
         plugin.reload();
         String msg = "Privileges has been reloaded.";
         sender.sendMessage(ChatColor.GREEN + msg);
-        if (!(sender instanceof ConsoleCommandSender)) {
+        if (sender instanceof Player) {
             plugin.log(">> " + sender.getName() + ": " + msg);
         }
     }

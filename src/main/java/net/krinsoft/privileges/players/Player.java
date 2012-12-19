@@ -37,7 +37,7 @@ public interface Player {
     public boolean removePermission(String world, String node);
 
     /**
-     * Fetchs a string representing this player's master permission for the given world
+     * Fetches a string representing this player's master permission for the given world
      * @param world The world on which the player is currently playing
      * @return The name of the permission
      */

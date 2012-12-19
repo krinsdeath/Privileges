@@ -1,14 +1,14 @@
 package net.krinsoft.privileges.commands;
 
+import java.util.List;
+import java.util.Map;
 import net.krinsoft.privileges.Privileges;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -56,7 +56,7 @@ public class CheckCommand extends PrivilegesCommand {
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
         msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
         msg = msg.replaceAll("&([0-9A-F])", "\u00A7$1");
-        if (sender instanceof ConsoleCommandSender) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.stripColor(msg));
         } else {
             sender.sendMessage(msg);
