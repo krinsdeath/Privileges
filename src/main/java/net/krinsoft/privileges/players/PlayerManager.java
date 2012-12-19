@@ -58,7 +58,7 @@ public class PlayerManager {
 
     public void disable() {
         for (org.bukkit.entity.Player p : plugin.getServer().getOnlinePlayers()) {
-            unregister(p.getName());
+            unregister(p);
         }
     }
 
@@ -68,12 +68,12 @@ public class PlayerManager {
         }
     }
 
-    public void unregister(String name) {
-        Player player = players.remove(name.toLowerCase());
+    public void unregister(OfflinePlayer ply) {
+        Player player = players.remove(ply.getName().toLowerCase());
         if (player != null) {
-            plugin.debug(name + " was successfully unregistered.");
+            plugin.debug(ply.getName() + " was successfully unregistered.");
         } else {
-            plugin.debug(name + " was already unregistered!");
+            plugin.debug(ply.getName() + " was already unregistered!");
         }
     }
 
