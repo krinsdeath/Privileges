@@ -40,7 +40,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuit(PlayerQuitEvent event) {
-        plugin.getPlayerManager().register(event.getPlayer());
+        plugin.getPlayerManager().unregister(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
