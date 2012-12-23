@@ -40,7 +40,7 @@ public class CheckCommand extends PrivilegesCommand {
                 target = plugin.getServer().getPlayer(args.get(0));
             } else {
                 String m = "&CThe player &A" + args.get(0) + "&C does not exist.";
-                sender.sendMessage(m.replaceAll("(?i)&([0-F])", "\u00A7$1"));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', m));
                 return;
             }
             node = args.get(1);
@@ -55,14 +55,14 @@ public class CheckCommand extends PrivilegesCommand {
         String name = (target instanceof ConsoleCommandSender) ? "Console" : (sender.equals(target) ? "Your" : target.getName() + "&A's");
         String msg = "&B" + name + "&A node " + "&B" + node + "&A is &B" + target.hasPermission(node) + " ";
         msg = msg + "&A(" + (target.isPermissionSet(node) ? "&3set" : "&3default") + "&A)";
-        msg = msg.replaceAll("&([0-9A-F])", "\u00A7$1");
+        msg = ChatColor.translateAlternateColorCodes('&', msg);
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(ChatColor.stripColor(msg));
         } else {
             sender.sendMessage(msg);
         }
         if (perm != null) {
-            String desc = (perm.getDescription() != null ? perm.getDescription() : perm.getName());
+            String desc = (perm.getDescription() != null ? perm.getDescription() : "No description defined.");
             sender.sendMessage("Description: " + desc);
             if (args.size() == 3 && args.get(2).equalsIgnoreCase("-v") && perm.getChildren().size() > 0) {
                 sender.sendMessage("=== Child Nodes ===");

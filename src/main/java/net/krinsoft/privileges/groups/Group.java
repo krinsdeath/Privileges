@@ -27,11 +27,11 @@ public interface Group {
 
     /**
      * Checks whether this group has the specified permission node on the given world
-     * @param world The name of the world on which we're checking the permission
      * @param node The permission node
+     * @param world The name of the world on which we're checking the permission
      * @return true if the group has the permission, otherwise false
      */
-    public boolean hasPermission(String world, String node);
+    public boolean hasPermission(String node, String world);
 
     /**
      * Returns the master permission string for this group on the specified world

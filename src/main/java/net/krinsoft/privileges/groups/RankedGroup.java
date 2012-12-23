@@ -3,6 +3,7 @@ package net.krinsoft.privileges.groups;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.event.GroupPermissionAddEvent;
 import net.krinsoft.privileges.event.GroupPermissionRemoveEvent;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
@@ -50,19 +51,15 @@ public class RankedGroup implements Group {
                 if (group == null) { continue; }
                 for (String node : group.getStringList("permissions")) {
                     if (node.startsWith("-")) {
-                        children.remove(node.substring(1));
                         children.put(node.substring(1), false);
                     } else {
-                        children.remove(node);
                         children.put(node, true);
                     }
                 }
                 for (String node : group.getStringList("worlds." + world.getName())) {
                     if (node.startsWith("-")) {
-                        children.remove(node.substring(1));
                         children.put(node.substring(1), false);
                     } else {
-                        children.remove(node);
                         children.put(node, true);
                     }
                 }

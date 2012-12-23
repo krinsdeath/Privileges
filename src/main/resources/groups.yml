@@ -1,5 +1,7 @@
 groups:
   default:
+    data:
+      promotion: user
     rank: 1
     permissions:
     - group.default
@@ -7,6 +9,9 @@ groups:
     worlds:
     inheritance: []
   user:
+    data:
+      promotion: null
+      demotion: default
     rank: 2
     permissions:
     - group.user
@@ -20,6 +25,9 @@ groups:
     - privileges.mods
     inheritance:
     - user
+    data:
+      promotion: admin
+      demotion: null
   admin:
     rank: 4
     permissions:
@@ -27,6 +35,9 @@ groups:
     - privileges.admins
     inheritance:
     - mod
+    data:
+      promotion: null
+      demotion: mod
   owner:
     rank: 100
     permissions:

@@ -40,7 +40,7 @@ public class UserPermSetCommand extends UserPermCommand {
         } else {
             test = args.get(0);
         }
-        String user = (plugin.getUsers().getConfigurationSection("users." + test) != null ? test : null);
+        String user = (plugin.getUserNode(test) != null ? test : null);
         if (user == null) {
             sender.sendMessage("I don't know about that user.");
             return;
@@ -63,7 +63,7 @@ public class UserPermSetCommand extends UserPermCommand {
             sender.sendMessage(ChatColor.RED + "Only the console can set that node.");
             return;
         }
-        Player priv = plugin.getPlayerManager().getPlayer(test);
+        Player priv = plugin.getPlayerManager().getPlayer(user);
         priv.addPermission(param[1], (val ? param[0] : "-" + param[0]));
         sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
         plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' is now '" + val + "'");

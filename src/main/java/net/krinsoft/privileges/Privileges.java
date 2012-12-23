@@ -8,8 +8,10 @@ import net.krinsoft.privileges.commands.CheckCommand;
 import net.krinsoft.privileges.commands.DebugCommand;
 import net.krinsoft.privileges.commands.DemoteCommand;
 import net.krinsoft.privileges.commands.GroupBaseCommand;
+import net.krinsoft.privileges.commands.GroupCheckCommand;
 import net.krinsoft.privileges.commands.GroupCreateCommand;
 import net.krinsoft.privileges.commands.GroupListCommand;
+import net.krinsoft.privileges.commands.GroupOptionCommand;
 import net.krinsoft.privileges.commands.GroupPermBaseCommand;
 import net.krinsoft.privileges.commands.GroupPermRemoveCommand;
 import net.krinsoft.privileges.commands.GroupPermSetCommand;
@@ -304,7 +306,9 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new SaveCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
         // group related commands
+        commandHandler.registerCommand(new GroupCheckCommand(this));
         commandHandler.registerCommand(new GroupCreateCommand(this));
+        commandHandler.registerCommand(new GroupOptionCommand(this));
         commandHandler.registerCommand(new GroupRemoveCommand(this));
         commandHandler.registerCommand(new GroupRenameCommand(this));
         commandHandler.registerCommand(new GroupSetCommand(this));
