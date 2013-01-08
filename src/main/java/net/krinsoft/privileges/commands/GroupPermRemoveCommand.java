@@ -51,8 +51,14 @@ public class GroupPermRemoveCommand extends GroupPermCommand {
         if (node.startsWith("-")) { node = node.substring(1); }
         group.removePermission(world, node);
         group.removePermission(world, "-" + node);
-        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' has been removed from the group " + group.getName());
-        plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' has been removed.");
+        StringBuilder msg = new StringBuilder("Node ").append(colorize(ChatColor.GREEN, node)).append(" has been ").append(colorize(ChatColor.RED, "removed")).append(" from the group ");
+        msg.append(colorize(ChatColor.GOLD, group.getName()));
+        if (world != null) {
+            msg.append(" on ").append(colorize(ChatColor.AQUA, world));
+        }
+        msg.append(".");
+        sender.sendMessage(msg.toString());
+        plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' has been removed" + (world != null ? " on '" + world + "'" : ""));
         reload(sender);
     }
 

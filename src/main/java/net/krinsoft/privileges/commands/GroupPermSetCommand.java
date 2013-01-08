@@ -1,12 +1,13 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -62,8 +63,15 @@ public class GroupPermSetCommand extends GroupPermCommand {
             return;
         }
         group.addPermission(world, (val ? node : "-" + node));
-        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, node) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + group.getName());
-        plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' is now '" + val + "'");
+        StringBuilder msg = new StringBuilder("Node ").append(colorize(ChatColor.GREEN, node)).append(" is now ");
+        msg.append(colorize(val ? ChatColor.GREEN : ChatColor.RED, String.valueOf(val))).append(" for the group ");
+        msg.append(colorize(ChatColor.GOLD, group.getName()));
+        if (world != null) {
+            msg.append(" on ").append(colorize(ChatColor.AQUA, world));
+        }
+        msg.append(".");
+        sender.sendMessage(msg.toString());
+        plugin.log(">> " + sender.getName() + ": " + group.getName() + "'s node '" + node + "' is now '" + val + "'" + (world != null ? " on '" + world + "'" : ""));
         reload(sender);
     }
 

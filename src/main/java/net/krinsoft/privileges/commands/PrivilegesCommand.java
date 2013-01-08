@@ -25,7 +25,7 @@ public abstract class PrivilegesCommand extends Command {
     public abstract void runCommand(CommandSender sender, List<String> args);
 
     public String colorize(ChatColor color, String value) {
-        return color + value + ChatColor.WHITE;
+        return color + value + ChatColor.RESET;
     }
 
     public void showHelp(CommandSender sender) {
@@ -59,10 +59,8 @@ public abstract class PrivilegesCommand extends Command {
             try {
                 thing[0] = param.split(":")[1];
                 thing[1] = param.split(":")[0];
-                if (plugin.getServer().getWorld(thing[0]) == null) {
-                    return null;
-                }
             } catch (Exception e) {
+                e.printStackTrace();
                 return null;
             }
         } else {
