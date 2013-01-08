@@ -35,11 +35,11 @@ public class UserPermRemoveCommand extends UserPermCommand {
         OfflinePlayer player = plugin.getServer().getOfflinePlayer(args.get(0));
         String test;
         if (player != null) {
-            test = player.getName();
+            test = player.getName().toLowerCase();
         } else {
-            test = args.get(0);
+            test = args.get(0).toLowerCase();
         }
-        String user = (plugin.getUsers().getConfigurationSection("users." + test) != null ? test : null);
+        String user = (plugin.getUserNode(test) != null ? test : null);
         if (user == null) {
             sender.sendMessage("I don't know about that user.");
             return;
@@ -52,8 +52,14 @@ public class UserPermRemoveCommand extends UserPermCommand {
         Player priv = plugin.getPlayerManager().getPlayer(test);
         priv.removePermission(param[1], param[0]);
         priv.removePermission(param[1], "-" + param[0]);
-        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' has been removed from " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
-        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' has been removed.");
+        StringBuilder msg = new StringBuilder("Node ").append(colorize(ChatColor.GREEN, param[0])).append(" has been ").append(colorize(ChatColor.RED, "removed")).append(" from the user ");
+        msg.append(colorize(ChatColor.GOLD, user));
+        if (param[1] != null) {
+            msg.append(" on ").append(colorize(ChatColor.AQUA, param[1]));
+        }
+        msg.append(".");
+        sender.sendMessage(msg.toString());
+        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' has been removed" + (param[1] != null ? " on '" + param[1] + "'" : ""));
         reload(sender);
     }
 

@@ -65,8 +65,15 @@ public class UserPermSetCommand extends UserPermCommand {
         }
         Player priv = plugin.getPlayerManager().getPlayer(user);
         priv.addPermission(param[1], (val ? param[0] : "-" + param[0]));
-        sender.sendMessage("Node '" + colorize(ChatColor.GREEN, param[0]) + "' is now " + (val ? ChatColor.GREEN : ChatColor.RED) + val + ChatColor.WHITE + " for " + user + (param[1] == null ? "" : " on " + ChatColor.GREEN + param[1]));
-        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' is now '" + val + "'");
+        StringBuilder msg = new StringBuilder("Node ").append(colorize(ChatColor.GREEN, param[0])).append(" is now ");
+        msg.append(colorize(val ? ChatColor.GREEN : ChatColor.RED, String.valueOf(val))).append(" for the user ");
+        msg.append(colorize(ChatColor.GOLD, user));
+        if (param[1] != null) {
+            msg.append(" on ").append(colorize(ChatColor.AQUA, param[1]));
+        }
+        msg.append(".");
+        sender.sendMessage(msg.toString());
+        plugin.log(">> " + sender.getName() + ": " + user + "'s node '" + param[0] + "' is now '" + val + "'" + (param[1] != null ? " on '" + param[1] + "'" : ""));
         reload(sender);
     }
 
