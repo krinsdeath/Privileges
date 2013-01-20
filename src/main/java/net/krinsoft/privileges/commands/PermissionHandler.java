@@ -1,10 +1,11 @@
-package net.krinsoft.privileges;
+package net.krinsoft.privileges.commands;
 
 import com.pneumaticraft.commandhandler.PermissionsInterface;
-import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
+
+import java.util.List;
 
 /**
  *

@@ -21,6 +21,7 @@ import net.krinsoft.privileges.commands.GroupSetCommand;
 import net.krinsoft.privileges.commands.InfoCommand;
 import net.krinsoft.privileges.commands.ListCommand;
 import net.krinsoft.privileges.commands.LoadCommand;
+import net.krinsoft.privileges.commands.PermissionHandler;
 import net.krinsoft.privileges.commands.ProfilingCommand;
 import net.krinsoft.privileges.commands.PromoteCommand;
 import net.krinsoft.privileges.commands.ReloadCommand;
