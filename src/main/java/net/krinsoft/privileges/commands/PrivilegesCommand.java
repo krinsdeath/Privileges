@@ -34,8 +34,12 @@ public abstract class PrivilegesCommand extends Command {
         sender.sendMessage(ChatColor.GOLD + getCommandDesc());
         sender.sendMessage(ChatColor.GREEN + "Permission: " + ChatColor.GOLD + this.getPermissionString());
         String keys = "";
+        String prefix = "";
+        if (sender instanceof Player) {
+            prefix = "/";
+        }
         for (String key : this.getKeyStrings()) {
-            keys += key + ", ";
+            keys += prefix + key + ", ";
         }
         keys = keys.substring(0, keys.length() - 2);
         sender.sendMessage(ChatColor.GREEN + "Aliases: " + ChatColor.RED + keys);

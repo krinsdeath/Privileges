@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -302,12 +301,8 @@ public class GroupManager {
         players.put(player, test.getName());
 
         // reload the permissions
+        plugin.getPlayerManager().unregister(player);
         plugin.getPlayerManager().register(player);
-
-        // add a metadata tag to the player
-        if (ply.getPlayer() != null) {
-            ply.getPlayer().setMetadata("group", new FixedMetadataValue(plugin, test.getName()));
-        }
 
         // tell other plugins about the group change
         plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(ply, orig.getName(), test.getName()));
