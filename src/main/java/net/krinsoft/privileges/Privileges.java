@@ -346,6 +346,7 @@ public class Privileges extends JavaPlugin {
             }
             saveUsers();
             debug("New user node for '" + player + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
+            user = getUsers().getConfigurationSection("users." + player.toLowerCase());
         }
         return user;
     }
