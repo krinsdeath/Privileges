@@ -120,47 +120,45 @@ public class Privileges extends JavaPlugin {
             debug("Error setting default permission for 'privileges.*'");
         }
 
-        if (getConfig().getBoolean("metrics")) {
-            try {
-                // initialize the plugin metrics tracker
-                Metrics metrics = new Metrics(this);
-                // track the number of groups
-                metrics.addCustomData(new Metrics.Plotter() {
-                    @Override
-                    public String getColumnName() {
-                        return "Groups";
+        try {
+            // initialize the plugin metrics tracker
+            Metrics metrics = new Metrics(this);
+            // track the number of groups
+            metrics.addCustomData(new Metrics.Plotter() {
+                @Override
+                public String getColumnName() {
+                    return "Groups";
+                }
+                @Override
+                public int getValue() {
+                    ConfigurationSection groups = getGroups().getConfigurationSection("groups");
+                    if (groups != null) {
+                        return groups.getKeys(false).size();
                     }
-                    @Override
-                    public int getValue() {
-                        ConfigurationSection groups = getGroups().getConfigurationSection("groups");
-                        if (groups != null) {
-                            return groups.getKeys(false).size();
-                        }
-                        return 0;
+                    return 0;
+                }
+            });
+            log("[Metrics] Tracking total number of groups.");
+            // track the number of users
+            metrics.addCustomData(new Metrics.Plotter() {
+                @Override
+                public String getColumnName() {
+                    return "Users";
+                }
+                @Override
+                public int getValue() {
+                    ConfigurationSection users = getUsers().getConfigurationSection("users");
+                    if (users != null) {
+                        return getUsers().getConfigurationSection("users").getKeys(false).size();
                     }
-                });
-                log("[Metrics] Tracking total number of groups.");
-                // track the number of users
-                metrics.addCustomData(new Metrics.Plotter() {
-                    @Override
-                    public String getColumnName() {
-                        return "Users";
-                    }
-                    @Override
-                    public int getValue() {
-                        ConfigurationSection users = getUsers().getConfigurationSection("users");
-                        if (users != null) {
-                            return getUsers().getConfigurationSection("users").getKeys(false).size();
-                        }
-                        return 0;
-                    }
-                });
-                log("[Metrics] Tracking total number of users.");
-                metrics.start();
-            } catch (IOException e) {
-                log("An error occurred while posting results to the Metrics.");
-                warn(e.getLocalizedMessage());
-            }
+                    return 0;
+                }
+            });
+            log("[Metrics] Tracking total number of users.");
+            metrics.start();
+        } catch (IOException e) {
+            log("An error occurred while posting results to the Metrics.");
+            warn(e.getLocalizedMessage());
         }
     }
 

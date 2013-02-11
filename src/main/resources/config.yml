@@ -1,5 +1,4 @@
 default_group: default
 debug: false
-metrics: false
 users_cleanup: false
 auto_reload: false
