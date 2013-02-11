@@ -39,7 +39,8 @@ public class PrivilegesPlayer implements Player {
             globals.put(global, val);
         }
         for (World world : plugin.getServer().getWorlds()) {
-            Map<String, Boolean> worlds = globals;
+            Map<String, Boolean> worlds = new HashMap<String, Boolean>();
+            worlds.putAll(globals);
             for (String node : user.getStringList("worlds." + world.getName())) {
                 boolean val = true;
                 if (node.startsWith("-")) {
@@ -49,10 +50,11 @@ public class PrivilegesPlayer implements Player {
                 worlds.put(node, val);
             }
             Permission perm = new Permission("player." + this.name + "." + world.getName(), PermissionDefault.FALSE, worlds);
-            if (plugin.getServer().getPluginManager().getPermission(perm.getName()) == null) {
-                plugin.getServer().getPluginManager().addPermission(perm);
-                perm.recalculatePermissibles();
-            }
+            plugin.getServer().getPluginManager().removePermission(perm);
+            perm.getChildren().clear();
+            perm.getChildren().putAll(worlds);
+            plugin.getServer().getPluginManager().addPermission(perm);
+            perm.recalculatePermissibles();
         }
     }
 

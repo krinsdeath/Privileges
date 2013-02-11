@@ -3,6 +3,7 @@ package net.krinsoft.privileges.players;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -21,6 +22,9 @@ public class PlayerManager {
 
     public PlayerManager(Privileges plugin) {
         this.plugin = plugin;
+        for (org.bukkit.entity.Player player : plugin.getServer().getOnlinePlayers()) {
+            register(player);
+        }
     }
 
     public boolean register(String player) {
@@ -71,6 +75,10 @@ public class PlayerManager {
     public void unregister(String name) {
         Player player = players.remove(name.toLowerCase());
         if (player != null) {
+            for (World world : plugin.getServer().getWorlds()) {
+                String node = player.getMasterPermission(world.getName());
+                plugin.getServer().getPluginManager().removePermission(node);
+            }
             plugin.debug(name + " was successfully unregistered.");
         } else {
             plugin.debug(name + " was already unregistered!");
