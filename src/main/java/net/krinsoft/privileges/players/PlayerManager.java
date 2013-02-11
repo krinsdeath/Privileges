@@ -22,9 +22,6 @@ public class PlayerManager {
 
     public PlayerManager(Privileges plugin) {
         this.plugin = plugin;
-        for (org.bukkit.entity.Player player : plugin.getServer().getOnlinePlayers()) {
-            register(player);
-        }
     }
 
     public boolean register(String player) {

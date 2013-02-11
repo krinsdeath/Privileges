@@ -214,6 +214,7 @@ public class Privileges extends JavaPlugin {
     private void registerPermissions() {
         playerManager = new PlayerManager(this);
         groupManager = new GroupManager(this);
+        playerManager.reload();
         registerDynamicPermissions();
     }
 
