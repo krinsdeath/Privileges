@@ -47,7 +47,7 @@ public class InfoCommand extends PrivilegesCommand {
                 return;
             }
         }
-        if (target.equals(sender) && !sender.hasPermission("privileges.info.other")) {
+        if (!target.equals(sender) && !sender.hasPermission("privileges.info.other")) {
             sender.sendMessage(ChatColor.RED + "You cannot view other peoples' information.");
             return;
         }
