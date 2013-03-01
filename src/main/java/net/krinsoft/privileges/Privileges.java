@@ -85,7 +85,7 @@ public class Privileges extends JavaPlugin {
         registerConfiguration();
         registerPermissions();
         performImports();
-        getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+        getServer().getScheduler().runTaskLater(this, new Runnable() {
             public void run() {
                 boolean tmp = debug;
                 debug = false;
@@ -97,7 +97,7 @@ public class Privileges extends JavaPlugin {
         registerEvents();
         registerCommands();
         if (on_start_clean) {
-            getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+            getServer().getScheduler().runTaskLater(this, new Runnable() {
                 public void run() {
                     log("Removing old users from users.yml...");
                     long timeout = 1000L * 60L * 60L * 24L * 30L;
@@ -212,7 +212,6 @@ public class Privileges extends JavaPlugin {
     private void registerPermissions() {
         playerManager = new PlayerManager(this);
         groupManager = new GroupManager(this);
-        playerManager.reload();
         registerDynamicPermissions();
     }
 
