@@ -38,12 +38,9 @@ public class GroupManager {
     }
 
     public void reload() {
-        StringBuilder line = new StringBuilder();
         Set<String> groups = plugin.getGroups().getConfigurationSection("groups").getKeys(false);
         for (String group : groups) {
-            if (line.length() > 0) { line.append(", "); }
             Group g = getGroup(group);
-            line.append(g.getName()).append(" (").append(g.getRank()).append(")");
         }
     }
 
