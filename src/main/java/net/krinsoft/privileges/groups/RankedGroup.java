@@ -3,7 +3,6 @@ package net.krinsoft.privileges.groups;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.event.GroupPermissionAddEvent;
 import net.krinsoft.privileges.event.GroupPermissionRemoveEvent;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
@@ -18,7 +17,6 @@ import java.util.List;
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class RankedGroup implements Group {
     // the name of this group
     private String name;

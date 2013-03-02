@@ -1,13 +1,11 @@
 package net.krinsoft.privileges.groups;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author krinsdeath 
  */
-@SuppressWarnings("unused")
 public interface Group {
 
     // Returns a list containing all groups in this group's inheritance tree
