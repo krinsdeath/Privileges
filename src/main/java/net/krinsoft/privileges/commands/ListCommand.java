@@ -78,13 +78,13 @@ public class ListCommand extends PrivilegesCommand {
         String header;
         if (sender instanceof ConsoleCommandSender) {
             header = ChatColor.GREEN + "=== " + ChatColor.WHITE + "Permissions list for " + ChatColor.AQUA + name + ChatColor.GREEN + " ===";
-            sender.sendMessage(header.replaceAll("&([0-9A-F])", "\u00A7$1"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', header));
             for (String line : list) {
                 sender.sendMessage(ChatColor.stripColor(line));
             }
         } else {
             header = ChatColor.GREEN + "=== " + ChatColor.WHITE + " [Page " + pageNum + "/" + page.getPages() + "] " + ChatColor.GREEN + "===";
-            sender.sendMessage(header.replaceAll("&([0-9A-F])", "\u00A7$1"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', header));
             for (String line : page.getPage(pageNum)) {
                 sender.sendMessage(line);
             }
