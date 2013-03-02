@@ -1,7 +1,6 @@
 package net.krinsoft.privileges.groups;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  *
