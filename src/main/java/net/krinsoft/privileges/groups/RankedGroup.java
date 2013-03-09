@@ -92,11 +92,11 @@ public class RankedGroup implements Group {
     }
 
     public boolean isMemberOf(String group) {
-        return (this.tree.contains(group));
+        return group != null && this.tree.contains(group.toLowerCase());
     }
 
     public boolean isMemberOf(Group group) {
-        return (group != null && this.tree.contains(group.getName()));
+        return (group != null && isMemberOf(group.getName()));
     }
 
     public boolean hasPermission(String permission, String world) {
