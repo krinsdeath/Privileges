@@ -50,7 +50,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerChangedWorld(PlayerChangedWorldEvent event) {
-        plugin.getPlayerManager().register(event.getPlayer());
+        plugin.getPlayerManager().changeWorld(event.getPlayer(), event.getFrom());
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

@@ -2,6 +2,7 @@ package net.krinsoft.privileges.players;
 
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
+import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.permissions.PermissionAttachment;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class PlayerManager {
     private final Privileges plugin;
     private final Map<String, Player> players = new HashMap<String, Player>();
+    private final Map<String, PermissionAttachment> attachment_cache = new HashMap<String, PermissionAttachment>();
 
     public PlayerManager(Privileges plugin) {
         this.plugin = plugin;
@@ -54,7 +56,20 @@ public class PlayerManager {
         PermissionAttachment attachment = player.addAttachment(plugin);
         attachment.setPermission(group.getMasterPermission(player.getWorld().getName()), true);
         attachment.setPermission(priv.getMasterPermission(player.getWorld().getName()), true);
+        attachment_cache.put(player.getName().toLowerCase(), attachment);
         return true;
+    }
+
+    public void changeWorld(org.bukkit.entity.Player player, World world) {
+        Player priv = players.get(player.getName().toLowerCase());
+        Validate.notNull(priv);
+        Validate.notNull(priv.getGroup());
+        PermissionAttachment attachment = attachment_cache.get(player.getName().toLowerCase());
+        Validate.notNull(attachment);
+        attachment.unsetPermission(priv.getGroup().getMasterPermission(world.getName()));
+        attachment.unsetPermission(priv.getMasterPermission(world.getName()));
+        attachment.setPermission(priv.getGroup().getMasterPermission(player.getWorld().getName()), true);
+        attachment.setPermission(priv.getMasterPermission(player.getWorld().getName()), true);
     }
 
     public void disable() {
@@ -72,6 +87,7 @@ public class PlayerManager {
     public void unregister(String name) {
         Player player = players.remove(name.toLowerCase());
         if (player != null) {
+            attachment_cache.remove(name.toLowerCase());
             for (World world : plugin.getServer().getWorlds()) {
                 String node = player.getMasterPermission(world.getName());
                 plugin.getServer().getPluginManager().removePermission(node);
