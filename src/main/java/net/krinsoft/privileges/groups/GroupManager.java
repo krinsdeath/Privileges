@@ -292,7 +292,11 @@ public class GroupManager {
 
         // update the player's group in the configuration
         plugin.getUserNode(player).set("group", test.getName());
-        plugin.saveUsers();
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            public void run() {
+                plugin.saveUsers();
+            }
+        });
 
         // update the player's values
         players.put(player, test.getName());

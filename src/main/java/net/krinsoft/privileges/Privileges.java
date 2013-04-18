@@ -373,12 +373,18 @@ public class Privileges extends JavaPlugin {
         return users;
     }
 
+    private boolean saving = false;
+
     public void saveUsers() {
-        try {
-            debug("users.yml checksum: " + sha256(userFile));
-            getUsers().save(userFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!saving) {
+            saving = true;
+            try {
+                debug("users.yml checksum: " + sha256(userFile));
+                getUsers().save(userFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            saving = false;
         }
     }
 
