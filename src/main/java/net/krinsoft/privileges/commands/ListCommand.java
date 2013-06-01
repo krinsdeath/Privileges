@@ -45,6 +45,9 @@ public class ListCommand extends PrivilegesCommand {
                 if (test != null) {
                     target = test;
                     name = test.getName();
+                } else {
+                    sender.sendMessage("No player named '" + args.get(0) + "' is online.");
+                    return;
                 }
             }
         } else if (args.size() == 2) {
@@ -54,6 +57,9 @@ public class ListCommand extends PrivilegesCommand {
                 if (test != null) {
                     target = test;
                     name = test.getName();
+                } else {
+                    sender.sendMessage("No player named '" + args.get(0) + "' is online.");
+                    return;
                 }
             } catch (NumberFormatException e) {
                 pageNum = 0;
