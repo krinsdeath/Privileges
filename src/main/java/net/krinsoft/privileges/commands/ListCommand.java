@@ -52,7 +52,6 @@ public class ListCommand extends PrivilegesCommand {
             }
         } else if (args.size() == 2) {
             try {
-                pageNum = Integer.parseInt(args.get(1));
                 CommandSender test = plugin.getServer().getPlayer(args.get(0));
                 if (test != null) {
                     target = test;
@@ -61,6 +60,7 @@ public class ListCommand extends PrivilegesCommand {
                     sender.sendMessage("No player named '" + args.get(0) + "' is online.");
                     return;
                 }
+                pageNum = Integer.parseInt(args.get(1));
             } catch (NumberFormatException e) {
                 pageNum = 0;
             }
