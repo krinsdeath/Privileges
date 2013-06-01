@@ -41,17 +41,19 @@ public class ListCommand extends PrivilegesCommand {
                 pageNum = Integer.parseInt(args.get(0));
             } catch (NumberFormatException e) {
                 pageNum = 0;
-                if (plugin.getServer().getPlayer(args.get(0)) != null) {
-                    target = plugin.getServer().getPlayer(args.get(0));
-                    name = target.getName();
+                CommandSender test = plugin.getServer().getPlayer(args.get(0));
+                if (test != null) {
+                    target = test;
+                    name = test.getName();
                 }
             }
         } else if (args.size() == 2) {
             try {
                 pageNum = Integer.parseInt(args.get(1));
-                if (plugin.getServer().getPlayer(args.get(0)) != null) {
-                    target = plugin.getServer().getPlayer(args.get(0));
-                    name = target.getName();
+                CommandSender test = plugin.getServer().getPlayer(args.get(0));
+                if (test != null) {
+                    target = test;
+                    name = test.getName();
                 }
             } catch (NumberFormatException e) {
                 pageNum = 0;
