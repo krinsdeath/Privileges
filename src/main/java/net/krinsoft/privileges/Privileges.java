@@ -44,6 +44,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
@@ -68,6 +69,8 @@ public class Privileges extends JavaPlugin {
 
     private boolean debug = false;
     private boolean on_start_clean = false;
+    private int on_start_clean_period = 30;
+    private boolean persist_default = true;
 
     // managers and handlers
     private PlayerManager playerManager;
@@ -100,7 +103,7 @@ public class Privileges extends JavaPlugin {
             getServer().getScheduler().runTaskLater(this, new Runnable() {
                 public void run() {
                     log("Removing old users from users.yml...");
-                    long timeout = 1000L * 60L * 60L * 24L * 30L;
+                    long timeout = 1000L * 60L * 60L * 24L * on_start_clean_period;
                     for (OfflinePlayer player : getServer().getOfflinePlayers()) {
                         if (System.currentTimeMillis() - player.getLastPlayed() >= timeout || player.isBanned()) {
                             if ((getUsers().get(player.getName()) != null && !getUsers().getString(player.getName() + ".group").equals(getConfig().getString("default_group", "default"))) || player.isBanned()) {
@@ -262,11 +265,18 @@ public class Privileges extends JavaPlugin {
         if (getConfig().get("default_group") == null) {
             getConfig().set("default_group", "default");
             getConfig().set("debug", false);
-            getConfig().set("profiler", false);
             saveConfig();
         }
         debug = getConfig().getBoolean("debug", false);
-        on_start_clean = getConfig().getBoolean("users_cleanup", false);
+        if (getConfig().get("users") == null) {
+            getConfig().set("users.persist_default", true);
+            getConfig().set("users.clean_old", true);
+            getConfig().set("users.clean_after_days", 30);
+            saveConfig();
+        }
+        persist_default = getConfig().getBoolean("users.persist_default", true);
+        on_start_clean = getConfig().getBoolean("users.clean_old", true);
+        on_start_clean_period = getConfig().getInt("users.clean_after_days", 30);
     }
 
     private void performImports() {
@@ -337,14 +347,18 @@ public class Privileges extends JavaPlugin {
         user = getUsers().getConfigurationSection("users." + player.toLowerCase());
         if (user == null || user.getString("group") == null) {
             String path = "users." + player.toLowerCase();
-            getUsers().set(path + ".group", getConfig().getString("default_group", "default"));
-            getUsers().set(path + ".permissions", null);
+            ConfigurationSection node = new MemoryConfiguration();
+            node.set("group", getConfig().getString("default_group", "default"));
+            node.set("permissions", null);
             for (World w : getServer().getWorlds()) {
-                getUsers().set(path + ".worlds." + w.getName(), null);
+                node.set("worlds." + w.getName(), null);
             }
-            saveUsers();
+            if (persist_default) {
+                getUsers().set("users." + player.toLowerCase(), node);
+                saveUsers();
+            }
             debug("New user node for '" + player + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
-            user = getUsers().getConfigurationSection("users." + player.toLowerCase());
+            user = node;
         }
         return user;
     }

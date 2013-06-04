@@ -291,7 +291,7 @@ public class GroupManager {
         if (test == null) { return null; }
 
         // update the player's group in the configuration
-        plugin.getUserNode(player).set("group", test.getName());
+        plugin.getUsers().set("users." + player.toLowerCase() + ".group", test.getName());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             public void run() {
                 plugin.saveUsers();

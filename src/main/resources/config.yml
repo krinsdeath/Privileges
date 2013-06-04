@@ -1,4 +1,7 @@
 default_group: default
 debug: false
-users_cleanup: false
+users:
+  persist_default: true
+  clean_old: true
+  clean_after_days: 30
 auto_reload: false

@@ -91,6 +91,7 @@ public class PrivilegesPlayer implements Player {
                 }
             }
             // TODO: PlayerPermissionAddEvent
+            plugin.getUsers().set("users." + this.name.toLowerCase(), user);
             return success;
         }
         return false;
@@ -111,6 +112,7 @@ public class PrivilegesPlayer implements Player {
                 user.set("permissions", nodes);
             }
             // TODO: PlayerPermissionRemoveEvent
+            plugin.getUsers().set("users." + this.name.toLowerCase(), user);
             return success;
         }
         return false;
