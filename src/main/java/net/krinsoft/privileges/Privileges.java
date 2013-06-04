@@ -28,6 +28,7 @@ import net.krinsoft.privileges.commands.ReloadCommand;
 import net.krinsoft.privileges.commands.RestoreCommand;
 import net.krinsoft.privileges.commands.SaveCommand;
 import net.krinsoft.privileges.commands.UserBaseCommand;
+import net.krinsoft.privileges.commands.UserCleanCommand;
 import net.krinsoft.privileges.commands.UserListCommand;
 import net.krinsoft.privileges.commands.UserPermRemoveCommand;
 import net.krinsoft.privileges.commands.UserPermSetCommand;
@@ -325,6 +326,7 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new GroupPermSetCommand(this));
         commandHandler.registerCommand(new GroupPermRemoveCommand(this));
         // user related commands
+        commandHandler.registerCommand(new UserCleanCommand(this));
         commandHandler.registerCommand(new UserListCommand(this));
         commandHandler.registerCommand(new UserPermSetCommand(this));
         commandHandler.registerCommand(new UserPermRemoveCommand(this));
