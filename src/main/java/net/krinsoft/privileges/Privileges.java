@@ -277,6 +277,9 @@ public class Privileges extends JavaPlugin {
             saveConfig();
         }
         read_only = getConfig().getBoolean("read_only", false);
+        if (read_only) {
+            log("Privileges is in read-only mode. No changes to users or groups will be saved!");
+        }
         persist_default = getConfig().getBoolean("users.persist_default", true);
         on_start_clean = getConfig().getBoolean("users.clean_old", true);
         on_start_clean_period = getConfig().getInt("users.clean_after_days", 30);
