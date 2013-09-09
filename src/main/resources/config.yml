@@ -5,3 +5,4 @@ users:
   clean_old: true
   clean_after_days: 30
 auto_reload: false
+read_only: false

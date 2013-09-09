@@ -72,6 +72,7 @@ public class Privileges extends JavaPlugin {
     private boolean on_start_clean = false;
     private int on_start_clean_period = 30;
     private boolean persist_default = true;
+    private boolean read_only = false;
 
     // managers and handlers
     private PlayerManager playerManager;
@@ -275,6 +276,7 @@ public class Privileges extends JavaPlugin {
             getConfig().set("users.clean_after_days", 30);
             saveConfig();
         }
+        read_only = getConfig().getBoolean("read_only", false);
         persist_default = getConfig().getBoolean("users.persist_default", true);
         on_start_clean = getConfig().getBoolean("users.clean_old", true);
         on_start_clean_period = getConfig().getInt("users.clean_after_days", 30);
@@ -392,6 +394,7 @@ public class Privileges extends JavaPlugin {
     private boolean saving = false;
 
     public void saveUsers() {
+        if (read_only) { return; }
         if (!saving) {
             saving = true;
             try {
@@ -412,6 +415,7 @@ public class Privileges extends JavaPlugin {
     }
 
     public void saveGroups() {
+        if (read_only) { return; }
         try {
             debug("groups.yml checksum: " + sha256(groupFile));
             getGroups().save(groupFile);
