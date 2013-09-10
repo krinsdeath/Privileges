@@ -27,9 +27,14 @@ public class ReloadCommand extends PrivilegesCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        plugin.saveGroups();
-        plugin.saveUsers();
-        plugin.saveConfig();
+        if (plugin.isReadOnly()) {
+            sender.sendMessage(ChatColor.GREEN + "Attempted to reload files in read-only mode.");
+            plugin.log(">> " + sender.getName() + ": Attempted to reload files in read-only mode.");
+        } else {
+            plugin.saveGroups();
+            plugin.saveUsers();
+            plugin.saveConfig();
+        }
         plugin.reload();
         String msg = "Privileges has been reloaded.";
         sender.sendMessage(ChatColor.GREEN + msg);

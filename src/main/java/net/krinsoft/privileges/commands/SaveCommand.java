@@ -25,6 +25,11 @@ public class SaveCommand extends PrivilegesCommand {
     
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
+        if (plugin.isReadOnly()) {
+            sender.sendMessage(ChatColor.GREEN + "Attempted to save files in read-only mode. Aborting!");
+            plugin.log(">> " + sender.getName() + ": Attempted to save files in read-only mode. Aborting!");
+            return;
+        }
         plugin.saveUsers();
         plugin.saveGroups();
         plugin.saveConfig();

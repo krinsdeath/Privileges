@@ -285,6 +285,10 @@ public class Privileges extends JavaPlugin {
         on_start_clean_period = getConfig().getInt("users.clean_after_days", 30);
     }
 
+    public boolean isReadOnly() {
+        return read_only;
+    }
+
     private void performImports() {
         // broken until I can improve it
         new ImportManager(this);
