@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -33,13 +34,13 @@ public class UserPermRemoveCommand extends UserPermCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         OfflinePlayer player = plugin.getServer().getOfflinePlayer(args.get(0));
-        String test;
+        UUID test;
         if (player != null) {
-            test = player.getName().toLowerCase();
+            test = player.getUniqueId();
         } else {
-            test = args.get(0).toLowerCase();
+            test = null;
         }
-        String user = (plugin.getUserNode(test) != null ? test : null);
+        UUID user = (plugin.getUserNode(test) != null ? test : null);
         if (user == null) {
             sender.sendMessage("I don't know about that user.");
             return;
@@ -53,7 +54,7 @@ public class UserPermRemoveCommand extends UserPermCommand {
         priv.removePermission(param[1], param[0]);
         priv.removePermission(param[1], "-" + param[0]);
         StringBuilder msg = new StringBuilder("Node ").append(colorize(ChatColor.GREEN, param[0])).append(" has been ").append(colorize(ChatColor.RED, "removed")).append(" from the user ");
-        msg.append(colorize(ChatColor.GOLD, user));
+        msg.append(colorize(ChatColor.GOLD, String.valueOf(user)));
         if (param[1] != null) {
             msg.append(" on ").append(colorize(ChatColor.AQUA, param[1]));
         }

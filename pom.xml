@@ -12,10 +12,9 @@
         <project.build.number>DEV</project.build.number>
     </properties>
     <repositories>
-        <!-- Bukkit Repository -->
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <!-- Multiverse Repository -->
         <repository>
@@ -120,8 +119,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.6.2-R0.1</version>
-            <type>jar</type>
+            <version>1.8-R0.1-SNAPSHOT</version>
         </dependency>
         <!-- End Bukkit -->
         <!-- CommandHandler -->

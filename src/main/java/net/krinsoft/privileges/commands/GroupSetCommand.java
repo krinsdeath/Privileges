@@ -48,7 +48,7 @@ public class GroupSetCommand extends GroupCommand {
             sender.sendMessage(ChatColor.RED + "No such group exists.");
             return;
         }
-        plugin.getGroupManager().setGroup(target.getName(), args.get(1));
+        plugin.getGroupManager().setGroup(target.getUniqueId(), args.get(1));
         sender.sendMessage(colorize(ChatColor.GREEN, target.getName()) + "'s group has been set to " + colorize(ChatColor.GREEN, args.get(1)));
         plugin.log(">> " + sender.getName() + ": Set " + target.getName() + "'s group to '" + args.get(1) + "'");
     }

@@ -1,39 +1,9 @@
 package net.krinsoft.privileges;
 
+import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.pneumaticraft.commandhandler.CommandHandler;
-import net.krinsoft.privileges.commands.BackupCommand;
-import net.krinsoft.privileges.commands.BaseCommand;
-import net.krinsoft.privileges.commands.CheckCommand;
-import net.krinsoft.privileges.commands.DebugCommand;
-import net.krinsoft.privileges.commands.DemoteCommand;
-import net.krinsoft.privileges.commands.GroupBaseCommand;
-import net.krinsoft.privileges.commands.GroupCheckCommand;
-import net.krinsoft.privileges.commands.GroupCreateCommand;
-import net.krinsoft.privileges.commands.GroupListCommand;
-import net.krinsoft.privileges.commands.GroupOptionCommand;
-import net.krinsoft.privileges.commands.GroupPermBaseCommand;
-import net.krinsoft.privileges.commands.GroupPermRemoveCommand;
-import net.krinsoft.privileges.commands.GroupPermSetCommand;
-import net.krinsoft.privileges.commands.GroupRemoveCommand;
-import net.krinsoft.privileges.commands.GroupRenameCommand;
-import net.krinsoft.privileges.commands.GroupSetCommand;
-import net.krinsoft.privileges.commands.InfoCommand;
-import net.krinsoft.privileges.commands.ListCommand;
-import net.krinsoft.privileges.commands.LoadCommand;
-import net.krinsoft.privileges.commands.PermissionHandler;
-import net.krinsoft.privileges.commands.ProfilingCommand;
-import net.krinsoft.privileges.commands.PromoteCommand;
-import net.krinsoft.privileges.commands.ReloadCommand;
-import net.krinsoft.privileges.commands.RestoreCommand;
-import net.krinsoft.privileges.commands.SaveCommand;
-import net.krinsoft.privileges.commands.UserBaseCommand;
-import net.krinsoft.privileges.commands.UserCleanCommand;
-import net.krinsoft.privileges.commands.UserListCommand;
-import net.krinsoft.privileges.commands.UserPermRemoveCommand;
-import net.krinsoft.privileges.commands.UserPermSetCommand;
-import net.krinsoft.privileges.commands.UserResetCommand;
-import net.krinsoft.privileges.commands.VersionCommand;
+import net.krinsoft.privileges.commands.*;
 import net.krinsoft.privileges.groups.GroupManager;
 import net.krinsoft.privileges.importer.ImportManager;
 import net.krinsoft.privileges.listeners.BlockListener;
@@ -56,11 +26,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -342,22 +311,22 @@ public class Privileges extends JavaPlugin {
         commandHandler.registerCommand(new UserResetCommand(this));
     }
 
-    public ConfigurationSection getUserNode(String player) {
-        ConfigurationSection user = getUsers().getConfigurationSection("users." + player);
-        if (!player.equals(player.toLowerCase()) && user != null) {
-            getUsers().set("users." + player.toLowerCase() + ".group", user.getString("group"));
-            getUsers().set("users." + player.toLowerCase() + ".permissions", user.getStringList("permissions"));
+    public ConfigurationSection getUserNode(UUID UUID) {
+        ConfigurationSection user = getUsers().getConfigurationSection("users." + UUID);
+        if (!UUID.equals(UUID) && user != null) {
+            getUsers().set("users." + UUID + ".group", user.getString("group"));
+            getUsers().set("users." + UUID + ".permissions", user.getStringList("permissions"));
             for (World w : getServer().getWorlds()) {
-                getUsers().set("users." + player.toLowerCase() + ".worlds." + w.getName(), user.getStringList("worlds." + w.getName()));
+                getUsers().set("users." + UUID + ".worlds." + w.getName(), user.getStringList("worlds." + w.getName()));
             }
-            getUsers().set("users." + player, null);
+            getUsers().set("users." + UUID, null);
             saveUsers();
-            debug("User node for '" + player + "' converted to lower case.");
-            return getUsers().getConfigurationSection("users." + player.toLowerCase());
+            debug("User node for '" + UUID + "' converted to lower case.");
+            return getUsers().getConfigurationSection("users." + UUID);
         }
-        user = getUsers().getConfigurationSection("users." + player.toLowerCase());
+        user = getUsers().getConfigurationSection("users." + UUID);
         if (user == null || user.getString("group") == null) {
-            String path = "users." + player.toLowerCase();
+            String path = "users." + UUID;
             ConfigurationSection node = new MemoryConfiguration();
             node.set("group", getConfig().getString("default_group", "default"));
             node.set("permissions", null);
@@ -365,10 +334,10 @@ public class Privileges extends JavaPlugin {
                 node.set("worlds." + w.getName(), null);
             }
             if (persist_default) {
-                getUsers().set("users." + player.toLowerCase(), node);
+                getUsers().set("users." + UUID, node);
                 saveUsers();
             }
-            debug("New user node for '" + player + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
+            debug("New user node for '" + UUID + "' created with default group '" + getConfig().getString("default_group", "default") + "'.");
             user = node;
         }
         return user;
@@ -473,14 +442,12 @@ public class Privileges extends JavaPlugin {
      */
     private String sha256(File file) {
         try {
-            byte[] bytes = Files.getDigest(file, MessageDigest.getInstance("SHA-256"));
+            byte[] bytes = Files.hash(file, Hashing.sha256()).asBytes();
             StringBuilder checksum = new StringBuilder();
             for (byte b : bytes) {
                 checksum.append(b);
             }
             return checksum.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             if (e instanceof FileNotFoundException) {
                 return e.getLocalizedMessage();
@@ -489,5 +456,4 @@ public class Privileges extends JavaPlugin {
         }
         return null;
     }
-
 }

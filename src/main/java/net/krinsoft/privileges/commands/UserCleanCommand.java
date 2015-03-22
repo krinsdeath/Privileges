@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author krinsdeath
@@ -32,7 +33,7 @@ public class UserCleanCommand extends UserCommand {
             String default_group = plugin.getConfig().getString("default_group", "default");
             for (String key : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
                 boolean success = false;
-                ConfigurationSection node = plugin.getUserNode(key);
+                ConfigurationSection node = plugin.getUserNode(UUID.fromString(key));
                 List<String> perms = node.getStringList("permissions");
                 if (node.getString("group").equals(default_group) && (perms == null || perms.size() == 0)) {
                     for (World world : plugin.getServer().getWorlds()) {

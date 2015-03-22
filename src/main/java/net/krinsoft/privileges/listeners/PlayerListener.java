@@ -34,7 +34,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerFailLogin(PlayerLoginEvent event) {
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-            plugin.getPlayerManager().unregister(event.getPlayer().getName()); // unregister if player is prevented from joining
+            plugin.getPlayerManager().unregister(event.getPlayer().getUniqueId()); // unregister if player is prevented from joining
         }
     }
 
@@ -45,7 +45,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuit(PlayerQuitEvent event) {
-        plugin.getPlayerManager().unregister(event.getPlayer().getName());
+        plugin.getPlayerManager().unregister(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

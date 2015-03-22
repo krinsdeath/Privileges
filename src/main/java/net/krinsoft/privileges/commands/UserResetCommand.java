@@ -33,15 +33,15 @@ public class UserResetCommand extends UserPermCommand {
             return;
         }
         try {
-            plugin.getUserNode(p.getName()).set("group", plugin.getGroupManager().getDefaultGroup().getName());
-            plugin.getUserNode(p.getName()).set("permissions", null);
-            plugin.getUserNode(p.getName()).set("worlds", null);
+            plugin.getUserNode(p.getUniqueId()).set("group", plugin.getGroupManager().getDefaultGroup().getName());
+            plugin.getUserNode(p.getUniqueId()).set("permissions", null);
+            plugin.getUserNode(p.getUniqueId()).set("worlds", null);
             plugin.getPlayerManager().register(p.getName());
             sender.sendMessage(ChatColor.GREEN + "The user '" + p.getName() + "' has been reset to default.");
-            plugin.log(">> " + sender.getName() + ": " + p.getName() + " has been reset.");
+            plugin.log(">> " + sender.getName() + ": " + p.getUniqueId() + " has been reset.");
             reload(sender);
         } catch (NullPointerException e) {
-            plugin.warn(">> " + sender.getName() + ": Couldn't reset '" + p.getName() + "'... ");
+            plugin.warn(">> " + sender.getName() + ": Couldn't reset '" + p.getUniqueId() + "'... ");
             plugin.warn(">> " + e.getLocalizedMessage());
         }
     }
