@@ -8,17 +8,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author krinsdeath
  */
 public class PrivilegesPlayer implements Player {
     private final Privileges plugin;
-    private final String name;
+    private final UUID UUID;
     private Group group;
 
     public PrivilegesPlayer(Privileges plugin, OfflinePlayer player) {
@@ -26,10 +23,10 @@ public class PrivilegesPlayer implements Player {
             throw new NullPointerException("The specified player doesn't exist.");
         }
         this.plugin = plugin;
-        this.name = player.getName().toLowerCase();
+        this.UUID = player.getUniqueId();
         this.group = plugin.getGroupManager().getGroup(player);
         Map<String, Boolean> globals = new HashMap<String, Boolean>();
-        ConfigurationSection user = plugin.getUserNode(player.getName());
+        ConfigurationSection user = plugin.getUserNode(player.getUniqueId());
         for (String global : user.getStringList("permissions")) {
             boolean val = true;
             if (global.startsWith("-")) {
@@ -49,7 +46,7 @@ public class PrivilegesPlayer implements Player {
                 }
                 worlds.put(node, val);
             }
-            Permission perm = new Permission("player." + this.name + "." + world.getName(), PermissionDefault.FALSE, worlds);
+            Permission perm = new Permission("player." + this.UUID + "." + world.getName(), PermissionDefault.FALSE, worlds);
             plugin.getServer().getPluginManager().removePermission(perm);
             perm.getChildren().clear();
             perm.getChildren().putAll(worlds);
@@ -73,7 +70,7 @@ public class PrivilegesPlayer implements Player {
     }
 
     public boolean addPermission(String world, String node) {
-        ConfigurationSection user = plugin.getUserNode(this.name);
+        ConfigurationSection user = plugin.getUserNode(this.UUID);
         if (user != null) {
             List<String> nodes = new ArrayList<String>();
             boolean success = false;
@@ -91,14 +88,14 @@ public class PrivilegesPlayer implements Player {
                 }
             }
             // TODO: PlayerPermissionAddEvent
-            plugin.getUsers().set("users." + this.name.toLowerCase(), user);
+            plugin.getUsers().set("users." + this.UUID, user);
             return success;
         }
         return false;
     }
 
     public boolean removePermission(String world, String node) {
-        ConfigurationSection user = plugin.getUserNode(this.name);
+        ConfigurationSection user = plugin.getUserNode(this.UUID);
         if (user != null) {
             List<String> nodes = new ArrayList<String>();
             boolean success;
@@ -112,14 +109,14 @@ public class PrivilegesPlayer implements Player {
                 user.set("permissions", nodes);
             }
             // TODO: PlayerPermissionRemoveEvent
-            plugin.getUsers().set("users." + this.name.toLowerCase(), user);
+            plugin.getUsers().set("users." + this.UUID, user);
             return success;
         }
         return false;
     }
 
     public String getMasterPermission(String world) {
-        return "player." + this.name + "." + world;
+        return "player." + this.UUID + "." + world;
     }
 
 }

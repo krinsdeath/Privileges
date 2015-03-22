@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author krinsdeath
@@ -47,9 +48,9 @@ public class GroupRenameCommand extends GroupCommand {
             }
         }
         for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
-            String group = plugin.getUserNode(user).getString("group");
+            String group = plugin.getUserNode(UUID.fromString(user)).getString("group");
             if (group.equalsIgnoreCase(o)) {
-                plugin.getUserNode(user).set("group", n);
+                plugin.getUserNode(UUID.fromString(user)).set("group", n);
             }
         }
         if (plugin.getGroupManager().getGroup(o).equals(plugin.getGroupManager().getDefaultGroup())) {

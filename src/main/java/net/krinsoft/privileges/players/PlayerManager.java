@@ -8,10 +8,7 @@ import org.bukkit.World;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An player manager that handles the creation and removal of player permissions within Privileges
@@ -19,8 +16,8 @@ import java.util.Map;
  */
 public class PlayerManager {
     private final Privileges plugin;
-    private final Map<String, Player> players = new HashMap<String, Player>();
-    private final Map<String, PermissionAttachment> attachment_cache = new HashMap<String, PermissionAttachment>();
+    private final Map<UUID, Player> players = new HashMap<UUID, Player>();
+    private final Map<UUID, PermissionAttachment> attachment_cache = new HashMap<UUID, PermissionAttachment>();
 
     public PlayerManager(Privileges plugin) {
         this.plugin = plugin;
@@ -35,15 +32,15 @@ public class PlayerManager {
             plugin.debug("Attempted permission registration of a player that was offline or didn't exist!");
             return false;
         }
-        Player priv = players.get(ply.getName().toLowerCase());
+        Player priv = players.get(ply.getUniqueId());
         if (priv == null) {
             priv = new PrivilegesPlayer(plugin, ply);
-            players.put(ply.getName().toLowerCase(), priv);
+            players.put(ply.getUniqueId(), priv);
         }
-        Group group = plugin.getGroupManager().addPlayerToGroup(ply.getName(), plugin.getUserNode(ply.getName()).getString("group"));
+        Group group = plugin.getGroupManager().addPlayerToGroup(ply.getUniqueId(), plugin.getUserNode(ply.getUniqueId()).getString("group"));
         if (group == null) {
             // no group was found for the player, so set them to default
-            group = plugin.getGroupManager().setGroup(ply.getName(), plugin.getGroupManager().getDefaultGroup().getName());
+            group = plugin.getGroupManager().setGroup(ply.getUniqueId(), plugin.getGroupManager().getDefaultGroup().getName());
         }
         org.bukkit.entity.Player player = ply.getPlayer();
         // clear the player's permissions
@@ -56,15 +53,15 @@ public class PlayerManager {
         PermissionAttachment attachment = player.addAttachment(plugin);
         attachment.setPermission(group.getMasterPermission(player.getWorld().getName()), true);
         attachment.setPermission(priv.getMasterPermission(player.getWorld().getName()), true);
-        attachment_cache.put(player.getName().toLowerCase(), attachment);
+        attachment_cache.put(player.getUniqueId(), attachment);
         return true;
     }
 
     public void changeWorld(org.bukkit.entity.Player player, World world) {
-        Player priv = players.get(player.getName().toLowerCase());
+        Player priv = players.get(player.getUniqueId());
         Validate.notNull(priv);
         Validate.notNull(priv.getGroup());
-        PermissionAttachment attachment = attachment_cache.get(player.getName().toLowerCase());
+        PermissionAttachment attachment = attachment_cache.get(player.getUniqueId());
         Validate.notNull(attachment);
         attachment.unsetPermission(priv.getGroup().getMasterPermission(world.getName()));
         attachment.unsetPermission(priv.getMasterPermission(world.getName()));
@@ -74,7 +71,7 @@ public class PlayerManager {
 
     public void disable() {
         for (org.bukkit.entity.Player p : plugin.getServer().getOnlinePlayers()) {
-            unregister(p.getName());
+            unregister(p.getUniqueId());
         }
     }
 
@@ -84,24 +81,24 @@ public class PlayerManager {
         }
     }
 
-    public void unregister(String name) {
-        Player player = players.remove(name.toLowerCase());
+    public void unregister(UUID UUID) {
+        Player player = players.remove(UUID);
         if (player != null) {
-            attachment_cache.remove(name.toLowerCase());
+            attachment_cache.remove(UUID);
             for (World world : plugin.getServer().getWorlds()) {
                 String node = player.getMasterPermission(world.getName());
                 plugin.getServer().getPluginManager().removePermission(node);
             }
-            plugin.debug(name + " was successfully unregistered.");
+            plugin.debug(UUID + " was successfully unregistered.");
         } else {
-            plugin.debug(name + " was already unregistered!");
+            plugin.debug(UUID + " was already unregistered!");
         }
     }
 
-    public Player getPlayer(String name) {
-        Player player = players.get(name.toLowerCase());
+    public Player getPlayer(UUID UUID) {
+        Player player = players.get(UUID);
         if (player == null) {
-            player = new PrivilegesPlayer(plugin, plugin.getServer().getOfflinePlayer(name));
+            player = new PrivilegesPlayer(plugin, plugin.getServer().getOfflinePlayer(UUID));
         }
         return player;
     }
@@ -152,5 +149,4 @@ public class PlayerManager {
         }
         return tree;
     }
-
 }

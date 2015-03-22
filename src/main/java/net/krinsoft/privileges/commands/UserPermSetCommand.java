@@ -9,6 +9,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -34,13 +35,13 @@ public class UserPermSetCommand extends UserPermCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         OfflinePlayer player = plugin.getServer().getOfflinePlayer(args.get(0));
-        String test;
+        UUID test;
         if (player != null) {
-            test = player.getName();
+            test = player.getUniqueId();
         } else {
-            test = args.get(0);
+            test = null;
         }
-        String user = (plugin.getUserNode(test) != null ? test : null);
+        UUID user = (plugin.getUserNode(test) != null ? test : null);
         if (user == null) {
             sender.sendMessage("I don't know about that user.");
             return;
@@ -67,7 +68,7 @@ public class UserPermSetCommand extends UserPermCommand {
         priv.addPermission(param[1], (val ? param[0] : "-" + param[0]));
         StringBuilder msg = new StringBuilder("Node ").append(colorize(ChatColor.GREEN, param[0])).append(" is now ");
         msg.append(colorize(val ? ChatColor.GREEN : ChatColor.RED, String.valueOf(val))).append(" for the user ");
-        msg.append(colorize(ChatColor.GOLD, user));
+        msg.append(colorize(ChatColor.GOLD, String.valueOf(user)));
         if (param[1] != null) {
             msg.append(" on ").append(colorize(ChatColor.AQUA, param[1]));
         }

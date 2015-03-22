@@ -11,11 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A group manager that handles the creation and removal of group permissions in Privileges
@@ -25,7 +21,7 @@ public class GroupManager {
     private Privileges plugin;
     private String DEFAULT;
     private Map<String, Group> groupList = new HashMap<String, Group>();
-    private Map<String, String> players = new HashMap<String, String>();
+    private Map<UUID, String> players = new HashMap<UUID, String>();
 
     public GroupManager(Privileges plugin) {
         this.plugin = plugin;
@@ -104,7 +100,11 @@ public class GroupManager {
      * @param player The player being promoted
      */
     public void promote(CommandSender sender, OfflinePlayer player) {
-        plugin.debug(sender.getName() + ": Running promotion for " + player.getName() + ".");
+        if(sender instanceof Player) {
+            plugin.debug(((Player) sender).getUniqueId() + ": Running promotion for " + player.getUniqueId() + ".");
+        } else {
+            plugin.debug(sender.getName() + ": Running promotion for " + player.getUniqueId() + ".");
+        }
         int send = getRank(sender);
         int rank = getRank(player);
         if (rank >= send) {
@@ -119,7 +119,7 @@ public class GroupManager {
                 if (player.getPlayer() != null) {
                     player.getPlayer().sendMessage("You have been promoted to " + ChatColor.AQUA + proGroup.getName() + ChatColor.WHITE + ".");
                 }
-                setGroup(player.getName(), proGroup.getName());
+                setGroup(player.getUniqueId(), proGroup.getName());
                 return;
             }
         }
@@ -130,7 +130,7 @@ public class GroupManager {
             // check the iteration's rank - player's current rank
             // if greater than 0 and less than current difference, we have a promotion possibility
             if (g.getRank() - rank > 0 && g.getRank() - rank < diff) {
-                plugin.debug("Promotion viability determined for player " + player.getName() + " to group " + g.getName() + "!");
+                plugin.debug("Promotion viability determined for player " + player.getUniqueId() + " to group " + g.getName() + "!");
                 diff = g.getRank() - rank;
                 group = g;
             }
@@ -141,7 +141,7 @@ public class GroupManager {
             if (player.getPlayer() != null) {
                 player.getPlayer().sendMessage("You have been promoted to " + ChatColor.AQUA + group.getName() + ChatColor.WHITE + ".");
             }
-            setGroup(player.getName(), group.getName());
+            setGroup(player.getUniqueId(), group.getName());
             return;
         }
         sender.sendMessage("Promotion failed.");
@@ -165,7 +165,11 @@ public class GroupManager {
      * @param player The player being demoted
      */
     public void demote(CommandSender sender, OfflinePlayer player) {
-        plugin.debug(sender.getName() + ": Running demotion for " + player.getName() + ".");
+        if(sender instanceof Player) {
+            plugin.debug(((Player) sender).getUniqueId() + ": Running demotion for " + player.getUniqueId() + ".");
+        } else {
+            plugin.debug(sender.getName() + ": Running demotion for " + player.getUniqueId() + ".");
+        }
         int send = getRank(sender);
         int rank = getRank(player);
         if (rank >= send) {
@@ -180,7 +184,7 @@ public class GroupManager {
                 if (player.getPlayer() != null) {
                     player.getPlayer().sendMessage("You have been demoted to " + ChatColor.DARK_RED + demGroup.getName() + ChatColor.WHITE + ".");
                 }
-                setGroup(player.getName(), demGroup.getName());
+                setGroup(player.getUniqueId(), demGroup.getName());
                 return;
             }
         }
@@ -191,7 +195,7 @@ public class GroupManager {
             // check the player's current rank - the current iteration's rank
             // if greater than 0 and less than current difference, we have a demotion possibility
             if (rank - g.getRank() > 0 && rank - g.getRank() < diff) {
-                plugin.debug("Demotion viability determined for player " + player.getName() + " to group " + g.getName() + "!");
+                plugin.debug("Demotion viability determined for player " + player.getUniqueId() + " to group " + g.getName() + "!");
                 diff = rank - g.getRank();
                 group = g;
             }
@@ -202,7 +206,7 @@ public class GroupManager {
             if (player.getPlayer() != null) {
                 player.getPlayer().sendMessage("You have been demoted to " + ChatColor.DARK_RED + group.getName() + ChatColor.WHITE + ".");
             }
-            setGroup(player.getName(), group.getName());
+            setGroup(player.getUniqueId(), group.getName());
             return;
         }
         sender.sendMessage("Demotion failed.");
@@ -222,14 +226,14 @@ public class GroupManager {
 
     /**
      * Adds the specified player to the specified group
-     * @param player The player to change
+     * @param UUID The player's UUID
      * @param group The group to set
      * @return The new group for the player
      */
-    public Group addPlayerToGroup(String player, String group) {
-        plugin.debug("Adding player " + player + " to group " + group + "...");
+    public Group addPlayerToGroup(UUID UUID, String group) {
+        plugin.debug("Adding player " + UUID + " to group " + group + "...");
         Group g = createGroup(group);
-        players.put(player, g.getName());
+        players.put(UUID, g.getName());
         return g;
     }
 
@@ -278,20 +282,20 @@ public class GroupManager {
 
     /**
      * Set a player's group to the specified group by name
-     * @param player The player whose group we're changing
+     * @param UUID The player's UUID whose group we're changing
      * @param group The name of the group (case-insensitive) to switch to
      * @return The new group of the player, or null if the specified group doesn't exist
      */
-    public Group setGroup(String player, String group) {
-        plugin.debug("Setting player " + player + " to group " + group + "...");
+    public Group setGroup(UUID UUID, String group) {
+        plugin.debug("Setting player " + UUID + " to group " + group + "...");
         // make sure the group is valid
-        OfflinePlayer ply = plugin.getServer().getOfflinePlayer(player);
+        OfflinePlayer ply = plugin.getServer().getOfflinePlayer(UUID);
         Group orig = getGroup(ply);
         Group test = getGroup(group);
         if (test == null) { return null; }
 
         // update the player's group in the configuration
-        plugin.getUsers().set("users." + player.toLowerCase() + ".group", test.getName());
+        plugin.getUsers().set("users." + UUID + ".group", test.getName());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             public void run() {
                 plugin.saveUsers();
@@ -299,11 +303,11 @@ public class GroupManager {
         });
 
         // update the player's values
-        players.put(player, test.getName());
+        players.put(UUID, test.getName());
 
         // reload the permissions
-        plugin.getPlayerManager().unregister(player);
-        plugin.getPlayerManager().register(player);
+        plugin.getPlayerManager().unregister(UUID);
+        plugin.getPlayerManager().register(ply);
 
         // tell other plugins about the group change
         plugin.getServer().getPluginManager().callEvent(new GroupChangeEvent(ply, orig.getName(), test.getName()));
@@ -347,9 +351,9 @@ public class GroupManager {
      */
     public Group getGroup(OfflinePlayer player) {
         try {
-            String group = players.get(player.getName());
+            String group = players.get(player.getUniqueId());
             if (group == null) {
-                group = plugin.getUserNode(player.getName()).getString("group");
+                group = plugin.getUserNode(player.getUniqueId()).getString("group");
             }
             return getGroup(group);
         } catch (Exception e) {

@@ -1,11 +1,13 @@
 package net.krinsoft.privileges.commands;
 
-import java.util.List;
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -44,8 +46,8 @@ public class GroupRemoveCommand extends GroupCommand {
             return;
         }
         for (String user : plugin.getUsers().getConfigurationSection("users").getKeys(false)) {
-            if (plugin.getUserNode(user).getString("group").equals(group.getName())) {
-                plugin.getUserNode(user).set("group", plugin.getGroupManager().getDefaultGroup().getName());
+            if (plugin.getUserNode(UUID.fromString(user)).getString("group").equals(group.getName())) {
+                plugin.getUserNode(UUID.fromString(user)).set("group", plugin.getGroupManager().getDefaultGroup().getName());
                 plugin.debug("Set " + user + "'s group to default");
             }
         }
