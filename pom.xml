@@ -45,6 +45,7 @@
             <artifactId>bukkit</artifactId>
             <version>1.6.2-R0.1</version>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <!-- CommandHandler -->
         <dependency>
@@ -53,6 +54,12 @@
             <version>6</version>
             <type>jar</type>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -98,15 +105,15 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>com.pneumaticraft.commandhandler:CommandHandler</include>
-                                </includes>
-                            </artifactSet>
+                            <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
                                     <pattern>com.pneumaticraft.commandhandler</pattern>
-                                    <shadedPattern>com.pneumaticraft.commandhandler.privileges</shadedPattern>
+                                    <shadedPattern>net.krinsoft.privileges.lib.commandhandler</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.lithium3141.shellparser</pattern>
+                                    <shadedPattern>net.krinsoft.privileges.lib.shellparser</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
