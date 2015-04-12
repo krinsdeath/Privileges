@@ -1,16 +1,61 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>net.krinsoft</groupId>
     <artifactId>Privileges</artifactId>
     <packaging>jar</packaging>
     <version>1.8.1</version>
     <name>Privileges</name>
+
+    <scm>
+        <developerConnection>scm:git:git@github.com:krinsdeath/Privileges.git</developerConnection>
+        <connection>scm:git:https://github.com/krinsdeath/Privileges.git</connection>
+        <url>https://github.com/krinsdeath/Privileges</url>
+    </scm>
+
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://ci.krincraft.net</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>ks-releases</id>
+            <name>KrinSoft Releases</name>
+            <url>http://files.krinsoft.net:8085/nexus/content/repositories/ks-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>ks-snapshots</id>
+            <name>KrinSoft Snapshots</name>
+            <url>http://files.krinsoft.net:8085/nexus/content/repositories/ks-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.number>DEV</project.build.number>
     </properties>
+
+    <dependencies>
+        <!-- Bukkit Dependency -->
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.6.2-R0.1</version>
+            <type>jar</type>
+        </dependency>
+        <!-- CommandHandler -->
+        <dependency>
+            <groupId>com.pneumaticraft.commandhandler</groupId>
+            <artifactId>CommandHandler</artifactId>
+            <version>6</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
     <repositories>
         <!-- Bukkit Repository -->
         <repository>
@@ -28,30 +73,7 @@
             <url>http://files.krinsoft.net:8085/nexus/content/groups/public</url>
         </repository>
     </repositories>
-    <!-- Jenkins manager -->
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://ci.krincraft.net</url>
-    </ciManagement>
-    <!-- End Jenkins -->
-    <scm>
-        <developerConnection>scm:git:git@github.com:krinsdeath/Privileges.git</developerConnection>
-        <connection>scm:git:git://github.com/krinsdeath/Privileges.git</connection>
-        <url>https://github.com/krinsdeath/Privileges</url>
-    </scm>
-    <profiles>
-        <profile>
-            <id>jenkins</id>
-            <activation>
-                <property>
-                    <name>env.BUILD_NUMBER</name>
-                </property>
-            </activation>
-            <properties>
-                <project.build.number>${env.BUILD_NUMBER}</project.build.number>
-            </properties>
-        </profile>
-    </profiles>
+
     <build>
         <finalName>${project.name}</finalName>
         <defaultGoal>clean package</defaultGoal>
@@ -115,36 +137,18 @@
             </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <!-- Bukkit Dependency -->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.6.2-R0.1</version>
-            <type>jar</type>
-        </dependency>
-        <!-- End Bukkit -->
-        <!-- CommandHandler -->
-        <dependency>
-            <groupId>com.pneumaticraft.commandhandler</groupId>
-            <artifactId>CommandHandler</artifactId>
-            <version>6</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>ks-releases</id>
-            <name>KrinSoft Releases</name>
-            <url>http://files.krinsoft.net:8085/nexus/content/repositories/ks-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>ks-snapshots</id>
-            <name>KrinSoft Snapshots</name>
-            <url>http://files.krinsoft.net:8085/nexus/content/repositories/ks-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
+    <profiles>
+        <profile>
+            <id>jenkins</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <project.build.number>${env.BUILD_NUMBER}</project.build.number>
+            </properties>
+        </profile>
+    </profiles>
 </project>
