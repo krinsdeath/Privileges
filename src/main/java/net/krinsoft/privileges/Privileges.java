@@ -1,5 +1,7 @@
 package net.krinsoft.privileges;
 
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.privileges.commands.BackupCommand;
@@ -57,8 +59,6 @@ import org.mcstats.Metrics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -474,14 +474,8 @@ public class Privileges extends JavaPlugin {
      */
     private String sha256(File file) {
         try {
-            byte[] bytes = Files.getDigest(file, MessageDigest.getInstance("SHA-256"));
-            StringBuilder checksum = new StringBuilder();
-            for (byte b : bytes) {
-                checksum.append(b);
-            }
+            HashCode checksum = Files.hash(file, Hashing.sha256());
             return checksum.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             if (e instanceof FileNotFoundException) {
                 return e.getLocalizedMessage();
@@ -490,5 +484,4 @@ public class Privileges extends JavaPlugin {
         }
         return null;
     }
-
 }
