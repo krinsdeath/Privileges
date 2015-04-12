@@ -61,6 +61,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Plugin Metrics -->
+        <dependency>
+            <groupId>org.mcstats.bukkit</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R6</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -78,6 +86,11 @@
         <repository>
             <id>krinsoft</id>
             <url>http://files.krinsoft.net:8085/nexus/content/groups/public</url>
+        </repository>
+        <!-- Plugin Metrics Repository -->
+        <repository>
+            <id>metrics-repo</id>
+            <url>https://repo.mcstats.org/content/repositories/public</url>
         </repository>
     </repositories>
 
@@ -114,6 +127,10 @@
                                 <relocation>
                                     <pattern>com.lithium3141.shellparser</pattern>
                                     <shadedPattern>net.krinsoft.privileges.lib.shellparser</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.mcstats</pattern>
+                                    <shadedPattern>net.krinsoft.privileges.lib.metrics</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
