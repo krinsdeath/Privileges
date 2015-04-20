@@ -11,7 +11,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class BlockListener implements Listener {
 
     public BlockListener(Privileges plugin) {

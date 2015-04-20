@@ -17,7 +17,6 @@ import java.util.List;
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class RankedGroup implements Group {
     // the name of this group
     private String name;

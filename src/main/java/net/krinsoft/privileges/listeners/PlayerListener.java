@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *
  * @author krinsdeath
  */
-@SuppressWarnings("unused")
 public class PlayerListener implements Listener {
 
     private Privileges plugin;
